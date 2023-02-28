@@ -1,0 +1,1316 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "6wcxulyjvhhr0"
+  },
+  "info": {
+    "title": "Allocation service",
+    "description": "V2 allocation APIs for multi-tenant service help identify the nearest warehouse to ship items in the order by reserving the inventory.",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/allocation",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/allocation",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/allocation",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Allocation",
+      "description": "Endpoints to perform allocation operations"
+    }
+  ],
+  "paths": {
+    "/allocation/": {
+      "post": {
+        "tags": [
+          "Allocation"
+        ],
+        "summary": "Generate allocation",
+        "description": "Generates  allocation for each item in the order. The response includes fabric-generated **allocationID**, which is required for *GET /allocation/{allocationId}*.",
+        "operationId": "allocateOrder",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventRequestAllocationEventDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Allocation Assigned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Allocation"
+                  }
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Partial Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Allocation went to Scratched or Failed !"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order/item/Details Not Found/Valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Allocation Does not exist for this detail-type"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/allocation/{allocationId}": {
+      "get": {
+        "tags": [
+          "Allocation"
+        ],
+        "summary": "Get allocation",
+        "description": "Gets allocation details by allocation ID",
+        "operationId": "getAllocation",
+        "parameters": [
+          {
+            "name": "allocationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "24-character system-generated allocation ID",
+            "example": "633f216c68f1b4456659161c"
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Allocation Details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allocation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "AllocationId not found/valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "message": "Allocation details are not available for this allocation Id"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Allocation"
+        ],
+        "summary": "Update allocation",
+        "description": "Updates allocation for the given order or item. Primary use cases are to update location number (related to warehouse), allocation number (external use), item details, etc. To specifically update Location Number, the *PUT /allocation/reallocate* endpoint is recommended",
+        "operationId": "updateAllocatedOrder",
+        "parameters": [
+          {
+            "name": "allocationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Allocation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Allocation Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allocation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Order/item/Details Not Found/Valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "message": "Allocation details not available for this allocationId"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/allocation/query": {
+      "post": {
+        "tags": [
+          "Allocation"
+        ],
+        "summary": "Get allocation by query",
+        "description": "Finds allocation details based on filter criteria",
+        "operationId": "getAllocationByQuery",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Matched Allocations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Allocation"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data Not Found/Valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "message": "Data not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/allocation/reallocate": {
+      "put": {
+        "tags": [
+          "Allocation"
+        ],
+        "summary": "Reallocate location",
+        "description": "Updates location number of the existing allocation. To update other details, *PUT /allocation/{allocationId}* endpoint is recommended.",
+        "operationId": "reAllocateOrder",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AllocationEventDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Location reallocated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "message": "Reallocation process completed Successfully with !! allocation Ids [6315dec507025b003f20ed3c]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "AllocationId not found/valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "message": "AllocationId is not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/allocation/cancel/{allocationIds}": {
+      "put": {
+        "tags": [
+          "Allocation"
+        ],
+        "summary": "Cancel allocation ",
+        "description": "Cancels allocation by allocation ID",
+        "operationId": "cancelAllocation",
+        "parameters": [
+          {
+            "name": "allocationIds",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cancel Allocation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Allocation"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "AllocationRequestId Not Found/Valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "message": "Allocation with AllocationRequestId is not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Allocation": {
+        "required": [
+          "allocationId",
+          "items",
+          "locationNum",
+          "parentAllocationId"
+        ],
+        "type": "object",
+        "properties": {
+          "allocationId": {
+            "type": "string",
+            "description": "Unique ID for an allocation document",
+            "example": "62ff5c0bec0aed3c86202c32"
+          },
+          "version": {
+            "type": "integer",
+            "description": "Current version of allocation document",
+            "format": "int64",
+            "example": 2
+          },
+          "allocationRequestId": {
+            "type": "string",
+            "description": "Allocation request ID used for tracking internal communication. Required to update allocation details.",
+            "example": "62ff5c0bec0aed3c86202c32"
+          },
+          "allocationNum": {
+            "type": "string",
+            "description": "Allocation number for client tracking",
+            "example": "xxyyzz12345"
+          },
+          "parentAllocationId": {
+            "type": "string",
+            "description": "Same as previous allocation document while creating new allocation",
+            "example": "62ff5c0bec0aed3c86202c32"
+          },
+          "sentToPPSDate": {
+            "type": "string",
+            "description": "Time of sending allocation event to PPS",
+            "format": "date-time",
+            "example": "2022-08-01T18:03:28.483971941Z"
+          },
+          "allocationDate": {
+            "type": "string",
+            "description": "Time of allocation creation and when it was stored in database",
+            "format": "date-time",
+            "example": "2022-08-01T18:03:28.483971941Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Time of allocation update",
+            "format": "date-time",
+            "example": "2022-08-01T20:03:28.483971941Z"
+          },
+          "type": {
+            "type": "string",
+            "description": "Allocation type",
+            "example": "ALLOCATED",
+            "enum": [
+              "ALLOCATED",
+              "SCRATCHED",
+              "RETURNED"
+            ]
+          },
+          "previousAllocationLocationNum": {
+            "type": "number",
+            "description": "In reallocation scenarios, keeps track of the previously allocation location numbers",
+            "example": 410
+          },
+          "poNumber": {
+            "type": "string",
+            "description": "Purchase order number (generally, vendor-generated)",
+            "example": "1125",
+            "nullable": true
+          },
+          "itemsType": {
+            "type": "string",
+            "description": "Items type",
+            "example": "WEB_SHIP",
+            "enum": [
+              "WEB_SHIP",
+              "POS",
+              "WEB"
+            ]
+          },
+          "orderSubType": {
+            "type": "string",
+            "description": "Sub-type of order",
+            "example": "BORDERFREE",
+            "enum": [
+              "IOS",
+              "Android",
+              "International",
+              "Borderfree"
+            ]
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Vendor ID",
+            "example": "56",
+            "nullable": true
+          },
+          "shipDate": {
+            "type": "string",
+            "description": "Estimated ship date",
+            "format": "date-time",
+            "example": null
+          },
+          "shipType": {
+            "type": "string",
+            "description": "Optional field for shipment type",
+            "format": "date-time",
+            "example": "SHIP_TO_ADDRESS"
+          },
+          "shipMethod": {
+            "type": "string",
+            "description": "Optional field for shipment method",
+            "format": "date-time",
+            "example": "Overnight Delivery"
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Unique Id for delivery address",
+            "example": "98ff5c0bec0aed3c86202c32"
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Allocation status code",
+            "example": "PENDING_PICK",
+            "enum": [
+              "ALLOCATED",
+              "PENDING_DROP",
+              "PENDING_PICK",
+              "SHIPPED",
+              "PARTIALLY_SHIPPED",
+              "REALLOCATED",
+              "CANCELLED",
+              "PARTIALLY_CANCELLED"
+            ]
+          },
+          "locationNum": {
+            "type": "string",
+            "description": "Tenant's ship-from location ID",
+            "example": "1234B"
+          },
+          "locationType": {
+            "type": "string",
+            "description": "Tenant's ship-from location type",
+            "example": "1234B"
+          },
+          "shipToAddress": {
+            "type": "object",
+            "properties": {}
+          },
+          "recipient": {
+            "type": "array",
+            "description": "Recipient details such as phone number, email, and name",
+            "items": {
+              "$ref": "#/components/schemas/OrderPickup"
+            }
+          },
+          "items": {
+            "type": "array",
+            "description": "List of items to be shipped",
+            "items": {
+              "$ref": "#/components/schemas/AllocationItem"
+            }
+          },
+          "auditLogs": {
+            "type": "array",
+            "description": "Logs with updated fields",
+            "items": {
+              "$ref": "#/components/schemas/OrderAuditLog"
+            }
+          }
+        },
+        "description": "Allocation details"
+      },
+      "AllocationItem": {
+        "required": [
+          "allocationLineNumber",
+          "itemId",
+          "quantity",
+          "sku"
+        ],
+        "type": "object",
+        "properties": {
+          "orderLineId": {
+            "type": "string",
+            "description": "Reference order line ID for  tracking purpose",
+            "example": "134fqfaa532qrf"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "100064"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": "123k4h123k"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Order ID",
+            "example": "123k4h123k"
+          },
+          "orderDate": {
+            "type": "string",
+            "description": "Time of order creation",
+            "format": "date-time",
+            "example": "2022-08-01T18:03:28.483971941Z"
+          },
+          "estimatedDeliveryDate": {
+            "type": "string",
+            "description": "Estimated delivery time",
+            "format": "date-time",
+            "example": "2022-08-01T18:03:28.483971941Z"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Item quantity",
+            "example": 3
+          },
+          "allocationLineNumber": {
+            "type": "number",
+            "description": "Unique number allocated at each item in an order",
+            "example": 3
+          },
+          "parentAllocationLineNumber": {
+            "type": "number",
+            "description": "Unique number allocated to each item in parent allocation",
+            "example": 3
+          },
+          "reallocationRequestId": {
+            "type": "string",
+            "description": "Request ID for re-allocation",
+            "example": "123k4h123k"
+          },
+          "shippedQuantity": {
+            "type": "number",
+            "description": "Quantity shipped for the specified line item",
+            "example": 1
+          },
+          "scratchQuantity": {
+            "type": "number",
+            "description": "Total quantity cancelled for the specified line item",
+            "example": 1
+          },
+          "scratchedReasonCode": {
+            "type": "string",
+            "description": "Reason code for cancellation",
+            "example": "Scratched during shipment"
+          },
+          "reshipReasonCode": {
+            "type": "string",
+            "description": "Reason code for reshipment",
+            "example": "Reshipping during shipment"
+          },
+          "reallocationReasonCode": {
+            "type": "string",
+            "description": "Reason code for re-allocation",
+            "example": "Reallocating due to unavailability of location number"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Sales channel ID for tenant",
+            "example": "12"
+          },
+          "segment": {
+            "type": "string",
+            "description": "Segment associated with item",
+            "example": null
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Vendor ID",
+            "example": "56"
+          },
+          "title": {
+            "type": "string",
+            "description": "Item name",
+            "example": "Demo"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Item weight",
+            "example": 5.5
+          },
+          "cost": {
+            "type": "number",
+            "description": "Total cost of item",
+            "example": 500.2
+          },
+          "price": {
+            "type": "number",
+            "description": "Total price",
+            "example": 50.2
+          },
+          "itemStatus": {
+            "type": "string",
+            "description": "Current status of line item",
+            "example": "ALLOCATED",
+            "enum": [
+              "CANCELLED",
+              "REFUNDED",
+              "ALLOCATED",
+              "PARTIALLY_ALLOCATED"
+            ]
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Custom attributes, if any",
+              "properties": {}
+            }
+          },
+          "uom": {
+            "type": "string",
+            "description": "Unit of measure",
+            "example": "KG"
+          }
+        },
+        "description": "Details of allocation items"
+      },
+      "OrderAuditLog": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "description": "Line item ID",
+            "example": "4"
+          },
+          "auditId": {
+            "type": "string",
+            "description": "Audit ID",
+            "example": "62272e917b12209e68751d94"
+          },
+          "auditType": {
+            "type": "string",
+            "description": "Audit Type",
+            "example": "UPDATE",
+            "enum": [
+              "CREATE",
+              "CANCEL",
+              "RETURN",
+              "RESHIP",
+              "SHIP",
+              "UPDATE",
+              "ORDER",
+              "APPEASEMENT",
+              "ORDER_ADJUSTMENT",
+              "ITEM_ADJUSTMENT"
+            ]
+          },
+          "employeeId": {
+            "type": "string",
+            "description": "Employee ID (Store context)",
+            "example": "62272e917b12209e68751d94"
+          },
+          "auditTimestamp": {
+            "type": "string",
+            "description": "Time of audit",
+            "format": "date-time",
+            "example": "2022-05-12T09:24:54.804Z"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source of audit",
+            "example": "POS"
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "Reason code",
+            "example": "POS"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "Sub-reason code",
+            "example": "POS"
+          },
+          "policyCode": {
+            "type": "string",
+            "description": "Policy code",
+            "example": "POS"
+          },
+          "note": {
+            "type": "string",
+            "description": "Additional information, if any",
+            "example": "Note"
+          },
+          "lineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Line item number for reference",
+            "example": 1
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": "F5F"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Item quantity",
+            "example": 1
+          },
+          "amount": {
+            "type": "number",
+            "description": "Total order amount",
+            "example": 2.4
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/OrderPaymentToken"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "true: success <br> false: failure",
+            "example": true
+          },
+          "paymentResponse": {
+            "type": "object",
+            "properties": {}
+          },
+          "updatedFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderAuditLogUpdatedField"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "Details of order audit log"
+      },
+      "OrderAuditLogUpdatedField": {
+        "type": "object",
+        "properties": {
+          "fieldName": {
+            "type": "string",
+            "description": "Updated field name for audit trail",
+            "example": "UOM"
+          },
+          "fieldOriginalValue": {
+            "type": "string",
+            "description": "Original field name for audit trail",
+            "example": "PK"
+          }
+        },
+        "description": "Details of audit log"
+      },
+      "OrderContactName": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "description": "First name of contact",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "description": "Middle name of contact",
+            "example": "Middle"
+          },
+          "last": {
+            "type": "string",
+            "description": "Last name of contact",
+            "example": "Doe"
+          }
+        },
+        "description": "Contact name"
+      },
+      "OrderContactPhone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "description": "Phone number of contact person",
+            "example": "55555555555"
+          },
+          "type": {
+            "type": "string",
+            "description": "Phone type",
+            "example": "MOBILE",
+            "enum": [
+              "MOBILE",
+              "HOME",
+              "BUSINESS"
+            ]
+          }
+        },
+        "description": "Details of contact phone number"
+      },
+      "OrderPaymentToken": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Payment token for reference",
+            "example": "pi_34tr6787rt"
+          },
+          "paymentType": {
+            "type": "string",
+            "description": "Payment type for identification",
+            "example": "VISA"
+          }
+        },
+        "description": "Details of order payment token"
+      },
+      "OrderPickup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrderContactName"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of contact",
+            "example": "demo@xyz.inc"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/OrderContactPhone"
+          },
+          "pickupType": {
+            "type": "string",
+            "description": "Pickup type",
+            "example": "Primary",
+            "enum": [
+              "Primary",
+              "Alternate"
+            ]
+          }
+        },
+        "description": "Order pickup details"
+      },
+      "XSiteContext": {
+        "required": [
+          "account",
+          "stage"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "Time of endpoint execution",
+            "type": "string",
+            "example": "2022-11-28T10:31:31.454Z"
+          },
+          "channel": {
+            "description": "Sales channel ID",
+            "type": "number",
+            "example": 12
+          },
+          "account": {
+            "description": "24 character client's co-pilot account ID",
+            "type": "string",
+            "example": "61ef7087d2f68100124b706d"
+          },
+          "stage": {
+            "description": "Environment shared with the client during onboarding",
+            "type": "string",
+            "example": "Sandbox"
+          }
+        },
+        "description": "JSON object containing `account`, `stage`, `date`, and `site`"
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error details"
+          }
+        },
+        "description": "Error details"
+      },
+      "AllocationEventDetail": {
+        "required": [
+          "channel",
+          "documentType",
+          "id",
+          "tenant"
+        ],
+        "type": "object",
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "Id of the given document",
+            "example": "ship1233234555g"
+          },
+          "channel": {
+            "type": "string",
+            "description": "Channel",
+            "example": "ship1233234555g"
+          },
+          "tenant": {
+            "type": "string",
+            "description": "Tenant ID",
+            "example": "ship1233234555g"
+          },
+          "id": {
+            "type": "array",
+            "description": "Unique ID of the document",
+            "example": "98ff5c0bec0aed3c86202c32",
+            "items": {
+              "type": "string",
+              "description": "Unique ID of the document",
+              "example": "98ff5c0bec0aed3c86202c32"
+            }
+          },
+          "documentType": {
+            "type": "string",
+            "description": "Document type",
+            "enum": [
+              "ALLOCATION",
+              "ORDER",
+              "SHIPMENT",
+              "ALLOCATION ORDER"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "description": "Optional item list needs to be allocated",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          }
+        }
+      },
+      "Item": {
+        "required": [
+          "allocationLineNumber",
+          "lineItemId",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "description": "Reference order line id for  tracking purpose",
+            "example": "134fqfaa532qrf"
+          },
+          "allocationLineNumber": {
+            "title": "Unique number for each allocation line level",
+            "type": "integer",
+            "description": "mandatory / required in case of modification / reallocation of existing allocation",
+            "format": "int32",
+            "example": 1
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Request quantity of the item",
+            "format": "int32",
+            "example": 3
+          }
+        },
+        "description": "Optional item List needs to be allocated"
+      },
+      "EventRequestAllocationEventDetail": {
+        "required": [
+          "detailType"
+        ],
+        "type": "object",
+        "properties": {
+          "detailType": {
+            "type": "string",
+            "description": "Event type",
+            "example": "ORDER_CREATE",
+            "enum": [
+              "ORDER_CREATED",
+              "SHIPMENT_CREATED",
+              "PICKUP_CREATED",
+              "PICKUP_COMPLETED",
+              "BOPIS_REMINDER_EMAIL",
+              "BACKORDER_CREATE",
+              "BACKORDER_30_DAYS_CONSENT_TO_DELAY_EMAIL",
+              "BACKORDER_53_DAYS_CONSENT_TO_DELAY_EMAIL",
+              "BACKORDER_CANCEL",
+              "BACKORDER_AUTH_DECLINE",
+              "ORDER_CANCELLATION_EMAIL_WEBCSC_ORDER_ITEM_CANCEL",
+              "ORDER_CANCELLATION_EMAIL_WEBCSC_ORDER_CANCEL",
+              "ORDER_CANCELLATION_EMAIL_LOCATE_ORDER_ITEM_CANCEL",
+              "RETURN_NOTIFICATION_EMAIL",
+              "REFUND_NOTIFICATION_EMAIL",
+              "APPEASEMENT_NOTIFICATION_EMAIL",
+              "BACKORDER_AUTH_DECLINE_EMAIL",
+              "INVOICE_POSTING"
+            ]
+          },
+          "detail": {
+            "$ref": "#/components/schemas/AllocationEventDetail"
+          }
+        }
+      },
+      "LibQuery": {
+        "required": [
+          "filters"
+        ],
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Numbers of records to be returned",
+            "format": "int32",
+            "example": 10,
+            "default": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of records to skipped",
+            "format": "int64",
+            "example": 0,
+            "default": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Sorting criteria based on attributes",
+            "example": "updatedAt",
+            "default": "updatedAt"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Sorting direction such as ascending or descending",
+            "example": "desc",
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Filter criteria to narrow down search results. <br> **Note**: To filter records, the json structure should be similar to target entity structure. That is, order, shipment, etc.",
+              "example": {
+                "retail": {
+                  "locationNum": 12
+                },
+                "orderSubTotal": {
+                  "gte": 1300,
+                  "lt": 1400
+                },
+                "orderNumber": "order-*Z",
+                "statusCode": [
+                  "ORDER_CREATED"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                },
+                "shipInfo": {
+                  "shipToId": [
+                    "23434",
+                    "23436"
+                  ]
+                }
+              },
+              "default": {}
+            },
+            "description": "Filter criteria. <br> **Note**: To filter records, the json structure should be similar to target entity structure. That is, order, shipment, etc.",
+            "example": {
+              "retail": {
+                "locationNum": 12
+              },
+              "orderSubTotal": {
+                "gte": 1300,
+                "lt": 1400
+              },
+              "orderNumber": "order-*Z",
+              "statusCode": [
+                "ORDER_CREATED"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              },
+              "shipInfo": {
+                "shipToId": [
+                  "23434",
+                  "23436"
+                ]
+              }
+            },
+            "default": {}
+          }
+        },
+        "description": "Filter criteria"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

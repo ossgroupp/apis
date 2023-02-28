@@ -1,0 +1,1207 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "louap6mpoxf5m"
+  },
+  "info": {
+    "title": "Order Recalculation service OpenAPI specification",
+    "description": "v2 Order Recalculation Apis for multi tenant service",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4041/api/v2/order-recalculation",
+      "description": "local"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/order-recalculation",
+      "description": "dev"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/order-recalculation",
+      "description": "stg02"
+    },
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/order-recalculation",
+      "description": "uat01"
+    },
+    {
+      "url": "https://prod01.oms.libertytreemedia.com/api/v2/order-recalculation",
+      "description": "prod01"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "paths": {
+    "/{orderId}": {
+      "patch": {
+        "tags": [
+          "order-recalculation-controller"
+        ],
+        "summary": "Create Recalculated Order Totals",
+        "operationId": "recalculateOrder",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.ltm.oms.model.order.Order"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "com.ltm.oms.model.order.Address": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Contact$Name"
+          },
+          "email": {
+            "type": "string",
+            "example": "test@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Contact$Phone"
+          },
+          "address1": {
+            "type": "string",
+            "example": "Test Street"
+          },
+          "address2": {
+            "type": "string",
+            "example": "123 Parking Lot"
+          },
+          "address3": {
+            "type": "string"
+          },
+          "address4": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string",
+            "example": "Beaumont"
+          },
+          "state": {
+            "type": "string",
+            "example": "TX"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "77705"
+          },
+          "type": {
+            "type": "string",
+            "example": "residence"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 35.294952
+          },
+          "longitude": {
+            "type": "number",
+            "example": 32.294952
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Adjustment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.PaymentToken"
+          },
+          "amount": {
+            "type": "number",
+            "example": 2.4
+          },
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "response": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.AppeasementDetail": {
+        "type": "object",
+        "properties": {
+          "appeasementCounter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "reasonCode": {
+            "type": "string",
+            "example": "Incorrect Item"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "example": "Late shipping"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          },
+          "invoiceValue": {
+            "type": "number",
+            "example": 34.56
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.AppeasementPaymentInfo"
+            }
+          }
+        }
+      },
+      "com.ltm.oms.model.order.AppeasementPaymentInfo": {
+        "type": "object",
+        "properties": {
+          "paymentCounter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 40
+          }
+        }
+      },
+      "com.ltm.oms.model.order.AuditLog": {
+        "type": "object",
+        "properties": {
+          "auditType": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "auditTimestamp": {
+            "type": "string",
+            "example": "2022-05-12T09:24:54.804Z"
+          },
+          "source": {
+            "type": "string",
+            "example": "POS"
+          },
+          "reasonCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "policyCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "note": {
+            "type": "string",
+            "example": "Note"
+          },
+          "lineItemId": {
+            "type": "string",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "lineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "sku": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "amount": {
+            "type": "number",
+            "example": 2.4
+          },
+          "updatedFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.AuditLog$UpdatedAttribute"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "com.ltm.oms.model.order.AuditLog$UpdatedAttribute": {
+        "type": "object",
+        "properties": {
+          "attributeName": {
+            "type": "string",
+            "example": "UOM"
+          },
+          "attributeOriginalValue": {
+            "type": "string",
+            "example": "PK"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Contact": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Contact$Name"
+          },
+          "email": {
+            "type": "string",
+            "example": "test@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Contact$Phone"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Contact$Name": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "example": "Middle"
+          },
+          "last": {
+            "type": "string",
+            "example": "Doe"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Contact$Phone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "example": "55555555555"
+          },
+          "type": {
+            "type": "string",
+            "example": "MOBILE",
+            "enum": [
+              "MOBILE",
+              "HOME",
+              "BUSINESS"
+            ]
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Detail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Discount": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "amount": {
+            "type": "number",
+            "example": 2.4
+          },
+          "invoiceQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "returnQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "cancelQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "unit": {
+            "type": "string",
+            "example": "AMOUNT_OFF"
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "promoId": {
+            "type": "string",
+            "example": "HNY2022"
+          },
+          "promoCode": {
+            "type": "string",
+            "example": "HNY2022"
+          },
+          "promoTitle": {
+            "type": "string",
+            "example": "Happy New Year"
+          },
+          "type": {
+            "type": "string",
+            "example": "promotion"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.FeeDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          },
+          "invoiceValue": {
+            "type": "number",
+            "example": 34.56
+          }
+        }
+      },
+      "com.ltm.oms.model.order.InvoiceDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 12
+          },
+          "invoiceQuantity": {
+            "type": "number",
+            "example": 34
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 10.4
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Item": {
+        "required": [
+          "itemId"
+        ],
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "lineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "itemId": {
+            "type": "string",
+            "example": "1234"
+          },
+          "sku": {
+            "type": "string",
+            "example": "P1234"
+          },
+          "title": {
+            "type": "string",
+            "example": "Item"
+          },
+          "type": {
+            "type": "string",
+            "example": "Borderfree"
+          },
+          "orderType": {
+            "type": "string",
+            "example": "WEB_SHIP"
+          },
+          "backorder": {
+            "type": "boolean",
+            "example": true
+          },
+          "orderedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 60
+          },
+          "backOrderedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "pendingShippedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "pendingShippedBackOrderQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "shippedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "deliveredQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "invoiceQuantity": {
+            "type": "number",
+            "example": 10
+          },
+          "canceledQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "pendingReturnQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "returnedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "reshippedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "shipToId": {
+            "type": "string",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "itemUnitPrice": {
+            "type": "number",
+            "example": 10
+          },
+          "itemSubTotal": {
+            "type": "number",
+            "example": 600
+          },
+          "itemFeeTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "updatedFeeTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "itemShippingTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "appeasementTotal": {
+            "type": "number",
+            "example": 5.5
+          },
+          "itemDiscountsTotal": {
+            "type": "number",
+            "example": 55
+          },
+          "updatedDiscounts": {
+            "type": "number",
+            "example": 55
+          },
+          "itemTaxTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "updatedTaxTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "itemTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "updatedItemTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "outstandingItemTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "updatedOutstandingItemTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "invoiceTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "5345HJH"
+          },
+          "associateId": {
+            "type": "string",
+            "example": "5345HJH"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.InvoiceDetail"
+            }
+          },
+          "appeasements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.AppeasementDetail"
+            }
+          },
+          "taxCode": {
+            "type": "string",
+            "example": "FR01"
+          },
+          "taxDetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Detail"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Discount"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "isDonation": true
+              }
+            },
+            "example": {
+              "isDonation": true
+            }
+          },
+          "exchangeItem": {
+            "type": "boolean",
+            "example": true
+          },
+          "parentLineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 12
+          },
+          "pendingExchangeQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 12
+          },
+          "exchangeQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 13
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 12.4
+          },
+          "lineOrderStatus": {
+            "type": "string",
+            "example": "VALID"
+          },
+          "uom": {
+            "type": "string"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.ItemAdjustment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.PaymentToken"
+          },
+          "amount": {
+            "type": "number",
+            "example": 2.4
+          },
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "response": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "type": {
+            "type": "string"
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.ItemAdjustment$LineItem"
+            }
+          }
+        }
+      },
+      "com.ltm.oms.model.order.ItemAdjustment$LineItem": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "example": "d538b1f1-0e45-43c6-bfc6-9666fc1188ca"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Order": {
+        "required": [
+          "channelId",
+          "orderNumber",
+          "statusCode"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "orderId": {
+            "type": "string",
+            "example": "5349b4ddd2781d08c09890f4"
+          },
+          "orderNumber": {
+            "type": "string",
+            "example": "5349b4ddd2781d08c09890f4"
+          },
+          "orderDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "cancellationDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "channelId": {
+            "type": "string",
+            "example": "12"
+          },
+          "cartId": {
+            "type": "string",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "type": {
+            "type": "string",
+            "example": "WEB_SHIP"
+          },
+          "subType": {
+            "type": "string",
+            "example": "Borderfree"
+          },
+          "processName": {
+            "type": "string",
+            "example": "CANCEL"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "43278"
+          },
+          "retail": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Order$Retail"
+          },
+          "orderSubTotal": {
+            "type": "number",
+            "example": 123.45
+          },
+          "updatedSubTotal": {
+            "type": "number",
+            "example": 113.45
+          },
+          "orderDiscount": {
+            "type": "number",
+            "example": 1.23
+          },
+          "updatedDiscounts": {
+            "type": "number",
+            "example": 1.45
+          },
+          "feeTotal": {
+            "type": "number",
+            "example": 12.34
+          },
+          "updatedFeeTotal": {
+            "type": "number",
+            "example": 12.34
+          },
+          "taxTotal": {
+            "type": "number",
+            "example": 12.34
+          },
+          "appeasementTotal": {
+            "type": "number",
+            "example": 12.34
+          },
+          "updatedTaxTotal": {
+            "type": "number",
+            "example": 12.34
+          },
+          "returnTotal": {
+            "type": "number",
+            "example": 12.34
+          },
+          "cancelTotal": {
+            "type": "number",
+            "example": 12.34
+          },
+          "invoiceTotal": {
+            "type": "number",
+            "example": 12.34
+          },
+          "orderTotal": {
+            "type": "number",
+            "example": 146.9
+          },
+          "updatedOrderTotal": {
+            "type": "number",
+            "example": 146.9
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "statusCode": {
+            "type": "string",
+            "example": "ORDER_CREATED"
+          },
+          "statusDescription": {
+            "type": "string",
+            "example": "Order Created"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "test": 123
+              }
+            },
+            "example": {
+              "test": 123
+            }
+          },
+          "exchangeReasonCode": {
+            "type": "string",
+            "example": "A123"
+          },
+          "exchangeSubReasonCode": {
+            "type": "string",
+            "example": "324R"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.FeeDetail"
+            }
+          },
+          "appeasements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.AppeasementDetail"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Discount"
+            }
+          },
+          "customer": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Order$Customer"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Payment"
+            }
+          },
+          "items": {
+            "maxItems": 2147483647,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Item"
+            }
+          },
+          "shipInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.ShipInfo"
+            }
+          },
+          "itemAdjustments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.ItemAdjustment"
+            }
+          },
+          "orderAdjustments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Adjustment"
+            }
+          },
+          "auditLogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.AuditLog"
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Order$Note"
+            }
+          },
+          "orderReleaseTimestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Order$Customer": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Contact$Name"
+          },
+          "email": {
+            "type": "string",
+            "example": "test@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Contact$Phone"
+          },
+          "userId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "accountId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "company": {
+            "type": "string",
+            "example": "Fabric"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Order$Note": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "user": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "description": {
+            "type": "string",
+            "example": "Type Anything"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Order$Retail": {
+        "type": "object",
+        "properties": {
+          "locationNum": {
+            "type": "integer",
+            "format": "int32",
+            "example": 123
+          },
+          "cashierId": {
+            "type": "string",
+            "example": "C-123"
+          },
+          "registerId": {
+            "type": "string",
+            "example": "113"
+          },
+          "transactionId": {
+            "type": "string",
+            "example": "R123-431-1133-2129"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.Payment": {
+        "type": "object",
+        "properties": {
+          "paymentCounter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-27T16:15:58-05:00"
+          },
+          "billToId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "paymentIdentifier": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.PaymentIdentifier"
+          },
+          "paymentProvider": {
+            "type": "string",
+            "example": "stripe"
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.PaymentToken"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "example": "CREDIT_CARD"
+          },
+          "authAmount": {
+            "type": "number",
+            "example": 123.2
+          },
+          "chargedAmount": {
+            "type": "number",
+            "example": 60
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 40
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "conversion": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "OK"
+          },
+          "billToAddress": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Address"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "expirationMonth": 12
+              }
+            },
+            "example": {
+              "expirationMonth": 12
+            }
+          }
+        }
+      },
+      "com.ltm.oms.model.order.PaymentIdentifier": {
+        "type": "object",
+        "properties": {
+          "cardIdentifier": {
+            "type": "string",
+            "example": "***********3456"
+          },
+          "paymentId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "ltmPaymentReference": {
+            "type": "string",
+            "example": "test"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.PaymentToken": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "pi_34tr6787rt"
+          },
+          "paymentType": {
+            "type": "string",
+            "example": "VISA"
+          }
+        }
+      },
+      "com.ltm.oms.model.order.ShipInfo": {
+        "type": "object",
+        "properties": {
+          "shipToId": {
+            "type": "string",
+            "example": "5349b4ddd2781d08c09890f4"
+          },
+          "taxCode": {
+            "type": "string",
+            "example": "FR01"
+          },
+          "pickup": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Contact"
+            }
+          },
+          "shipToAddress": {
+            "$ref": "#/components/schemas/com.ltm.oms.model.order.Address"
+          },
+          "taxDetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/com.ltm.oms.model.order.Detail"
+            }
+          },
+          "shipMethod": {
+            "type": "string",
+            "example": "Express Delivery"
+          },
+          "shipToType": {
+            "type": "string",
+            "example": "SHIP_TO_ADDRESS"
+          },
+          "promisedShipDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "shipToPrice": {
+            "type": "number",
+            "example": 20
+          },
+          "shipToDiscount": {
+            "type": "number",
+            "example": 12.6
+          },
+          "shipmentInstructions": {
+            "type": "string",
+            "example": "User Instructions"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "name": "x-site-context",
+        "in": "header"
+      }
+    }
+  }
+}

@@ -1,0 +1,895 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "mv5xea4xulqec"
+  },
+  "info": {
+    "title": "Export service",
+    "description": "fabrics export APIs for multi tenant service",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/exports",
+      "description": "Development"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/exports",
+      "description": "Staging"
+    },
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/exports",
+      "description": "Sandbox"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Export Controller",
+      "description": "These endpoints help in performing export operations"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [
+          "Export Controller"
+        ],
+        "summary": "Export records by query",
+        "description": "Exports records by query",
+        "operationId": "exportRecordsByQuery",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibExportQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "[SUCCESS] Record export process Initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OMSExportLog"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "[BAD REQUEST] ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "[module must not be null]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/history": {
+      "post": {
+        "tags": [
+          "Export Controller"
+        ],
+        "summary": "Get OMS export log history by query",
+        "description": "Retrieves OMS export log history by query",
+        "operationId": "listOMSExportLogHistory",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OMSExportLog list matching query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibQueryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "[BAD REQUEST]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "[filters must not be null]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": [
+          "Export Controller"
+        ],
+        "summary": "Get record export status for given request",
+        "description": "Retrieves record export status for given request",
+        "operationId": "getRecordExportStatus",
+        "parameters": [
+          {
+            "name": "keyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Record Export status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OMSExportLog"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "[BAD REQUEST] ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "KeyId provided is incorrect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Key does not exist!"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/headers-list": {
+      "get": {
+        "tags": [
+          "Export Controller"
+        ],
+        "summary": "Get list of headers for given module",
+        "description": "Retrieves list of headers for given module. Accepted values are order, location, allocation, inventory, invoice, and network.",
+        "operationId": "listExportHeaders",
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of headers",
+            "content": {
+              "application/json": {
+                "example": {
+                  "header1": true,
+                  "header2": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "[BAD REQUEST]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not a valid module name",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Not a valid module name"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files-list": {
+      "get": {
+        "tags": [
+          "Export Controller"
+        ],
+        "summary": "Get list of files for given module",
+        "description": "Retrieves list of files for given module. Accepted values are order, location, allocation, inventory, invoice, and network.",
+        "operationId": "listNetworkExportFiles",
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of network export keys",
+            "content": {
+              "application/json": {
+                "example": "[KeyId1, KeyId2]"
+              }
+            }
+          },
+          "400": {
+            "description": "[BAD REQUEST]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not a valid module name",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Not a valid module name"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/download-url": {
+      "get": {
+        "tags": [
+          "Export Controller"
+        ],
+        "summary": "Get URL for downloading exports",
+        "description": "Gets URL for downloading exports",
+        "operationId": "getOMSExportDownloadUrl",
+        "parameters": [
+          {
+            "name": "keyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OMSExportLog download url",
+            "content": {
+              "application/json": {
+                "example": {
+                  "url": "https://**.csv"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "[BAD REQUEST]",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Key does not exist!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Key does not exist!"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LibExportQuery": {
+        "required": [
+          "filters",
+          "module"
+        ],
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Numbers of records to be returned.",
+            "format": "int32",
+            "example": 10,
+            "default": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of records to skipped.",
+            "format": "int64",
+            "example": 0,
+            "default": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Item property on which data needed to be sorted on.",
+            "example": "updatedAt",
+            "default": "updatedAt"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Direction of sorting i.e ascending or descending",
+            "example": "desc",
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+              "example": {
+                "retail": {
+                  "locationNum": 12
+                },
+                "orderSubTotal": {
+                  "gte": 1300,
+                  "lt": 1400
+                },
+                "orderNumber": "order-*Z",
+                "statusCode": [
+                  "ORDER_CREATED"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                },
+                "shipInfo": {
+                  "shipToId": [
+                    "23434",
+                    "23436"
+                  ]
+                }
+              },
+              "default": {}
+            },
+            "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+            "example": {
+              "retail": {
+                "locationNum": 12
+              },
+              "orderSubTotal": {
+                "gte": 1300,
+                "lt": 1400
+              },
+              "orderNumber": "order-*Z",
+              "statusCode": [
+                "ORDER_CREATED"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              },
+              "shipInfo": {
+                "shipToId": [
+                  "23434",
+                  "23436"
+                ]
+              }
+            },
+            "default": {}
+          },
+          "module": {
+            "type": "string",
+            "description": "Define module for which you need to export data",
+            "example": "ORDER",
+            "enum": [
+              "ORDER",
+              "LOCATION",
+              "ALLOCATION",
+              "INVENTORY",
+              "INVOICE",
+              "SHIPMENT",
+              "SHIPPING_METHODS",
+              "NETWORK"
+            ]
+          },
+          "csvHeadersConfig": {
+            "type": "string",
+            "description": "Define config name that contains the expected headers to be exported with each export file",
+            "example": "default"
+          }
+        },
+        "description": "LibExportQuery Model"
+      },
+      "XSiteContext": {
+        "required": [
+          "account",
+          "stage"
+        ],
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "string",
+            "description": "Merchant account ID. It is a 24 character alphanumeric account value of merchant's copilot account, provided by fabric",
+            "example": "5z689abc4216v8000930d1ef"
+          },
+          "date": {
+            "type": "string",
+            "example": "2022-10-18T09:05:19.647Z"
+          },
+          "stage": {
+            "type": "string",
+            "description": "Stage name",
+            "example": "sandbox"
+          },
+          "site": {
+            "type": "string",
+            "description": "Source origin (or storefront) of the request",
+            "example": "libertytreemedia.com"
+          }
+        },
+        "description": "JSON object containing `account`, `stage`, `date`, and `site`."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "ErrorResponse Model"
+      },
+      "OMSExportLog": {
+        "required": [
+          "module"
+        ],
+        "type": "object",
+        "properties": {
+          "keyId": {
+            "type": "string",
+            "example": "6213c2d4deeadd00debb46b4"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "module": {
+            "type": "string",
+            "example": "order"
+          },
+          "status": {
+            "type": "string",
+            "example": "FINISHED"
+          },
+          "totalRowsExported": {
+            "type": "integer",
+            "format": "int32",
+            "example": 20
+          },
+          "totalRecordsExported": {
+            "type": "integer",
+            "format": "int32",
+            "example": 20
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "orderSubTotal": {
+                  "gte": 1300,
+                  "lt": 1400
+                },
+                "orderNumber": "order-*Z",
+                "statusCode": [
+                  "ORDER_CREATED"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                }
+              },
+              "default": {}
+            },
+            "example": {
+              "orderSubTotal": {
+                "gte": 1300,
+                "lt": 1400
+              },
+              "orderNumber": "order-*Z",
+              "statusCode": [
+                "ORDER_CREATED"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              }
+            },
+            "default": {}
+          }
+        },
+        "description": "OMSExportLog Model"
+      },
+      "LibQuery": {
+        "required": [
+          "filters"
+        ],
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Numbers of records to be returned.",
+            "format": "int32",
+            "example": 10,
+            "default": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of records to skipped.",
+            "format": "int64",
+            "example": 0,
+            "default": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Item property on which data needed to be sorted on.",
+            "example": "updatedAt",
+            "default": "updatedAt"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Direction of sorting i.e ascending or descending",
+            "example": "desc",
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+              "example": {
+                "retail": {
+                  "locationNum": 12
+                },
+                "orderSubTotal": {
+                  "gte": 1300,
+                  "lt": 1400
+                },
+                "orderNumber": "order-*Z",
+                "statusCode": [
+                  "ORDER_CREATED"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                },
+                "shipInfo": {
+                  "shipToId": [
+                    "23434",
+                    "23436"
+                  ]
+                }
+              },
+              "default": {}
+            },
+            "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+            "example": {
+              "retail": {
+                "locationNum": 12
+              },
+              "orderSubTotal": {
+                "gte": 1300,
+                "lt": 1400
+              },
+              "orderNumber": "order-*Z",
+              "statusCode": [
+                "ORDER_CREATED"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              },
+              "shipInfo": {
+                "shipToId": [
+                  "23434",
+                  "23436"
+                ]
+              }
+            },
+            "default": {}
+          }
+        },
+        "description": "LibQuery Model"
+      },
+      "LibQueryResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "example": 100
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          }
+        },
+        "description": "LibQueryResponse Model"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "description": "API Key for the user provided by fabric",
+        "name": "x-site-context",
+        "in": "header"
+      }
+    }
+  }
+}

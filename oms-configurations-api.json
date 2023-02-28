@@ -1,0 +1,2051 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "cm5jwvin3nkei"
+  },
+  "info": {
+    "title": "Configurations service OpenAPI specification",
+    "description": "Fabrics v2 Configurations Apis for multi tenant service",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/configurations",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/configurations",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/configurations",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Tenant Configuration Controller",
+      "description": "These endpoints help in performing CRUD operations on tenant configurations"
+    },
+    {
+      "name": "Target Configuration Controller",
+      "description": "These endpoints help in performing CRUD operations on Target configurations"
+    },
+    {
+      "name": "Fraud Configuration Controller",
+      "description": "These endpoints help in performing CRUD operations on Fraud configurations"
+    }
+  ],
+  "paths": {
+    "/tenant-config": {
+      "get": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Get All configuration for tenant.",
+        "description": "Get all Tenant configurations for the given tenantId",
+        "operationId": "fetchAllTenantConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration found and returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Replace all tenant configuration for tenant",
+        "description": "Replace List of Tenant configuration with new configs for the given tenantId.",
+        "operationId": "updateManyTenantConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TenantConfigurationRequest"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Configuration Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Create a configuration for tenant.",
+        "description": "Create Tenant configuration for the given tenantId",
+        "operationId": "createTenantConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Configuration already exists for the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Configuration already exists"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Update All the configuration for tenant.",
+        "description": "Update Tenant configuration for the given tenantId",
+        "operationId": "updateAllTenantConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TenantConfigurationRequest"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Configuration Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tenant-config/{configType}/name/{configName}": {
+      "get": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Get  configuration for tenant.",
+        "description": "Get Tenant configuration for the given tenantId",
+        "operationId": "fetchTenantConfig_1",
+        "parameters": [
+          {
+            "name": "configType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "configName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration found and returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Configuration Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Replace the configuration for tenant.",
+        "description": "Replace Tenant configuration with new configs for the given tenantId",
+        "operationId": "updateTenantConfig",
+        "parameters": [
+          {
+            "name": "configType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "configName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Configuration Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Delete the tenant's configuration.",
+        "operationId": "deleteOne",
+        "parameters": [
+          {
+            "name": "configName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "configType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration deleted."
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Configuration Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Update tenant configuration for tenant.",
+        "description": "Update Tenant configuration for the given tenantId,configName and configType",
+        "operationId": "updateTenantConfig_1",
+        "parameters": [
+          {
+            "name": "configType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "configName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Configuration Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fraud-config/{processName}/{serviceName}": {
+      "get": {
+        "tags": [
+          "Fraud Configuration Controller"
+        ],
+        "summary": "Get All Fraud configuration for tenant.",
+        "description": "Get all Fraud configurations for the given tenantId",
+        "operationId": "fetchAllFraudConfig_1",
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fraud Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FraudConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fraud Configuration not found for tenant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Fraud Config not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Fraud Configuration Controller"
+        ],
+        "summary": "Replace the Fraud configuration for tenant.",
+        "description": "Replace Fraud configuration with new configs for the given tenantId",
+        "operationId": "updateFraudConfig",
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriteriaConfiguration"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Fraud Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FraudConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fraud Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Fraud Config not Found"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Fraud Configuration already exists for the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Config already exists"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Fraud Configuration Controller"
+        ],
+        "summary": "Delete the Fraud's configuration.",
+        "operationId": "delete_1",
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fraud Configuration deleted."
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fraud Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Fraud Config not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tenant-config/query": {
+      "post": {
+        "tags": [
+          "Tenant Configuration Controller"
+        ],
+        "summary": "Get configuration for given filters.",
+        "description": "Get Tenant info for the given tenantId",
+        "operationId": "fetchTenantConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Matched tenant configs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibQueryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad Request",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "[filters must not be null]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No Configurations found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/target-config": {
+      "get": {
+        "tags": [
+          "Target Configuration Controller"
+        ],
+        "summary": "Get All Target configuration for tenant.",
+        "description": "Get all Target configurations for the given tenantId",
+        "operationId": "fetchAllTargetConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Target Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TargetConfigurationResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Target Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Target Config not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Target Configuration Controller"
+        ],
+        "summary": "Create a Target configuration for tenant.",
+        "description": "Create Target configuration for the given tenantId",
+        "operationId": "createTargetConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Target Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TargetConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Target Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Target Config not Found"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Target Configuration already exists for the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Target Config already exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fraud-config": {
+      "get": {
+        "tags": [
+          "Fraud Configuration Controller"
+        ],
+        "summary": "Get All Fraud configuration for tenant.",
+        "description": "Get all Fraud configurations for the given tenantId",
+        "operationId": "fetchAllFraudConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fraud Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FraudConfigurationResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fraud Configuration not found for tenant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Fraud Config not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Fraud Configuration Controller"
+        ],
+        "summary": "Create a Fraud configuration for tenant.",
+        "description": "Create Fraud configuration for the given tenantId",
+        "operationId": "createFraudConfig",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FraudConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FraudConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Configuration not found for tenant."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": " Fraud Configuration already exists for the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Fraud Configuration already exists for the tenant"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/target-config/{serviceName}/{processName}": {
+      "get": {
+        "tags": [
+          "Target Configuration Controller"
+        ],
+        "summary": "Get configuration for tenant.",
+        "description": "Get Tenant configuration for the given tenantId",
+        "operationId": "fetchTenantConfig_2",
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Target Configuration updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TargetConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Target Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Target Config not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Target Configuration Controller"
+        ],
+        "summary": "Delete the Target's configuration.",
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Target Configuration deleted."
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Target Configuration not found for tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Target Config not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TenantConfigurationRequest": {
+        "type": "object",
+        "properties": {
+          "configName": {
+            "type": "string",
+            "description": "Name of the configuration",
+            "example": "ENUM"
+          },
+          "objectValue": {
+            "type": "object",
+            "description": "Value that needs to be configured for given configName & configType",
+            "example": "SYSTEM"
+          },
+          "objectType": {
+            "type": "string",
+            "description": "Data type of the ObjectValue given",
+            "example": "SYSTEM"
+          },
+          "configType": {
+            "type": "string",
+            "description": "Type of the configuration",
+            "example": "HOLD"
+          }
+        },
+        "description": "Request model for Tenant Configuration Request"
+      },
+      "XSiteContext": {
+        "required": [
+          "account",
+          "stage"
+        ],
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "string",
+            "description": "Merchant account ID. It is a 24 character alphanumeric account value of merchant's copilot account, provided by fabric",
+            "example": "5z689abc4216v8000930d1ef"
+          },
+          "date": {
+            "type": "string",
+            "example": "2022-10-18T09:05:19.647Z"
+          },
+          "stage": {
+            "type": "string",
+            "description": "Stage name",
+            "example": "sandbox"
+          },
+          "site": {
+            "type": "string",
+            "description": "Source origin (or storefront) of the request",
+            "example": "libertytreemedia.com"
+          }
+        },
+        "description": "JSON object containing `account`, `stage`, `date`, and `site`."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "ErrorResponse Model"
+      },
+      "TenantConfigurationResponse": {
+        "type": "object",
+        "properties": {
+          "configName": {
+            "type": "string",
+            "description": "Name of the configuration",
+            "example": "ENUM"
+          },
+          "objectValue": {
+            "type": "object",
+            "description": "Value that needs to be configured for given configName & configType",
+            "example": "SYSTEM"
+          },
+          "objectType": {
+            "type": "string",
+            "description": "Data type of the ObjectValue given",
+            "example": "SYSTEM"
+          },
+          "configType": {
+            "type": "string",
+            "description": "Type of the configuration",
+            "example": "HOLD"
+          },
+          "tenantId": {
+            "type": "string",
+            "example": "erfvda5435234tgfdvsf"
+          }
+        },
+        "description": "TenantConfigurationResponse Model"
+      },
+      "Condition": {
+        "required": [
+          "key",
+          "operator"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "example": "orderNumber"
+          },
+          "operator": {
+            "type": "string",
+            "example": "EQUAL"
+          },
+          "type": {
+            "type": "string",
+            "example": "date"
+          },
+          "value": {
+            "type": "object",
+            "example": "postman"
+          },
+          "values": {
+            "type": "array",
+            "example": [
+              1,
+              2
+            ],
+            "items": {
+              "type": "object",
+              "example": [
+                1,
+                2
+              ]
+            }
+          },
+          "dateValue": {
+            "$ref": "#/components/schemas/DateValue"
+          }
+        },
+        "description": "Condition model",
+        "example": "[  // OR BLOCK START\n   [    // AND BLOCK STARTS\n     {\n       \"key\": \"orderDate\",\n       \"operator\": \"lte\",\n       \"type\": \"date\",\n       \"value\": [-59, \"SECONDS\"] // now -59 sec\n     },\n     {\n       \"key\": \"type\",\n       \"operator\": \"in\",\n       \"value\": [\"web\", \"mobile\"]\n     }\n   ],  // AND BLOCK END\n   [ // AND BLOCK STARTS\n     {\n       \"key\": \"orderDate\",\n       \"operator\": \"lt\",\n       \"type\": \"date\",\n       \"value\": [-10, \"MINUTES\"]\n     },\n     {\n       \"key\": \"type\",\n       \"operator\": \"is\",\n       \"value\": \"postman\"\n     }\n   ] // AND BLOCK ENDS\n ] // OR BLOCK ENDS\n"
+      },
+      "CriteriaConfiguration": {
+        "required": [
+          "conditions"
+        ],
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "type": "array",
+            "example": "[  // OR BLOCK START\n   [    // AND BLOCK STARTS\n     {\n       \"key\": \"orderDate\",\n       \"operator\": \"lte\",\n       \"type\": \"date\",\n       \"value\": [-59, \"SECONDS\"] // now -59 sec\n     },\n     {\n       \"key\": \"type\",\n       \"operator\": \"in\",\n       \"value\": [\"web\", \"mobile\"]\n     }\n   ],  // AND BLOCK END\n   [ // AND BLOCK STARTS\n     {\n       \"key\": \"orderDate\",\n       \"operator\": \"lt\",\n       \"type\": \"date\",\n       \"value\": [-10, \"MINUTES\"]\n     },\n     {\n       \"key\": \"type\",\n       \"operator\": \"is\",\n       \"value\": \"postman\"\n     }\n   ] // AND BLOCK ENDS\n ] // OR BLOCK ENDS\n",
+            "items": {
+              "type": "array",
+              "example": "[  // OR BLOCK START\n   [    // AND BLOCK STARTS\n     {\n       \"key\": \"orderDate\",\n       \"operator\": \"lte\",\n       \"type\": \"date\",\n       \"value\": [-59, \"SECONDS\"] // now -59 sec\n     },\n     {\n       \"key\": \"type\",\n       \"operator\": \"in\",\n       \"value\": [\"web\", \"mobile\"]\n     }\n   ],  // AND BLOCK END\n   [ // AND BLOCK STARTS\n     {\n       \"key\": \"orderDate\",\n       \"operator\": \"lt\",\n       \"type\": \"date\",\n       \"value\": [-10, \"MINUTES\"]\n     },\n     {\n       \"key\": \"type\",\n       \"operator\": \"is\",\n       \"value\": \"postman\"\n     }\n   ] // AND BLOCK ENDS\n ] // OR BLOCK ENDS\n",
+              "items": {
+                "$ref": "#/components/schemas/Condition"
+              }
+            }
+          }
+        },
+        "description": "CriteriaConfiguration model"
+      },
+      "DateValue": {
+        "required": [
+          "comparisonType"
+        ],
+        "type": "object",
+        "properties": {
+          "comparisonType": {
+            "type": "string",
+            "example": "EXACT"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "plusValue": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "description": "DateValue model"
+      },
+      "FraudConfigurationResponse": {
+        "required": [
+          "configuration",
+          "processName",
+          "serviceName"
+        ],
+        "type": "object",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "example": "asferf3r4safasdcd"
+          },
+          "serviceName": {
+            "type": "string",
+            "example": "FRAUD_RELEASE_SERVICE"
+          },
+          "processName": {
+            "type": "string",
+            "example": "ORDER_CREATE"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/CriteriaConfiguration"
+          }
+        },
+        "description": "Fraud Configuration Response model"
+      },
+      "LibQuery": {
+        "required": [
+          "filters"
+        ],
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Numbers of records to be returned.",
+            "format": "int32",
+            "example": 10,
+            "default": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of records to skipped.",
+            "format": "int64",
+            "example": 0,
+            "default": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Item property on which data needed to be sorted on.",
+            "example": "updatedAt",
+            "default": "updatedAt"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Direction of sorting i.e ascending or descending",
+            "example": "desc",
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+              "example": {
+                "retail": {
+                  "locationNum": 12
+                },
+                "orderSubTotal": {
+                  "gte": 1300,
+                  "lt": 1400
+                },
+                "orderNumber": "order-*Z",
+                "statusCode": [
+                  "ORDER_CREATED"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                },
+                "shipInfo": {
+                  "shipToId": [
+                    "23434",
+                    "23436"
+                  ]
+                }
+              },
+              "default": {}
+            },
+            "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+            "example": {
+              "retail": {
+                "locationNum": 12
+              },
+              "orderSubTotal": {
+                "gte": 1300,
+                "lt": 1400
+              },
+              "orderNumber": "order-*Z",
+              "statusCode": [
+                "ORDER_CREATED"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              },
+              "shipInfo": {
+                "shipToId": [
+                  "23434",
+                  "23436"
+                ]
+              }
+            },
+            "default": {}
+          }
+        },
+        "description": "LibQuery Model"
+      },
+      "LibQueryResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "example": 100
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          }
+        },
+        "description": "LibQueryResponse Model"
+      },
+      "TargetConfigurationRequest": {
+        "required": [
+          "processName",
+          "serviceName"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceName": {
+            "type": "string",
+            "example": "order-service"
+          },
+          "processName": {
+            "type": "string",
+            "example": "order-create"
+          },
+          "targetService": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TargetServiceRequest"
+            }
+          }
+        },
+        "description": "Target Configuration Request model"
+      },
+      "TargetServiceRequest": {
+        "required": [
+          "serviceName"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceName": {
+            "type": "string",
+            "description": "order-service url",
+            "example": "NOTIFICATION_SERVICE"
+          },
+          "serviceAttributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "Request model for Target Service Request"
+      },
+      "TargetConfigurationResponse": {
+        "required": [
+          "processName",
+          "serviceName"
+        ],
+        "type": "object",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "example": "asferf3r4safasdcd"
+          },
+          "serviceName": {
+            "type": "string",
+            "example": "order-service"
+          },
+          "processName": {
+            "type": "string",
+            "example": "order-create"
+          },
+          "targetService": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TargetServiceResponse"
+            }
+          }
+        },
+        "description": "Target Configuration Response model"
+      },
+      "TargetServiceResponse": {
+        "required": [
+          "serviceName"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceName": {
+            "type": "string",
+            "description": "order-service url",
+            "example": "NOTIFICATION_SERVICE"
+          },
+          "serviceAttributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "Request model for Target Service Response"
+      },
+      "FraudConfigurationRequest": {
+        "required": [
+          "configuration",
+          "processName",
+          "serviceName"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceName": {
+            "type": "string",
+            "example": "FRAUD_RELEASE_SERVICE"
+          },
+          "processName": {
+            "type": "string",
+            "example": "ORDER_CREATE"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/CriteriaConfiguration"
+          }
+        },
+        "description": "Fraud Configuration Request model"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "description": "API Key for the user provided by fabric",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}

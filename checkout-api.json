@@ -1,0 +1,535 @@
+{
+  "paths": {
+    "/v2/checkout": {
+      "post": {
+        "tags": [
+          "Checkout"
+        ],
+        "summary": "Create checkout",
+        "operationId": "checkout",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResponse"
+                },
+                "example": {
+                  "checkoutComplete": true,
+                  "orderId": "111-121-1234"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BillToAddress": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/Phone"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@gmail.com"
+          },
+          "street1": {
+            "type": "string",
+            "example": "100 NE 100th St"
+          },
+          "street2": {
+            "type": "string",
+            "nullable": true,
+            "example": "Near landmark"
+          },
+          "street3": {
+            "type": "string",
+            "nullable": true,
+            "example": "Near landmark"
+          },
+          "street4": {
+            "type": "string",
+            "nullable": true,
+            "example": "Near landmark"
+          },
+          "city": {
+            "type": "string",
+            "example": "Seattle"
+          },
+          "state": {
+            "type": "string",
+            "example": "Washington"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "zipCode": {
+            "type": "string",
+            "example": 98121
+          },
+          "customerId": {
+            "type": "string",
+            "nullable": true,
+            "example": 98121
+          },
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "example": "residence"
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true,
+            "example": 32.294952
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true,
+            "example": 32.294952
+          }
+        }
+      },
+      "CheckoutRequest": {
+        "required": [
+          "cartId",
+          "paymentDetails"
+        ],
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "customerAccountId": {
+            "type": "string",
+            "nullable": true,
+            "example": "5f689caa4216e7000750d1ef"
+          },
+          "customerName": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "customerEmail": {
+            "type": "string",
+            "nullable": true,
+            "example": "john.doe@gmail.com"
+          },
+          "customerPhoneNumber": {
+            "$ref": "#/components/schemas/CustomerPhone"
+          },
+          "paymentDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentDetailsRequest"
+            }
+          },
+          "estimatedTax": {
+            "$ref": "#/components/schemas/EstimatedTax"
+          },
+          "shipFrom": {
+            "$ref": "#/components/schemas/ShipFrom"
+          },
+          "orderType": {
+            "type": "string",
+            "nullable": true,
+            "example": "WEB"
+          },
+          "orderSubType": {
+            "type": "string",
+            "nullable": true,
+            "example": "Android"
+          },
+          "employeeId": {
+            "type": "string",
+            "nullable": true,
+            "example": 43278
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Note"
+            }
+          }
+        }
+      },
+      "CheckoutResponse": {
+        "type": "object",
+        "properties": {
+          "checkoutComplete": {
+            "type": "boolean",
+            "example": true
+          },
+          "orderId": {
+            "type": "string",
+            "nullable": true,
+            "example": "111-123-4421"
+          },
+          "pointOfFailure": {
+            "$ref": "#/components/schemas/DependencyFailureEnum"
+          },
+          "paymentResp": {
+            "$ref": "#/components/schemas/PaymentResponseData"
+          }
+        }
+      },
+      "CustomerPhone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "example": "123-456-7890"
+          },
+          "kind": {
+            "type": "string",
+            "example": "office"
+          }
+        }
+      },
+      "DependencyFailureEnum": {
+        "type": "string",
+        "enum": [
+          "CART",
+          "PAYMENT",
+          "ORDER"
+        ]
+      },
+      "EstimatedTax": {
+        "required": [
+          "itemsTaxes",
+          "shipToTaxes"
+        ],
+        "type": "object",
+        "properties": {
+          "itemsTaxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemsTaxes"
+            }
+          },
+          "shipToTaxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipToTaxes"
+            }
+          }
+        }
+      },
+      "ShipFrom": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string",
+            "example": "100 NE 100th St"
+          },
+          "city": {
+            "type": "string",
+            "example": "Seattle"
+          },
+          "state": {
+            "type": "string",
+            "example": "Washington"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "zipcode": {
+            "type": "string",
+            "example": 98121
+          }
+        }
+      },
+      "Note": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "nullable": true,
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "user": {
+            "type": "string",
+            "nullable": true,
+            "example": "62272e917b12209e68751d94"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "example": "Type Anything"
+          }
+        }
+      },
+      "ItemsTaxes": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "example": 1
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "example": 1.5
+          },
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "example": "state tax"
+          }
+        }
+      },
+      "Name": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "nullable": true,
+            "example": ""
+          },
+          "last": {
+            "type": "string",
+            "example": "Doe"
+          }
+        }
+      },
+      "PaymentDetailsRequest": {
+        "type": "object",
+        "properties": {
+          "connectorName": {
+            "type": "string",
+            "example": "Authorizenet"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "nullable": true,
+            "example": "card"
+          },
+          "paymentMethodType": {
+            "type": "string",
+            "nullable": true,
+            "example": "tamara, tabby"
+          },
+          "paymentToken": {
+            "type": "string",
+            "example": 534234543
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "example": 100
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "conversion": {
+            "type": "number",
+            "format": "double",
+            "example": 1.1
+          },
+          "billToAddress": {
+            "$ref": "#/components/schemas/BillToAddress"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": true,
+            "example": {
+              "Attribute1": "Attribute1 Value"
+            }
+          }
+        }
+      },
+      "PaymentResponseData": {
+        "type": "object",
+        "properties": {
+          "totalAmountCapturable": {
+            "type": "number",
+            "format": "double",
+            "example": 200.5
+          },
+          "orderTotal": {
+            "type": "number",
+            "format": "double",
+            "example": 200.5
+          }
+        }
+      },
+      "Phone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "example": "123-456-7890"
+          },
+          "kind": {
+            "type": "string",
+            "nullable": true,
+            "example": "office"
+          }
+        }
+      },
+      "ShipToTaxes": {
+        "type": "object",
+        "properties": {
+          "shipToId": {
+            "type": "string",
+            "nullable": true,
+            "example": "fef78121-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "example": 2.5
+          },
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "example": "state tax"
+          }
+        }
+      },
+      "ClientError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "Bad request"
+          },
+          "message": {
+            "type": "string",
+            "example": "User ID or Cart ID does not exist"
+          }
+        }
+      },
+      "ServerError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "Internal server error"
+          },
+          "message": {
+            "type": "string",
+            "example": "An internal error occurred. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "Cart not found"
+          },
+          "message": {
+            "type": "string",
+            "example": "If the issue persists, please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "xSiteContext": {
+        "type": "object",
+        "required": [
+          "account",
+          "channel",
+          "stage"
+        ],
+        "properties": {
+          "account": {
+            "type": "string",
+            "example": "5f493c9f30ec2a0007a94fc8"
+          },
+          "stage": {
+            "type": "string",
+            "example": "Sandbox"
+          },
+          "channel": {
+            "type": "number",
+            "example": 12
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-04-28T02:35:27.787Z"
+          },
+          "site": {
+            "type": "string",
+            "example": "libertytreemedia.com"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,3971 @@
+{
+  "openapi": "3.0.0",
+  "x-stoplight": {
+    "id": "vg47k4pf68zph"
+  },
+  "info": {
+    "title": "Subscriptions API",
+    "description": "The Subscriptions API lets your customers set recurring purchases of their desired products or services for a scheduled period (weekly, monthly, etc.). In addition, Subscriptions helps you retrieve and update subscription details, and lets your customers skip one or more subscription schedules, or remove a subscription.",
+    "version": "3.14.0",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    }
+  },
+  "tags": [
+    {
+      "name": "Customers",
+      "description": "These endpoints get one or all of your customers.  If you request all customers, they will be sent paginated; you can specify the page size, and which page you want."
+    },
+    {
+      "name": "Plans",
+      "description": "Merchants create plans, to which customers can subscribe. A plan includes the product information, schedule, and associated details. Using these Plans endpoints, you can determine how many plans have been created, retrieve one or more plans, or delete a plan."
+    },
+    {
+      "name": "Subscriptions",
+      "description": "These endpoints let your customers set recurring purchases of their desired products or services for a scheduled period (weekly, monthly, etc.). In addition, these endpoints let you get and update subscription details, and let your customers skip one or more subscription schedules, or remove a subscription."
+    }
+  ],
+  "externalDocs": {
+    "description": "Find out more about Subscriptions",
+    "url": "https://knowledgebase.libertytreemedia.com/knowledgebase/subscriptions"
+  },
+  "servers": [
+    {
+      "url": "https://sandbox.copilot.libertytreemedia.com/data-subscription",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.copilot.libertytreemedia.com/data-subscription",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev02.copilot.libertytreemedia.com/data-subscription",
+      "description": "Development"
+    }
+  ],
+  "paths": {
+    "/customers/{id}": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "summary": "Get a specific customer's account",
+        "description": "Get account details for a single customer",
+        "operationId": "getCustomer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Customer ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6169b2d892a5f30009d76480"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCustomer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "summary": "Get all customers' accounts",
+        "description": "Get account details for all customers",
+        "operationId": "getAllCustomers",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "description": "Number of customers per page",
+              "type": "number",
+              "example": 35
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageNumber",
+            "schema": {
+              "description": "Page number",
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "description": "If full or partial email address is specified, customers matching the address will be returned.<br>If not specified, all customers will be returned.",
+              "type": "string",
+              "example": "test.shop@libertytreemedia.com"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getAllCustomers"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans/count": {
+      "get": {
+        "tags": [
+          "Plans"
+        ],
+        "summary": "Get number of plans",
+        "description": "Get the total number of subscription plans, including counts per subscription status",
+        "operationId": "getPlanCount",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/planCount"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans/get-by-itemIds": {
+      "post": {
+        "tags": [
+          "Plans"
+        ],
+        "summary": "Get plans by itemId",
+        "description": "Get all subscription plans for a given item ID",
+        "operationId": "plansByItemIDs",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Plan IDs of plans to be returned",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/bodyPlansByItemIDs"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/plansByItemIDs"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestErrorPlansByItemIDs"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/plans": {
+      "get": {
+        "tags": [
+          "Plans"
+        ],
+        "summary": "Get all plans",
+        "description": "Get all plans that have been created for this merchant",
+        "operationId": "getAllPlans",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getPlansV3"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/plans/{id}": {
+      "get": {
+        "tags": [
+          "Plans"
+        ],
+        "summary": "Get one plan",
+        "description": "Get a single plan",
+        "operationId": "getPlanV3",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Plan group ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "848c8e-b18c-134-8bbb-5a35f2158c37"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getPlanV3"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans/{id}": {
+      "delete": {
+        "tags": [
+          "Plans"
+        ],
+        "summary": "Delete plan",
+        "description": "Delete a specific plan",
+        "operationId": "deletePlan",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of plan to be deleted",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6155a9b24667170011a3e2cd"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/removePlan"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions": {
+      "post": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Create subscription",
+        "description": "Create a subscription. Details, including plan ID, item ID, and quantity are specified in the request body.",
+        "operationId": "createSubscription",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addSubscriptionBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestErrorMerchantId"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "description": "Subscription ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "6169b2d892a5f30009d76480"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Authorization",
+          "description": "JWT authorization token",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Authorization"
+          }
+        },
+        {
+          "in": "header",
+          "name": "x-site-context",
+          "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/xsitecontext"
+          }
+        }
+      ],
+      "put": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Update subscription",
+        "description": "Update product quantity, billing and shipping frequency, shipping address, payment method, product tax, or shipping cost; cancel a subscription; change next payment date.",
+        "operationId": "updateSubscription",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateSubscriptionBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestErrorMerchantId"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Get subscription",
+        "description": "Get details of a single subscription",
+        "operationId": "getSingleSubscription",
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getSingleSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "description": "true: Response was successful<br>false: Response was not successful",
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "responseStatus": {
+                          "description": "Response status",
+                          "example": "BAD_REQUEST",
+                          "type": "string"
+                        },
+                        "message": {
+                          "description": "Response message",
+                          "example": "Invalid Subscription ID. Please provide a valid one.",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Delete subscription",
+        "description": "Delete a single subscription",
+        "operationId": "deleteSubscription",
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestErrorMerchantId"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Get specific order",
+        "description": "Get order by specifying order ID",
+        "operationId": "getSingleOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Order ID",
+            "schema": {
+              "type": "string",
+              "example": "6803-5058-41298"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "JWT"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getSingleOrder"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "description": "Indicates if response was successful or not",
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "responseStatus": {
+                          "description": "Success status",
+                          "type": "string",
+                          "example": "OK"
+                        },
+                        "message": {
+                          "description": "Response message",
+                          "example": "Request processed successfully",
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "order": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/get-by-customer/{id}": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Get all orders for specific customer",
+        "description": "Get all orders for a specific customer by specifying the customer reference ID",
+        "operationId": "getOrdersbyCustomerReferenceId",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Customer reference ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606f01f441b8fc0008529916"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "JWT"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getOrdersbyCustomerReferenceId"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/scheduled/get-by-customerId/{id}": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Get all scheduled orders for specific customer",
+        "description": "Get all scheduled orders by specifying customer reference ID",
+        "operationId": "getScheduledOrdersByCustomer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Customer reference ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606f01f441b8fc0008529916"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "JWT"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getSubscriptionsByCustomer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "description": "true: Response was successful<br>false: Response was not successful",
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "responseStatus": {
+                          "description": "Response status",
+                          "type": "string",
+                          "example": "BAD_REQUEST"
+                        },
+                        "message": {
+                          "description": "Response message",
+                          "example": "Invalid Customer ID. Please provide a valid one.",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/get-by-subscriptionId/{id}": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Get orders for specific subscription",
+        "description": "Get all orders for a given subscription by specifying the subscription ID",
+        "operationId": "getBySubscriptionId",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Subscription ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "616984147da89c000824f483"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "JWT"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getBySubscriptionId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestErrorMerchantId"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/skip/{id}": {
+      "post": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Skip order",
+        "description": "Skip the next order for a specific subscription",
+        "operationId": "skipOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Subscription ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6149b1726a9f860011a9fb5a"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "JWT authorization token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "JWT"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-site-context",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`. If omitted, the Authorization parameter is required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xsitecontext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateSkipSubscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/skipSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "description": "true: Response was successful<br>false: Response was not successful",
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "responseStatus": {
+                          "description": "Response status",
+                          "type": "string",
+                          "example": "BAD_REQUEST"
+                        },
+                        "message": {
+                          "description": "Response message",
+                          "example": "Invalid Subscription ID. Please provide a valid one.",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unAuthError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "1000000007": {
+        "description": "Plan being returned",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Plan ID",
+            "type": "string",
+            "example": "6155a9334667170011a3e2c3"
+          },
+          "isDeleted": {
+            "description": "true: Plan is deleted<br>false: Plan is not deleted",
+            "type": "boolean",
+            "example": false
+          },
+          "deletedAt": {
+            "description": "If `isDeleted`=true, time at which the plan was deleted<br>If `isDeleted`=false, NULL",
+            "type": "string",
+            "example": "2021-08-04T07:45:00.000Z"
+          },
+          "title": {
+            "description": "Plan title",
+            "type": "string",
+            "example": "Weekly chocolate bars"
+          },
+          "description": {
+            "description": "Plan description",
+            "type": "string",
+            "example": "Plan for chocolate bars to ship every 1 week"
+          },
+          "discount": {
+            "description": "Discount percent",
+            "type": "number",
+            "example": 10
+          },
+          "isTrialAllowed": {
+            "description": "true: Plan allows a trial<br>false: Plan does not allow a trial",
+            "type": "boolean",
+            "example": false
+          },
+          "merchantAccount": {
+            "type": "string",
+            "description": "Merchant account number",
+            "example": "5f689caa4216e7000750d1ef"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current plan status",
+            "example": "ACTIVE",
+            "enum": [
+              "ACTIVE",
+              "DRAFT",
+              "ARCHIVED",
+              "DELETED"
+            ]
+          },
+          "planGroup": {
+            "type": "string",
+            "description": "Plan group",
+            "example": "848c8e-b18c-134-8bbb-5a35f2158c37"
+          },
+          "products": {
+            "$ref": "#/components/schemas/plansByItemIdsProduts"
+          },
+          "shippingCost": {
+            "type": "number",
+            "description": "Shipping cost",
+            "example": 10
+          },
+          "scheduledAt": {
+            "type": "string",
+            "description": "Time plan becomes active",
+            "example": "2021-10-12T21:34:39.000Z"
+          },
+          "expireDate": {
+            "type": "string",
+            "description": "Plan expiration time",
+            "example": "2021-10-20T20:15:00.000Z"
+          },
+          "frequency": {
+            "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "type": "number",
+            "example": 2
+          },
+          "frequencyType": {
+            "type": "string",
+            "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "example": "Weekly",
+            "enum": [
+              "Daily",
+              "Weekly",
+              "Monthly",
+              "Yearly"
+            ]
+          },
+          "attributes": {
+            "type": "array",
+            "description": "Plan attributes",
+            "items": {
+              "$ref": "#/components/schemas/attributes"
+            }
+          },
+          "lastPriceSycedAt": {
+            "type": "string",
+            "description": "Time price was last synchronized",
+            "example": "2021-10-12T21:35:05.742Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Time plan was created",
+            "example": "2021-10-12T21:35:05.756Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Most recent time plan was updated",
+            "example": "2021-10-14T05:40:55.997Z"
+          }
+        }
+      },
+      "Authorization": {
+        "description": "JWT authorization token",
+        "type": "string",
+        "example": "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiSm9lIENvZGVyIn0.5dlp7GmziL2QS06sZgK4mtaqv0_xX4oFUuTDh1zHK4U"
+      },
+      "xsitecontext": {
+        "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+        "type": "object",
+        "required": [
+          "account"
+        ],
+        "properties": {
+          "channel": {
+            "description": "Sales channel",
+            "type": "number",
+            "example": 12
+          },
+          "account": {
+            "description": "Merchant account ID",
+            "type": "string",
+            "example": "xxxxxcxxxxxxxxxxxxxx"
+          },
+          "stage": {
+            "description": "Stage name",
+            "type": "string",
+            "example": "dev"
+          },
+          "date": {
+            "description": "Localized date and time",
+            "type": "string",
+            "example": "2021-04-20T10:24:36.162Z"
+          }
+        }
+      },
+      "getCustomer": {
+        "description": "Customer details being returned",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "success": {
+                "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+                "type": "boolean",
+                "example": true
+              },
+              "responseStatus": {
+                "description": "Response status",
+                "type": "string",
+                "example": "OK"
+              },
+              "message": {
+                "description": "Response message",
+                "type": "string",
+                "example": "Request processed successfully"
+              },
+              "data": {
+                "description": "A single customer",
+                "type": "object",
+                "properties": {
+                  "isDeleted": {
+                    "description": "true: Customer is deleted<br>false: Customer is not deleted",
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "deletedAt": {
+                    "description": "If `isDeleted`=true, time at which the customer was deleted<br>If `isDeleted`=false, NULL",
+                    "type": "string",
+                    "example": "2021-04-03T14:19:30.701Z"
+                  },
+                  "_id": {
+                    "description": "Customer ID",
+                    "type": "string",
+                    "example": "606879725b639b00084bc7f4"
+                  },
+                  "paymentId": {
+                    "$ref": "#/components/schemas/paymentId"
+                  },
+                  "customerEmail": {
+                    "description": "Customer's email address",
+                    "type": "string",
+                    "example": "aliraza@aliraza.app"
+                  },
+                  "merchantAccount": {
+                    "description": "Merchant account",
+                    "type": "string",
+                    "example": "5fc78dfc6135050007191290"
+                  },
+                  "customerReferenceId": {
+                    "description": "Customer reference ID",
+                    "type": "string",
+                    "example": "60643519f56592000824273a"
+                  },
+                  "customerFullName": {
+                    "description": "Customer's full name",
+                    "type": "string",
+                    "example": "Ali Raza"
+                  },
+                  "paymentMethodIds": {
+                    "description": "Array of payment method IDs",
+                    "type": "array",
+                    "example": [],
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "createdAt": {
+                    "description": "Time customer was created",
+                    "type": "string",
+                    "example": "2021-04-03T14:19:30.701Z"
+                  },
+                  "updatedAt": {
+                    "description": "Most recent time customer was updated",
+                    "type": "string",
+                    "example": "2021-04-03T14:19:30.701Z"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "customerId": {
+        "description": "Customer ID and email address",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Customer ID",
+            "type": "string",
+            "example": "61499d53bfbab400114475fa"
+          },
+          "customerEmail": {
+            "description": "Customer's email address",
+            "type": "string",
+            "example": "test@mail.com"
+          }
+        }
+      },
+      "paymentId": {
+        "description": "Payment ID",
+        "type": "object",
+        "properties": {
+          "stripeId": {
+            "description": "Payment ID",
+            "type": "string",
+            "example": "cus_JEdbwIO8xHi6xl"
+          }
+        }
+      },
+      "getAllCustomers": {
+        "allOf": [
+          {
+            "type": "object",
+            "description": "All customers and their details",
+            "properties": {
+              "success": {
+                "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+                "type": "boolean",
+                "example": true
+              },
+              "responseStatus": {
+                "description": "Response status",
+                "type": "string",
+                "example": "OK"
+              },
+              "message": {
+                "description": "Response message",
+                "type": "string",
+                "example": "Request processed successfully"
+              },
+              "data": {
+                "type": "object",
+                "description": "Customers and their details",
+                "properties": {
+                  "customers": {
+                    "description": "Customers and their details",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/customerDetail"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "customerDetail": {
+        "description": "A single customer's details",
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "description": "true: Customer is deleted<br>false: Customer is not deleted",
+            "type": "boolean",
+            "example": false
+          },
+          "deletedAt": {
+            "description": "If `isDeleted`=true, time at which the customer was deleted<br>If `isDeleted`=false, NULL",
+            "type": "string",
+            "example": "2021-04-03T14:19:30.701Z"
+          },
+          "_id": {
+            "description": "Customer ID",
+            "type": "string",
+            "example": "606879725b639b00084bc7f4"
+          },
+          "paymentId": {
+            "description": "Payment method and ID",
+            "type": "object",
+            "properties": {
+              "stripeId": {
+                "description": "Payment method and ID (can also be braintreeId, or others)",
+                "type": "string",
+                "example": "cus_JEdbwIO8xHi6xl"
+              }
+            }
+          },
+          "customerEmail": {
+            "description": "Customer's email address",
+            "type": "string",
+            "example": "aliraza@aliraza.app"
+          },
+          "merchantAccount": {
+            "description": "Merchant account",
+            "type": "string",
+            "example": "5fc78dfc6135050007191290"
+          },
+          "customerReferenceId": {
+            "description": "Customer reference ID",
+            "type": "string",
+            "example": "60643519f56592000824273a"
+          },
+          "customerFullName": {
+            "description": "Customer's full name",
+            "type": "string",
+            "example": "Ali Raza"
+          },
+          "paymentMethodIds": {
+            "description": "Payment method IDs",
+            "type": "array",
+            "example": [],
+            "items": {
+              "type": "object"
+            }
+          },
+          "createdAt": {
+            "description": "Time customer record was created",
+            "type": "string",
+            "example": "2021-04-03T14:19:30.701Z"
+          },
+          "updatedAt": {
+            "description": "Most recent time customer was updated",
+            "type": "string",
+            "example": "2021-04-03T14:19:30.701Z"
+          },
+          "subscriptions": {
+            "description": "Customer's subscriptions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/customerSubscriptionDetail"
+            }
+          }
+        }
+      },
+      "customerSubscriptionDetail": {
+        "description": "Customer's subscriptions",
+        "type": "object",
+        "properties": {
+          "count": {
+            "description": "Number of customer's subscriptions",
+            "type": "number",
+            "example": 2
+          },
+          "_id": {
+            "description": "Subscription ID",
+            "type": "string",
+            "example": "61660b4301493d001175326a"
+          },
+          "status_with_counts": {
+            "description": "Number of subscriptions for specified status",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/customerSubscriptionDetailStatusWithCount"
+            }
+          }
+        }
+      },
+      "customerSubscriptionDetailStatusWithCount": {
+        "description": "Number of subscriptions for specified status",
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "Status name",
+            "type": "string",
+            "example": "ACTIVE"
+          },
+          "count": {
+            "description": "Number of subscriptions with this status",
+            "type": "number",
+            "example": 2
+          }
+        }
+      },
+      "planCount": {
+        "allOf": [
+          {
+            "type": "object",
+            "description": "Number of plans per status",
+            "properties": {
+              "success": {
+                "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+                "type": "boolean",
+                "example": true
+              },
+              "responseStatus": {
+                "description": "Response status",
+                "type": "string",
+                "example": "OK"
+              },
+              "message": {
+                "description": "Message corresponding to response status",
+                "type": "string",
+                "example": "Request processed successfully"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "plansCount": {
+                    "description": "Number of plans",
+                    "type": "number",
+                    "example": 268
+                  },
+                  "statusCounts": {
+                    "description": "Number of plans with this status",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/planStatusCount"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "planStatusCount": {
+        "description": "Number of plans with a specified status",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Current plan status",
+            "type": "string",
+            "example": "ACTIVE"
+          },
+          "total": {
+            "description": "Number of plans with this status",
+            "type": "number",
+            "example": 257
+          }
+        }
+      },
+      "bodyPlansByItemIDs": {
+        "description": "Plan IDs",
+        "type": "object",
+        "properties": {
+          "itemIds": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 1000000007
+            }
+          }
+        }
+      },
+      "plansByItemIdsProduts": {
+        "description": "Product details",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "description": "Product ID",
+              "type": "string",
+              "example": "6167c2e7900847001143ca8b"
+            },
+            "itemId": {
+              "description": "Item ID",
+              "type": "string",
+              "example": 1000011310
+            },
+            "priceListId": {
+              "description": "Price list ID",
+              "type": "string",
+              "example": 108674
+            }
+          }
+        }
+      },
+      "attributes": {
+        "description": "Plan attributes",
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "Attribute title",
+            "type": "string",
+            "example": "Max Quantity"
+          },
+          "fieldType": {
+            "description": "Attribute field type",
+            "type": "string",
+            "example": "NUMBER"
+          },
+          "value": {
+            "description": "Attribute value",
+            "type": "string",
+            "example": 10
+          },
+          "_id": {
+            "description": "Attribute ID",
+            "type": "string",
+            "example": "6167c2e7900847001143ca8c"
+          }
+        }
+      },
+      "plan": {
+        "description": "Plan details",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Plan title",
+            "example": "Weekly chocolate bars"
+          },
+          "description": {
+            "type": "string",
+            "description": "Plan description",
+            "example": "Plan for chocolate bars to ship every 1 week"
+          },
+          "isTrialAllowed": {
+            "description": "true: Plan allows a trial<br>false: Plan does not allow a trial",
+            "type": "boolean",
+            "example": false
+          },
+          "merchantAccount": {
+            "type": "string",
+            "description": "Merchant account",
+            "example": "5f689caa4216e7000750d1ef"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current plan status",
+            "example": "Active",
+            "enum": [
+              "ACTIVE",
+              "DRAFT",
+              "ARCHIVED",
+              "DELETED"
+            ]
+          },
+          "shippingCost": {
+            "type": "number",
+            "description": "Shipping cost",
+            "example": 1
+          },
+          "scheduledAt": {
+            "type": "string",
+            "description": "Time plan becomes active",
+            "example": "2021-10-12T21:34:39.000Z"
+          },
+          "expireDate": {
+            "type": "string",
+            "description": "Plan expiration time",
+            "example": "2021-10-20T20:15:00.000Z"
+          },
+          "attributes": {
+            "type": "array",
+            "description": "Plan attributes",
+            "items": {
+              "$ref": "#/components/schemas/attributes"
+            }
+          },
+          "lastPriceSycedAt": {
+            "type": "string",
+            "description": "Time price was last synchronized",
+            "example": "2021-10-12T21:35:05.742Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Time plan was created",
+            "example": "2021-10-12T21:35:05.756Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Most recent time plan was updated",
+            "example": "2021-10-14T05:40:55.997Z"
+          }
+        }
+      },
+      "planProducts": {
+        "description": "List of plan products",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Product name",
+              "type": "string",
+              "example": "Varnet Garden LED Spot Light"
+            },
+            "sku": {
+              "description": "Product SKU",
+              "type": "string",
+              "example": "13B9CL6WT2SLW"
+            },
+            "itemId": {
+              "description": "Product item ID",
+              "type": "number",
+              "example": 1000000006
+            },
+            "image": {
+              "description": "URL to product image",
+              "type": "string",
+              "example": "https://images-na.ssl-images-amazon.com/images/I/51i6AP650CL.jpg"
+            },
+            "price": {
+              "description": "Product price in specified currency",
+              "type": "number",
+              "example": 2
+            },
+            "currency": {
+              "description": "Currency in which product price is specified",
+              "type": "string",
+              "example": "USD"
+            }
+          }
+        }
+      },
+      "frequencySettings": {
+        "description": "Array of frequency settings",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "description": "Plan ID",
+              "type": "string",
+              "example": "6165ff891460d700105482af"
+            },
+            "planGroup": {
+              "description": "Plan group ID",
+              "type": "string",
+              "example": "330fee0-e334-f71-4830-cfb0088285b"
+            },
+            "frequency": {
+              "type": "number",
+              "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+              "example": 2
+            },
+            "frequencyType": {
+              "type": "string",
+              "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+              "example": "Weekly",
+              "enum": [
+                "Daily",
+                "Weekly",
+                "Monthly",
+                "Yearly"
+              ]
+            },
+            "discount": {
+              "description": "Discount percent",
+              "type": "number",
+              "example": 10
+            },
+            "isDeleted": {
+              "description": "true: Plan is deleted<br>false: Plan is not deleted",
+              "type": "boolean",
+              "example": false
+            },
+            "deletedAt": {
+              "type": "string",
+              "description": "If `isDeleted`=true, time at which the plan was deleted<br>If `isDeleted`=false, NULL",
+              "example": "2021-10-14T05:40:55.997Z"
+            }
+          }
+        }
+      },
+      "plansByItemIDs": {
+        "allOf": [
+          {
+            "type": "object",
+            "description": "Returned plans for given itemId",
+            "properties": {
+              "success": {
+                "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+                "type": "boolean",
+                "example": true
+              },
+              "responseStatus": {
+                "description": "Request response status",
+                "type": "string",
+                "example": "OK"
+              },
+              "message": {
+                "description": "Response message",
+                "type": "string",
+                "example": "Request processed successfully"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "1000000007": {
+                    "description": "Plan being returned",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/1000000007"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "getPlanV3": {
+        "allOf": [
+          {
+            "type": "object",
+            "description": "Single returned plan for given itemId",
+            "properties": {
+              "success": {
+                "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+                "type": "boolean",
+                "example": true
+              },
+              "responseStatus": {
+                "description": "Request response status",
+                "type": "string",
+                "example": "OK"
+              },
+              "message": {
+                "description": "Response message",
+                "type": "string",
+                "example": "Request processed successfully"
+              },
+              "data": {
+                "description": "Plan",
+                "type": "object",
+                "properties": {
+                  "plan": {
+                    "description": "Details of a single plan",
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "description": "Plan group ID",
+                        "type": "string",
+                        "example": "330fee0-e334-f71-4830-cfb0088285b"
+                      },
+                      "count": {
+                        "description": "Number of plans",
+                        "type": "number",
+                        "example": 1
+                      },
+                      "plan": {
+                        "$ref": "#/components/schemas/plan"
+                      },
+                      "frequencySettings": {
+                        "$ref": "#/components/schemas/frequencySettings"
+                      },
+                      "planProducts": {
+                        "$ref": "#/components/schemas/planProducts"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "getPlansV3": {
+        "allOf": [
+          {
+            "type": "object",
+            "description": "All plans that have been created for the specified merchant",
+            "properties": {
+              "success": {
+                "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+                "type": "boolean",
+                "example": true
+              },
+              "responseStatus": {
+                "description": "Request response status",
+                "type": "string",
+                "example": "OK"
+              },
+              "message": {
+                "description": "Response message",
+                "type": "string",
+                "example": "Request processed successfully"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "docs": {
+                    "description": "List of plans",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "description": "Plan group ID",
+                          "type": "string",
+                          "example": "330fee0-e334-f71-4830-cfb0088285b"
+                        },
+                        "count": {
+                          "description": "Number of plans",
+                          "type": "number",
+                          "example": 1
+                        },
+                        "plan": {
+                          "$ref": "#/components/schemas/plan"
+                        },
+                        "frequencySettings": {
+                          "$ref": "#/components/schemas/frequencySettings"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "removePlan": {
+        "allOf": [
+          {
+            "type": "object",
+            "description": "Removed plan",
+            "properties": {
+              "success": {
+                "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+                "type": "boolean",
+                "example": true
+              },
+              "responseStatus": {
+                "description": "Request response status",
+                "type": "string",
+                "example": "OK"
+              },
+              "message": {
+                "description": "Response message",
+                "type": "string",
+                "example": "Request processed successfully"
+              },
+              "data": {
+                "description": "Removed plan",
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "description": "Plan ID",
+                    "type": "string",
+                    "example": "6155a9334667170011a3e2c3"
+                  },
+                  "isDeleted": {
+                    "description": "true: Plan is deleted<br>false: Plan is not deleted",
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "deletedAt": {
+                    "description": "If `isDeleted`=true, time at which the plan was deleted<br>If `isDeleted`=false, NULL",
+                    "type": "string",
+                    "example": "2021-08-04T07:45:00.000Z"
+                  },
+                  "title": {
+                    "description": "Plan title",
+                    "type": "string",
+                    "example": "Weekly chocolate bars"
+                  },
+                  "description": {
+                    "description": "Plan description",
+                    "type": "string",
+                    "example": "Plan for chocolate bars to ship every 1 week"
+                  },
+                  "discount": {
+                    "description": "Discount percent",
+                    "type": "number",
+                    "example": 10
+                  },
+                  "isTrialAllowed": {
+                    "description": "true: Plan allows a trial<br>false: Plan does not allow a trial",
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "merchantAccount": {
+                    "description": "Merchant account ID",
+                    "type": "string",
+                    "example": "5f689caa4216e7000750d1ef"
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Current plan status",
+                    "example": "DELETED"
+                  },
+                  "planGroup": {
+                    "description": "Plan group ID",
+                    "type": "string",
+                    "example": "848c8e-b18c-134-8bbb-5a35f2158c37"
+                  },
+                  "products": {
+                    "$ref": "#/components/schemas/produts"
+                  },
+                  "shippingCost": {
+                    "description": "Plan shipping cost",
+                    "type": "number",
+                    "example": 1
+                  },
+                  "scheduledAt": {
+                    "type": "string",
+                    "description": "Time plan becomes active",
+                    "example": "2021-10-12T21:34:39.000Z"
+                  },
+                  "expireDate": {
+                    "description": "Plan expiration time",
+                    "type": "string",
+                    "example": "2021-10-20T20:15:00.000Z"
+                  },
+                  "frequency": {
+                    "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+                    "type": "number",
+                    "example": 2
+                  },
+                  "frequencyType": {
+                    "type": "string",
+                    "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+                    "example": "Weekly",
+                    "enum": [
+                      "Daily",
+                      "Weekly",
+                      "Monthly",
+                      "Yearly"
+                    ]
+                  },
+                  "attributes": {
+                    "type": "array",
+                    "description": "Plan attributes",
+                    "items": {
+                      "$ref": "#/components/schemas/attributes"
+                    }
+                  },
+                  "lastPriceSycedAt": {
+                    "type": "string",
+                    "description": "Time price was last synchronized",
+                    "example": "2021-10-12T21:35:05.742Z"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "description": "Time plan was created",
+                    "example": "2021-10-12T21:35:05.756Z"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "description": "Most recent time plan was updated",
+                    "example": "2021-10-14T05:40:55.997Z"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "userName": {
+        "description": "User's full name",
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "description": "User's first name",
+            "type": "string",
+            "example": "Pat"
+          },
+          "middleName": {
+            "description": "User's middle name",
+            "type": "string",
+            "example": "E."
+          },
+          "lastName": {
+            "description": "User's last name",
+            "type": "string",
+            "example": "Kake"
+          }
+        }
+      },
+      "streetAddress": {
+        "description": "Street address",
+        "type": "object",
+        "properties": {
+          "street1": {
+            "description": "Street address field 1",
+            "type": "string",
+            "example": "27 O ST"
+          },
+          "street2": {
+            "description": "Street address field 2",
+            "type": "string",
+            "example": "Apartment 2468"
+          }
+        }
+      },
+      "phone": {
+        "description": "Phone number",
+        "type": "object",
+        "properties": {
+          "number": {
+            "description": "Phone number",
+            "type": "string",
+            "example": "555-555-1234"
+          }
+        }
+      },
+      "userAddress": {
+        "description": "User's full address",
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/userName"
+          },
+          "streetAddress": {
+            "$ref": "#/components/schemas/streetAddress"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/phone"
+          },
+          "id": {
+            "description": "Address ID",
+            "type": "string",
+            "example": "60cb0986559fbd000816afc2"
+          },
+          "city": {
+            "description": "City name",
+            "type": "string",
+            "example": "Boston"
+          },
+          "state": {
+            "description": "State name",
+            "type": "string",
+            "example": "MA"
+          },
+          "zipCode": {
+            "description": "Zip code",
+            "type": "string",
+            "example": 2127
+          },
+          "country": {
+            "description": "Country name",
+            "type": "string",
+            "example": "US"
+          }
+        }
+      },
+      "subscriptionChildItem": {
+        "description": "Additional items with the subscription product",
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "description": "Item ID",
+            "type": "string",
+            "example": 1000000006
+          },
+          "quantity": {
+            "description": "Number of child items",
+            "type": "number",
+            "example": 1
+          }
+        }
+      },
+      "subscriptionItemAttribute": {
+        "description": "Additional information about item",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Item ID",
+            "type": "string",
+            "example": "60cb07fc20387b000821c5c3"
+          },
+          "price": {
+            "description": "Item price",
+            "type": "number",
+            "example": 1
+          },
+          "attributeId": {
+            "description": "Attribute ID",
+            "type": "string",
+            "example": "609436d21baded0008945b05"
+          },
+          "name": {
+            "description": "Attribute name",
+            "type": "string",
+            "example": "Custom Case"
+          },
+          "value": {
+            "description": "Attribute value",
+            "type": "string",
+            "example": "850004554074,CHOCOLATE SEA SALT"
+          },
+          "type": {
+            "description": "Attribute type",
+            "type": "string",
+            "example": "string"
+          }
+        }
+      },
+      "orderDetail": {
+        "description": "Order details",
+        "type": "object",
+        "properties": {
+          "channel": {
+            "description": "Order channel",
+            "type": "number",
+            "example": 12
+          },
+          "currencyCode": {
+            "description": "Order currency code",
+            "type": "string",
+            "example": "USD"
+          },
+          "item": {
+            "description": "Items in the order",
+            "type": "object",
+            "properties": {
+              "taxCode": {
+                "description": "Order tax code for country",
+                "type": "string",
+                "example": "FR020000"
+              },
+              "weight": {
+                "description": "Order weight amount",
+                "type": "number",
+                "example": 10
+              },
+              "weightUnit": {
+                "description": "Order weight unit",
+                "type": "string",
+                "example": "lb"
+              }
+            }
+          },
+          "shipTo": {
+            "description": "Shipping information",
+            "type": "object",
+            "properties": {
+              "taxCode": {
+                "description": "Shipping tax code",
+                "type": "string",
+                "example": "FR020000"
+              },
+              "shipmentCarrier": {
+                "description": "Shipment carrier",
+                "type": "string",
+                "example": "USPS"
+              },
+              "shipmentMethod": {
+                "description": "Shipment method",
+                "type": "string",
+                "example": "Ground"
+              },
+              "shipmentInstructions": {
+                "description": "Shipment instructions",
+                "type": "string",
+                "example": "Leave on the porch"
+              }
+            }
+          }
+        }
+      },
+      "addSubscriptionBody": {
+        "description": "Request body for adding a subscription to a plan",
+        "type": "object",
+        "required": [
+          "planId",
+          "itemId",
+          "quantity",
+          "customerEmail",
+          "orderReferenceId",
+          "shipTo",
+          "billTo",
+          "orderDetail"
+        ],
+        "properties": {
+          "planId": {
+            "description": "Plan ID",
+            "type": "string",
+            "example": "6155a9334667170011a3e2c3"
+          },
+          "itemId": {
+            "description": "Item ID",
+            "type": "string",
+            "example": 1000000006
+          },
+          "childItems": {
+            "description": "List of subscription child items",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/subscriptionChildItem"
+            }
+          },
+          "quantity": {
+            "description": "Number of items to add to subscription",
+            "type": "number",
+            "example": 2
+          },
+          "customerEmail": {
+            "description": "Customer's email address",
+            "type": "string",
+            "example": "customer@mail.com"
+          },
+          "customerReferenceId": {
+            "description": "Customer reference ID",
+            "type": "string",
+            "example": "606f01f441b8fc0008529916"
+          },
+          "customerFullName": {
+            "description": "Customer's full name",
+            "type": "string",
+            "example": "Pat E. Kake"
+          },
+          "orderReferenceId": {
+            "description": "Order reference ID",
+            "type": "string",
+            "example": "6803-5058-41270"
+          },
+          "paymentMethod": {
+            "description": "Payment method",
+            "type": "string",
+            "example": "paypal"
+          },
+          "discount": {
+            "description": "Discount percent",
+            "type": "number",
+            "example": 10
+          },
+          "tax": {
+            "description": "Tax amount",
+            "type": "number",
+            "example": 10
+          },
+          "shippingCost": {
+            "description": "Shipping cost",
+            "type": "number",
+            "example": 1
+          },
+          "status": {
+            "description": "Subscription status",
+            "type": "string",
+            "example": "ACTIVE",
+            "enum": [
+              "ACTIVE",
+              "SCHEDULED",
+              "INACTIVE",
+              "CANCEL",
+              "PAUSED",
+              "EXPIRED",
+              "TRIAL"
+            ]
+          },
+          "shipTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "billTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/payment"
+          },
+          "channel": {
+            "description": "Subscription channel",
+            "type": "string",
+            "example": "WEBSITE"
+          },
+          "itemAttributes": {
+            "description": "List of subscription item attributes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/subscriptionItemAttribute"
+            }
+          },
+          "orderDetail": {
+            "$ref": "#/components/schemas/orderDetail"
+          }
+        }
+      },
+      "payment": {
+        "description": "Payment details",
+        "type": "object",
+        "properties": {
+          "billToAddress": {
+            "description": "Billing address",
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Customer's billing name",
+                "type": "object",
+                "properties": {
+                  "first": {
+                    "description": "Customer's first name",
+                    "type": "string",
+                    "example": "Pat"
+                  },
+                  "last": {
+                    "description": "Customer's last name",
+                    "type": "string",
+                    "example": "Kake"
+                  }
+                }
+              },
+              "phone": {
+                "description": "Customer's phone detail",
+                "type": "object",
+                "properties": {
+                  "number": {
+                    "description": "Customer's phone number",
+                    "type": "string",
+                    "example": 4156529712
+                  },
+                  "kind": {
+                    "description": "Customer's phone type",
+                    "type": "string",
+                    "example": "mobile"
+                  }
+                }
+              },
+              "email": {
+                "description": "Customer's email address",
+                "type": "string",
+                "example": "test@mail.com"
+              },
+              "street1": {
+                "description": "Customer's street address - field 1",
+                "type": "string",
+                "example": "27 O ST"
+              },
+              "street2": {
+                "description": "Customer's street address - field 2",
+                "type": "string",
+                "example": "Apartment 2468"
+              },
+              "city": {
+                "description": "Customer's city",
+                "type": "string",
+                "example": "Boston"
+              },
+              "state": {
+                "description": "Customer's state",
+                "type": "string",
+                "example": "MA"
+              },
+              "country": {
+                "description": "Customer's country",
+                "type": "string",
+                "example": "US"
+              },
+              "zipCode": {
+                "description": "Customer's Zip code",
+                "type": "string",
+                "example": 2116
+              }
+            }
+          },
+          "shipToIds": {
+            "description": "Shipment IDs",
+            "type": "array",
+            "items": {
+              "example": 2866
+            }
+          },
+          "_id": {
+            "description": "Transaction ID",
+            "type": "string",
+            "example": "60cb0986559fbd000816afc2"
+          },
+          "paymentStatus": {
+            "description": "Payment status",
+            "type": "string",
+            "example": "succeeded"
+          },
+          "amount": {
+            "description": "Payment amount",
+            "type": "number",
+            "example": 117.4
+          },
+          "currency": {
+            "description": "Payment currency",
+            "type": "string",
+            "example": "USD"
+          },
+          "paymentIdentifier": {
+            "description": "Payment card identifier",
+            "type": "object",
+            "properties": {
+              "cardIdentifier": {
+                "type": "string",
+                "example": "1234"
+              }
+            }
+          },
+          "paymentMethod": {
+            "description": "Payment method name",
+            "type": "string",
+            "example": "Stripe"
+          },
+          "paymentKind": {
+            "description": "Type of payment",
+            "type": "string",
+            "example": "CARD"
+          },
+          "conversion": {
+            "description": "Payment conversion value",
+            "type": "number",
+            "example": 1
+          },
+          "paymentToken": {
+            "description": "Payment token Details",
+            "type": "object",
+            "properties": {
+              "token": {
+                "description": "Payment token",
+                "type": "string",
+                "example": "pi_1J3GhrJxr7zyIFb9ooMrxEct"
+              },
+              "type": {
+                "description": "Payment type",
+                "type": "string",
+                "example": "CARD"
+              }
+            }
+          }
+        }
+      },
+      "createSubscription": {
+        "allOf": [
+          {
+            "type": "object",
+            "description": "Details of subscription that has been created",
+            "properties": {
+              "success": {
+                "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+                "type": "boolean",
+                "example": true
+              },
+              "responseStatus": {
+                "description": "Request response status",
+                "type": "string",
+                "example": "OK"
+              },
+              "message": {
+                "description": "Response message",
+                "type": "string",
+                "example": "Request processed successfully"
+              },
+              "data": {
+                "$ref": "#/components/schemas/subscription"
+              }
+            }
+          }
+        ]
+      },
+      "updateSubscriptionBody": {
+        "description": "Request body for updating subscription",
+        "type": "object",
+        "properties": {
+          "frequency": {
+            "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "type": "number",
+            "example": 2
+          },
+          "frequencyType": {
+            "type": "string",
+            "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "example": "Weekly",
+            "enum": [
+              "Daily",
+              "Weekly",
+              "Monthly",
+              "Yearly"
+            ]
+          },
+          "quantity": {
+            "description": "Number of items on subscription",
+            "type": "number",
+            "example": 2
+          },
+          "orderReferenceId": {
+            "description": "Order reference ID",
+            "type": "string",
+            "example": "6803-5058-41270"
+          },
+          "paymentMethod": {
+            "description": "Payment method",
+            "type": "string",
+            "example": "authorize.net"
+          },
+          "discount": {
+            "description": "Discount percent",
+            "type": "number",
+            "example": 10
+          },
+          "tax": {
+            "description": "Tax amount",
+            "type": "number",
+            "example": 10
+          },
+          "shippingCost": {
+            "description": "Shipping cost",
+            "type": "number",
+            "example": 1
+          },
+          "status": {
+            "description": "Subscription status",
+            "type": "string",
+            "example": "ACTIVE",
+            "enum": [
+              "ACTIVE",
+              "SCHEDULED",
+              "INACTIVE",
+              "CANCEL",
+              "PAUSED",
+              "EXPIRED",
+              "TRIAL"
+            ]
+          },
+          "shipTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "billTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "channel": {
+            "description": "Subscription channel",
+            "type": "string",
+            "example": "WEBSITE"
+          },
+          "itemAttributes": {
+            "description": "List of item attributes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/subscriptionItemAttribute"
+            }
+          },
+          "orderDetail": {
+            "$ref": "#/components/schemas/orderDetail"
+          },
+          "nextPaymentDate": {
+            "description": "Date of next payment",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          }
+        }
+      },
+      "subscription": {
+        "description": "Subscription details",
+        "type": "object",
+        "properties": {
+          "nextPaymentDate": {
+            "description": "Date of next payment",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          },
+          "lastPaymentDate": {
+            "description": "Time last payment was made",
+            "type": "string",
+            "example": "2021-10-15T13:37:24.727Z"
+          },
+          "cancellationReason": {
+            "description": "Cancellation reason",
+            "type": "string",
+            "example": ""
+          },
+          "lastOrderReferenceId": {
+            "description": "Reference ID of most recent order",
+            "type": "string",
+            "example": "6803-5058-41272"
+          },
+          "merchantAccount": {
+            "description": "Merchant account",
+            "type": "string",
+            "example": "5f689caa4216e7000750d1ef"
+          },
+          "frequency": {
+            "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "type": "number",
+            "example": 2
+          },
+          "frequencyType": {
+            "type": "string",
+            "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "example": "Weekly",
+            "enum": [
+              "Daily",
+              "Weekly",
+              "Monthly",
+              "Yearly"
+            ]
+          },
+          "customerId": {
+            "description": "Customer ID",
+            "type": "string",
+            "example": "61499d53bfbab400114475fa"
+          },
+          "priceListId": {
+            "description": "Price list ID",
+            "type": "string",
+            "example": 108015
+          },
+          "deletedAt": {
+            "description": "If `isDeleted`=true, time at which the subscription was deleted<br>If `isDeleted`=false, NULL",
+            "type": "string",
+            "example": "2021-10-15T13:37:24.727Z"
+          },
+          "isDeleted": {
+            "description": "true: Subscription is deleted<br>false: Subscription is not deleted",
+            "type": "boolean",
+            "example": false
+          },
+          "_id": {
+            "description": "Subscription ID",
+            "type": "string",
+            "example": "616984147da89c000824f483"
+          },
+          "retryCount": {
+            "description": "Retry count",
+            "type": "number",
+            "example": 0
+          },
+          "paymentDetail": {
+            "$ref": "#/components/schemas/paymentDetail"
+          },
+          "planId": {
+            "description": "Plan ID",
+            "type": "string",
+            "example": "6155a9334667170011a3e2c3"
+          },
+          "itemId": {
+            "description": "Item ID",
+            "type": "string",
+            "example": 1000000006
+          },
+          "childItems": {
+            "description": "List of subscription child items",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "description": "Child item linkage ID",
+                  "type": "string",
+                  "example": "6169b2d892a5f30009d76480"
+                },
+                "itemId": {
+                  "description": "Product ID",
+                  "type": "string",
+                  "example": 1000000006
+                },
+                "quantity": {
+                  "description": "Number of child items per parent",
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          "quantity": {
+            "description": "Number of items in subscription",
+            "type": "number",
+            "example": 2
+          },
+          "paymentMethod": {
+            "description": "Payment method",
+            "type": "string",
+            "example": "braintree"
+          },
+          "discount": {
+            "description": "Discount percent",
+            "type": "number",
+            "example": 10
+          },
+          "tax": {
+            "description": "Tax amount",
+            "type": "number",
+            "example": 10
+          },
+          "shippingCost": {
+            "description": "Shipping cost",
+            "type": "number",
+            "example": 1
+          },
+          "status": {
+            "description": "Subscription status",
+            "type": "string",
+            "example": "ACTIVE",
+            "enum": [
+              "ACTIVE",
+              "SCHEDULED",
+              "INACTIVE",
+              "CANCEL",
+              "PAUSED",
+              "EXPIRED",
+              "TRIAL"
+            ]
+          },
+          "shipTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "billTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/payment"
+          },
+          "tags": {
+            "description": "Tags",
+            "type": "array",
+            "items": {
+              "example": ""
+            }
+          },
+          "channel": {
+            "description": "Subscription channel",
+            "type": "string",
+            "example": "WEBSITE"
+          },
+          "itemAttributes": {
+            "description": "Item attributes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/subscriptionItemAttribute"
+            }
+          },
+          "nextShipDate": {
+            "description": "Next shipping date",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          },
+          "updatedAt": {
+            "description": "Most recent time subscription was updated",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          },
+          "createdAt": {
+            "description": "Time subscription was created",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          }
+        }
+      },
+      "subscriptionSingleOrder": {
+        "description": "Subscription order",
+        "type": "object",
+        "properties": {
+          "frequency": {
+            "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "type": "number",
+            "example": 2
+          },
+          "frequencyType": {
+            "type": "string",
+            "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "example": "Weekly",
+            "enum": [
+              "Daily",
+              "Weekly",
+              "Monthly",
+              "Yearly"
+            ]
+          },
+          "customerReferenceId": {
+            "description": "Customer reference ID",
+            "type": "string",
+            "example": "606f01f441b8fc0008529916"
+          },
+          "deletedAt": {
+            "description": "If `isDeleted`=true, time at which the subscription was deleted<br>If `isDeleted`=false, NULL",
+            "type": "string",
+            "example": "2021-10-15T13:37:24.727Z"
+          },
+          "isDeleted": {
+            "description": "true: Subscription is deleted<br>false: Subscription is not deleted",
+            "type": "boolean",
+            "example": false
+          },
+          "subscriptionId": {
+            "description": "Subscription ID",
+            "type": "string",
+            "example": "616984147da89c000824f483"
+          },
+          "_id": {
+            "description": "Order ID",
+            "type": "string",
+            "example": "616984147da89c000824f483"
+          },
+          "paymentDetail": {
+            "$ref": "#/components/schemas/paymentDetail"
+          },
+          "planId": {
+            "description": "Plan ID",
+            "type": "string",
+            "example": "6155a9334667170011a3e2c3"
+          },
+          "itemId": {
+            "description": "Item ID",
+            "type": "string",
+            "example": 1000000006
+          },
+          "itemName": {
+            "description": "Item name",
+            "type": "string",
+            "example": "Varnet Garden LED Spot Light"
+          },
+          "orderReferenceId": {
+            "description": "Order reference ID",
+            "type": "string",
+            "example": "6803-5058-41298"
+          },
+          "childItems": {
+            "description": "List of subscription child items",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemId": {
+                  "description": "Item ID",
+                  "type": "string",
+                  "example": 1000000006
+                },
+                "quantity": {
+                  "description": "Number of child items per parent",
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          "quantity": {
+            "description": "Number of items in order",
+            "type": "number",
+            "example": 2
+          },
+          "paymentMethod": {
+            "description": "Payment method",
+            "type": "string",
+            "example": "stripe"
+          },
+          "discount": {
+            "description": "Discount percent",
+            "type": "number",
+            "example": 10
+          },
+          "tax": {
+            "description": "Tax amount",
+            "type": "number",
+            "example": 10
+          },
+          "totalAmount": {
+            "description": "Total order cost",
+            "type": "number",
+            "example": 12
+          },
+          "shippingCost": {
+            "description": "Shipping cost",
+            "type": "number",
+            "example": 1
+          },
+          "paymentStatus": {
+            "description": "Payment status",
+            "type": "string",
+            "example": "PAID"
+          },
+          "paymentDate": {
+            "description": "Payment date",
+            "type": "string",
+            "example": "2021-09-21T08:57:23.316Z"
+          },
+          "shipTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "billTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/payment"
+          },
+          "updatedAt": {
+            "description": "Most recent time subscription was updated",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          },
+          "createdAt": {
+            "description": "Time subscription was created",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          }
+        }
+      },
+      "paymentDetail": {
+        "description": "Payment processor",
+        "type": "object",
+        "properties": {
+          "processor": {
+            "description": "Payment processor",
+            "type": "string",
+            "example": "stripe"
+          }
+        }
+      },
+      "item": {
+        "description": "Item details",
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "description": "Item ID",
+            "type": "string",
+            "example": 1000000006
+          },
+          "quantity": {
+            "description": "Number of items",
+            "type": "number",
+            "example": 1
+          }
+        }
+      },
+      "getOrdersbyCustomerReferenceId": {
+        "description": "Customer orders specified by customer reference ID",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+            "type": "boolean",
+            "example": true
+          },
+          "responseStatus": {
+            "description": "Request response status",
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Request processed successfully"
+          },
+          "data": {
+            "description": "Orders for customer specified by customer reference ID",
+            "type": "object",
+            "properties": {
+              "orders": {
+                "description": "Order",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/subscriptionSingleOrder"
+                }
+              }
+            }
+          }
+        }
+      },
+      "getSubscriptionsByCustomer": {
+        "description": "Subscriptions for specified customer",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+            "type": "boolean",
+            "example": true
+          },
+          "responseStatus": {
+            "description": "Request response status",
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Request processed successfully"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "scheduledSubscriptions": {
+                "description": "Subscriptions for specified customer",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "subscription": {
+                      "$ref": "#/components/schemas/subscription"
+                    },
+                    "schedules": {
+                      "description": "Scheduled subscription",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/scheduled"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "getBySubscriptionId": {
+        "description": "Subscription for specified subscription ID",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+            "type": "boolean",
+            "example": true
+          },
+          "responseStatus": {
+            "description": "Request response status",
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Request processed successfully"
+          },
+          "data": {
+            "description": "Subscription for specified subscription ID",
+            "type": "object",
+            "properties": {
+              "subscription": {
+                "$ref": "#/components/schemas/subscription"
+              },
+              "orderAttempts": {
+                "description": "Order attempts",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/orderAttempt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "getSingleOrder": {
+        "description": "Order for specified order ID",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+            "type": "boolean",
+            "example": true
+          },
+          "responseStatus": {
+            "description": "Request response status",
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Request processed successfully"
+          },
+          "data": {
+            "description": "Order details",
+            "type": "object",
+            "properties": {
+              "order": {
+                "$ref": "#/components/schemas/subscriptionSingleOrder"
+              }
+            }
+          }
+        }
+      },
+      "scheduled": {
+        "description": "Scheduled subscription",
+        "type": "object",
+        "properties": {
+          "deliveryDate": {
+            "description": "Delivery date",
+            "type": "string",
+            "example": "2021-09-03T10:49:12.171Z"
+          },
+          "paymentStatus": {
+            "description": "Payment status",
+            "type": "string",
+            "example": "PAID"
+          }
+        }
+      },
+      "orderAttempt": {
+        "description": "Attempt to process order",
+        "type": "object",
+        "properties": {
+          "paymentDate": {
+            "description": "Payment date",
+            "type": "string",
+            "example": "2021-09-21T08:57:23.316Z"
+          },
+          "orderReferenceId": {
+            "description": "Order reference ID",
+            "type": "string",
+            "example": "6803-5058-41298"
+          },
+          "customerReferenceId": {
+            "description": "Customer reference ID",
+            "type": "string",
+            "example": "606f01f441b8fc0008529916"
+          },
+          "totalAmount": {
+            "description": "Total order cost",
+            "type": "number",
+            "example": 18
+          },
+          "subscriptionId": {
+            "description": "Subscription ID",
+            "type": "string",
+            "example": "61499e72bfbab40011447634"
+          },
+          "frequency": {
+            "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "type": "number",
+            "example": 2
+          },
+          "frequencyType": {
+            "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "type": "string",
+            "example": "Weekly",
+            "enum": [
+              "Daily",
+              "Weekly",
+              "Monthly",
+              "Yearly"
+            ]
+          },
+          "deletedAt": {
+            "description": "If `isDeleted`=true, time at which the order was deleted<br>If `isDeleted`=false, NULL",
+            "type": "string",
+            "example": "2021-10-15T13:37:24.727Z"
+          },
+          "isDeleted": {
+            "description": "true: Order is deleted<br>false: Order is not deleted",
+            "type": "boolean",
+            "example": false
+          },
+          "_id": {
+            "description": "Order ID",
+            "type": "string",
+            "example": "616984147da89c000824f483"
+          },
+          "paymentDetails": {
+            "$ref": "#/components/schemas/paymentDetail"
+          },
+          "planId": {
+            "description": "Plan ID",
+            "type": "string",
+            "example": "6155a9334667170011a3e2c3"
+          },
+          "itemId": {
+            "description": "Item ID",
+            "type": "string",
+            "example": 1000000006
+          },
+          "itemName": {
+            "description": "Item name",
+            "type": "string",
+            "example": "Varnet Garden LED Spot Light"
+          },
+          "childItems": {
+            "description": "List of order child items",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemId": {
+                  "description": "Child item ID",
+                  "type": "string",
+                  "example": 1000000006
+                },
+                "quantity": {
+                  "description": "Number of child items per parent",
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          "quantity": {
+            "description": "Number of items",
+            "type": "number",
+            "example": 2
+          },
+          "paymentMethod": {
+            "description": "Payment method",
+            "type": "string",
+            "example": "stripe"
+          },
+          "discount": {
+            "description": "Discount percent",
+            "type": "number",
+            "example": 10
+          },
+          "tax": {
+            "description": "Tax amount",
+            "type": "number",
+            "example": 10
+          },
+          "shippingCost": {
+            "description": "Shipping cost",
+            "type": "number",
+            "example": 1
+          },
+          "status": {
+            "description": "Order status",
+            "type": "string",
+            "example": "ACTIVE"
+          },
+          "shipTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "billTo": {
+            "$ref": "#/components/schemas/userAddress"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/payment"
+          },
+          "updatedAt": {
+            "description": "Most recent time order was updated",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          },
+          "createdAt": {
+            "description": "Time order was created",
+            "type": "string",
+            "example": "2025-10-17T10:00:01.199Z"
+          }
+        }
+      },
+      "singleSubscription": {
+        "description": "Subscription details",
+        "type": "object",
+        "properties": {
+          "subscription": {
+            "description": "Single subscription",
+            "type": "object",
+            "properties": {
+              "expireDate": {
+                "description": "Subscription expiration time",
+                "type": "string",
+                "example": null
+              },
+              "nextPaymentDate": {
+                "description": "Date of next payment",
+                "type": "string",
+                "example": "2025-10-17T10:00:01.199Z"
+              },
+              "lastPaymentDate": {
+                "description": "Time last payment was made",
+                "type": "string",
+                "example": "2021-10-15T13:37:24.727Z"
+              },
+              "cancellationReason": {
+                "description": "Subscription cancellation reason",
+                "type": "string",
+                "example": "Cancelled by user"
+              },
+              "lastOrderReferenceId": {
+                "description": "Reference ID of most recent order",
+                "type": "string",
+                "example": "6803-5058-41272"
+              },
+              "merchantAccount": {
+                "description": "Merchant account",
+                "type": "string",
+                "example": "5f689caa4216e7000750d1ef"
+              },
+              "frequency": {
+                "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+                "type": "number",
+                "example": 2
+              },
+              "frequencyType": {
+                "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+                "type": "string",
+                "example": "Weekly",
+                "enum": [
+                  "Daily",
+                  "Weekly",
+                  "Monthly",
+                  "Yearly"
+                ]
+              },
+              "priceListId": {
+                "description": "Price list ID",
+                "type": "string",
+                "example": 108015
+              },
+              "deletedAt": {
+                "description": "If `isDeleted`=true, time at which the subscription was deleted<br>If `isDeleted`=false, NULL",
+                "type": "string",
+                "example": "2021-10-15T13:37:24.727Z"
+              },
+              "isDeleted": {
+                "description": "true: Subscription is deleted<br>false: Subscription is not deleted",
+                "type": "boolean",
+                "example": false
+              },
+              "_id": {
+                "description": "Subscription ID",
+                "type": "string",
+                "example": "616984147da89c000824f483"
+              },
+              "retryCount": {
+                "description": "Retry count for failed order",
+                "type": "number",
+                "example": 3
+              },
+              "paymentDetail": {
+                "$ref": "#/components/schemas/paymentDetail"
+              },
+              "planID": {
+                "$ref": "#/components/schemas/planId"
+              },
+              "customerId": {
+                "$ref": "#/components/schemas/customerId"
+              },
+              "itemId": {
+                "description": "Item ID",
+                "type": "string",
+                "example": 1000000006
+              },
+              "childItems": {
+                "description": "List of subscription child items",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/item"
+                }
+              },
+              "quantity": {
+                "description": "Number of items",
+                "type": "number",
+                "example": 2
+              },
+              "paymentMethod": {
+                "description": "Payment method",
+                "type": "string",
+                "example": "paypal"
+              },
+              "discount": {
+                "description": "Discount percent",
+                "type": "number",
+                "example": 10
+              },
+              "tax": {
+                "description": "Tax amount",
+                "type": "number",
+                "example": 10
+              },
+              "shippingCost": {
+                "description": "Shipping cost",
+                "type": "number",
+                "example": 1
+              },
+              "status": {
+                "description": "Subscription status",
+                "type": "string",
+                "example": "ACTIVE",
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE",
+                  "CANCEL"
+                ]
+              },
+              "shipTo": {
+                "$ref": "#/components/schemas/userAddress"
+              },
+              "billTo": {
+                "$ref": "#/components/schemas/userAddress"
+              },
+              "isGift": {
+                "description": "true: Subscription is a gift<br>false: Subscription is not a gift",
+                "type": "boolean",
+                "example": false
+              },
+              "payment": {
+                "$ref": "#/components/schemas/payment"
+              },
+              "tags": {
+                "description": "Tags",
+                "type": "array",
+                "items": {
+                  "example": ""
+                }
+              },
+              "channel": {
+                "description": "Subscription channel",
+                "type": "string",
+                "example": "WEBSITE"
+              },
+              "itemAttributes": {
+                "description": "Item attributes",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/subscriptionItemAttribute"
+                }
+              },
+              "nextShipDate": {
+                "description": "Next shipping date",
+                "type": "string",
+                "example": "2025-10-17T10:00:01.199Z"
+              },
+              "updatedAt": {
+                "description": "Most recent time subscription was updated",
+                "type": "string",
+                "example": "2025-10-17T10:00:01.199Z"
+              },
+              "createdAt": {
+                "description": "Time subscription was created",
+                "type": "string",
+                "example": "2025-10-17T10:00:01.199Z"
+              }
+            }
+          },
+          "subscriptionItems": {
+            "description": "Items on a subscription",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Item name",
+                  "type": "string",
+                  "example": "Varnet Garden LED Spot Light"
+                },
+                "sku": {
+                  "description": "Item SKU",
+                  "type": "string",
+                  "example": "13B9CL6WT2SLW"
+                },
+                "defaultPrice": {
+                  "description": "Item's default price",
+                  "type": "number",
+                  "example": 100
+                },
+                "promotionPrice": {
+                  "description": "Item's promotion price",
+                  "type": "number",
+                  "example": 80
+                },
+                "subscriptionPrice": {
+                  "description": "Item's subscription price",
+                  "type": "number",
+                  "example": 90
+                },
+                "itemId": {
+                  "description": "Item ID",
+                  "type": "string",
+                  "example": 1000000006
+                },
+                "quantity": {
+                  "description": "Number of items",
+                  "type": "number",
+                  "example": 8
+                },
+                "image": {
+                  "description": "URL to product image",
+                  "type": "string",
+                  "example": "https://images-na.ssl-images-amazon.com/images/I/51i6AP650CL.jpg"
+                }
+              }
+            }
+          },
+          "nextSubscriptions": {
+            "description": "Next order to be placed for subscription",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "deliveryDate": {
+                  "description": "Delivery Date",
+                  "type": "string",
+                  "example": "2021-10-15T13:37:27.204Z"
+                },
+                "paymentStatus": {
+                  "description": "Payment status",
+                  "type": "string",
+                  "example": "PAID"
+                }
+              }
+            }
+          }
+        }
+      },
+      "planId": {
+        "description": "Plan details",
+        "type": "object",
+        "properties": {
+          "isTrialAllowed": {
+            "description": "true: Plan allows a trial<br>false: Plan does not allow a trial",
+            "type": "boolean",
+            "example": true
+          },
+          "isDeleted": {
+            "description": "true: Plan is deleted<br>false: Plan is not deleted",
+            "type": "boolean",
+            "example": false
+          },
+          "deletedAt": {
+            "description": "If `isDeleted`=true, time at which the plan was deleted<br>If `isDeleted`=false, NULL",
+            "type": "string",
+            "example": null
+          },
+          "_id": {
+            "description": "Plan ID",
+            "type": "string",
+            "example": "6155a9334667170011a3e2c3"
+          },
+          "title": {
+            "description": "Plan title",
+            "type": "string",
+            "example": "Weekly chocolate bars"
+          },
+          "description": {
+            "description": "Plan description",
+            "type": "string",
+            "example": "Plan for chocolate bars to ship every 1 week"
+          },
+          "products": {
+            "$ref": "#/components/schemas/produts"
+          },
+          "frequency": {
+            "description": "Frequency with which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "type": "number",
+            "example": 2
+          },
+          "frequencyType": {
+            "type": "string",
+            "description": "Period at which a customer is billed and a recurring order is created for a product or service.<br>For example, when `frequency`=5 and `frequencyType`=weekly, the product or service will be billed, and an order will be created, every 5 weeks.",
+            "example": "Weekly",
+            "enum": [
+              "Daily",
+              "Weekly",
+              "Monthly",
+              "Yearly"
+            ]
+          },
+          "status": {
+            "description": "Plan status",
+            "type": "string",
+            "example": "ACTIVE"
+          },
+          "discount": {
+            "description": "Discount percent",
+            "type": "number",
+            "example": 10
+          },
+          "shippingCost": {
+            "description": "Shipping cost",
+            "type": "number",
+            "example": 2
+          },
+          "planGroup": {
+            "description": "Plan group ID",
+            "type": "string",
+            "example": "848c8e-b18c-134-8bbb-5a35f2158c37"
+          },
+          "merchantAccount": {
+            "description": "Merchant account",
+            "type": "string",
+            "example": "5f689caa4216e7000750d1ef"
+          },
+          "scheduledAt": {
+            "description": "Time plan becomes active",
+            "type": "string",
+            "example": "2021-08-04T07:45:00.000Z"
+          },
+          "expireDate": {
+            "description": "Plan expiration time",
+            "type": "string",
+            "example": "2021-08-04T07:45:00.000Z"
+          },
+          "charge": {
+            "description": "Number of times customer will be charged",
+            "type": "number",
+            "example": 2
+          },
+          "attributes": {
+            "type": "array",
+            "description": "Plan attributes",
+            "items": {
+              "$ref": "#/components/schemas/attributes"
+            }
+          },
+          "lastPriceSycedAt": {
+            "description": "Time price was last synchronized",
+            "type": "string",
+            "example": "2021-08-04T07:45:00.000Z"
+          },
+          "createdAt": {
+            "description": "Time plan was created",
+            "type": "string",
+            "example": "2021-08-04T07:45:00.000Z"
+          },
+          "updatedAt": {
+            "description": "Most recent time plan was updated",
+            "type": "string",
+            "example": "2021-08-04T07:45:00.000Z"
+          }
+        }
+      },
+      "getSingleSubscription": {
+        "description": "Subscription details",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+            "type": "boolean",
+            "example": true
+          },
+          "responseStatus": {
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Request processed successfully"
+          },
+          "data": {
+            "$ref": "#/components/schemas/singleSubscription"
+          }
+        }
+      },
+      "produts": {
+        "description": "Array of products",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "description": "Child item linkage ID",
+              "type": "string",
+              "example": "6167c2e7900847001143ca8b"
+            },
+            "itemId": {
+              "description": "Item ID",
+              "type": "string",
+              "example": 1000011310
+            },
+            "priceListId": {
+              "description": "Price list ID",
+              "type": "string",
+              "example": 108674
+            }
+          }
+        }
+      },
+      "skipSubscription": {
+        "description": "Subscription to be skipped",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "true: Request was successfully processed<br>false: Request was not successfully processed",
+            "type": "boolean",
+            "example": true
+          },
+          "responseStatus": {
+            "description": "Request response status",
+            "type": "string",
+            "example": "OK"
+          },
+          "message": {
+            "description": "Response message",
+            "type": "string",
+            "example": "Request processed successfully"
+          },
+          "data": {
+            "description": "Skip subscription information",
+            "type": "object",
+            "properties": {
+              "_id": {
+                "description": "Skipped subscription ID",
+                "type": "string",
+                "example": "6149b1726a9f860011a9fb5a"
+              },
+              "subscriptionId": {
+                "description": "Subscription ID",
+                "type": "string",
+                "example": "6149b081dddaad0011c1394d"
+              },
+              "skipDate": {
+                "description": "Subscription skip date",
+                "type": "string",
+                "example": "2024-02-20T00:00:00.000Z"
+              }
+            }
+          }
+        }
+      },
+      "updateSkipSubscription": {
+        "description": "Skip subscription details",
+        "type": "object",
+        "properties": {
+          "skipDate": {
+            "description": "Subscription skip date",
+            "type": "string",
+            "example": "2024-02-20T10:00:01.199Z"
+          },
+          "skip": {
+            "description": "true: Next order is to be skipped<br>false: Next order should be processed as usual",
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "badRequestError": {
+        "description": "Error response when trying to get an individual customer's account",
+        "type": "object",
+        "properties": {
+          "responseStatus": {
+            "description": "Response status",
+            "example": "BAD_REQUEST",
+            "type": "string"
+          },
+          "message": {
+            "description": "Response message",
+            "example": "Something went wrong",
+            "type": "string"
+          }
+        }
+      },
+      "unAuthError": {
+        "type": "object",
+        "properties": {
+          "Message": {
+            "description": "Response message",
+            "example": "User is not authorized to access this resource with an explicit deny",
+            "type": "string"
+          }
+        }
+      },
+      "badRequestErrorPlansByItemIDs": {
+        "description": "Error response when trying to get all subscription plans for a given item ID",
+        "type": "object",
+        "properties": {
+          "responseStatus": {
+            "description": "Response status",
+            "example": "BAD_REQUEST",
+            "type": "string"
+          },
+          "message": {
+            "description": "Response message",
+            "example": "User is not authorized to access this resource",
+            "type": "string"
+          }
+        }
+      },
+      "badRequestErrorMerchantId": {
+        "description": "Error response when trying to get all subscription plans for a given item ID",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "true: Response was successful<br>false: Response was not successful",
+            "type": "boolean",
+            "example": false
+          },
+          "responseStatus": {
+            "description": "Response status",
+            "example": "BAD_REQUEST",
+            "type": "string"
+          },
+          "message": {
+            "description": "Response message",
+            "example": "Invalid Merchant Account ID. Please provide a valid one.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

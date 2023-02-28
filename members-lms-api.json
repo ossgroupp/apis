@@ -1,0 +1,5562 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "hqkyp6zlzfln0"
+  },
+  "info": {
+    "title": "Member APIs",
+    "description": "**Member** is a Loyalty Management System (LMS) that enables marketers to create multiple loyalty strategies under a loyalty program to cater to various businesses and customer segments. <br> **Member overview**: <br> During onboarding, you are given the necessary **credentials** (client_id and client_secret) to obtain an access token, which is required to run every call. Membership hierarchy is organized into Programs, Clubs, and Tiers. <br> **Program** is the first hierarchy level and is where rewards and benefits are configured for the organization. <br> **Club** is the second hierarchy level and is where Rules for the program are configured. <br>Each Club must have at least one **Tier**, which is used to define membership and to configure criteria and thresholds (including free vs paid). Additional hierarchy levels can be added to support the needs of your business.  <br> Members are always enrolled into a **Default Tier** within a club. When members make purchases, they earn Points based on the rules set at the club level and/or based on promotions. When points in a member account reach a predefined **Threshold Value**, points are converted to **Rewards**. This conversion may be manual or automatic depending on the program configuration. Members can **Redeem** their rewards within the reward **Expiry Period**. Account point balances are updated after each point-impacting activity.",
+    "version": "1.0.0",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Inc",
+      "url": "https://libertytreemedia.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://vanilla-dev02-loyalty.fabric.zone/api",
+      "description": "For developers to work outside of the production environment."
+    },
+    {
+      "url": "https://vanilla-stg-loyalty.fabric.zone/api",
+      "description": "Replica of the production environment for testing."
+    },
+    {
+      "url": "https://loyalty-sbx.fabric.zone/api",
+      "description": "An isolated testing environment (UAT) to run programs without affecting the application, system or platform on which they run."
+    },
+    {
+      "url": "https://loyalty.fabric.zone/api",
+      "description": "Production environment."
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/members": {
+      "post": {
+        "summary": "Enroll Member",
+        "description": "After setting up your loyalty program with fabric, the next crucial step is to enroll members to the program. This endpoint enrolls a loyalty member into a default tier associated with a club. <br> **Note**: Only a single member can be enrolled at a time.",
+        "tags": [
+          "Members"
+        ],
+        "operationId": "member_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnrollMember"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnrollMemberResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      },
+      "put": {
+        "summary": "Update Member",
+        "description": "Updates details of an existing member. <br> **Note**: Only a single member can be updated at a time.",
+        "tags": [
+          "Members"
+        ],
+        "operationId": "members_update",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMember"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Member updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnrollMemberUpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      },
+      "get": {
+        "summary": "Retrieve Member(s)",
+        "description": "Retrieves the details of all members of a parent company. The results can be narrowed down by using the query parameters. By specifying the loyaltyNumber or the profileId as query parameter, you can get details of a single member. <br> **Note**: <br> 1) Member must be already part of the loyalty program. <br> 2) The query parameter used to get results must be part of member information.",
+        "tags": [
+          "Members"
+        ],
+        "operationId": "members_read",
+        "parameters": [
+          {
+            "name": "loyaltyNumber",
+            "description": "Loyalty number of the member. Either the loyaltyNumber or the profileId must be specified. It is generated in the response of the Enroll Member endpoint - POST /v1/members/.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "profileId",
+            "in": "query",
+            "description": "Profile ID of the member. Either the loyaltyNumber or the profileId must be specified. It is generated in the response of the Enroll Member endpoint - POST /v1/members/.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "redemptionChoice",
+            "in": "query",
+            "description": "Redemption choice. Supported options are Bank and Auto. If the redemptionChoice is 'auto,' the points are automatically converted to rewards. When the redemptionChoice is 'bank,' the points are converted to rewards at the member’s requests.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "firstName",
+            "in": "query",
+            "description": "First name of the member.",
+            "example": "Sam",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "middleName",
+            "in": "query",
+            "description": "Middle name of the member.",
+            "example": "M",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastName",
+            "in": "query",
+            "description": "Last name of the member.",
+            "example": "Demo",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phonenumber",
+            "in": "query",
+            "description": "Phone number given for enrollment (without space or dash).",
+            "example": "923331234567",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email address given for enrollment.",
+            "example": "user@abc.com",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "address",
+            "in": "query",
+            "description": "Address of member.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "postalCode",
+            "in": "query",
+            "description": "Postal code of the address.",
+            "example": "98004",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "description": "City name",
+            "example": "Bellevue",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryName",
+            "in": "query",
+            "description": "Country name",
+            "example": "United State",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryAbbreviation",
+            "in": "query",
+            "description": "Abbreviation of the country name.",
+            "example": "US",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "regionName",
+            "in": "query",
+            "description": "State name",
+            "example": "Washington",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "regionAbbreviation",
+            "in": "query",
+            "description": "Abbreviation of the state name.",
+            "example": "WA",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The starting number of record (within the total number of records) in the response. Default value is 0.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The ending number of record (from the offset number) in the response. Default value is 20.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/members/points-activate": {
+      "post": {
+        "summary": "Activate Points",
+        "description": "Updates the status of the points from Pending to Active. When setToPending flag is true, the duration in which the points will be in Pending status must be specified between 0-24 hours. When it is 0, the endpoint must be run manually (otherwise, the points earned will remain in Pending status). When the duration is between 1-24 hours, the points stay in Pending status only for the defined period. This endpoint can be configured to run automatically to activate the points. **Note**: Points in the Pending status reflect in the account balance but they can be redeemed only after they reach the defined threshold value and is in Active status.",
+        "tags": [
+          "Members"
+        ],
+        "operationId": "members_points-activate_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PointActivationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivatePointsResponseClass"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/members/points-adjustment": {
+      "post": {
+        "summary": "Adjust Points",
+        "description": "Allows points adjustment by adding or deducting points from the member’s loyalty account. <br> **Note**: <br> 1) The daily cap for adjustment is configurable as per the role requirements. <br> 2) Point adjustments are recorded as a transaction, where a pre-defined reason code must be selected.",
+        "tags": [
+          "Members"
+        ],
+        "operationId": "members_points-adjustment_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PointAdjustment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/adjusted-points"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v2/earn": {
+      "post": {
+        "summary": "Earn Points",
+        "description": "Earns and accumulates points based on core (earn and burn) rules, promotional rules, etc. set at the club level. It is possible, for instance, to set rules that a member will earn 10 points for every $100 spent in a purchase transaction, and 10 points are equivalent to $2. The rules are customizable based on the requirement. <br> Points are categorized as: <br> 1) Base points - Earned in any purchase transaction  based on the core rule. <br> 2) Bonus points - Earned as a bonus for example on a large purchase. <br> 3) Promotional Points - Earned as part of promotional events. <br> 4) Restricted Points - Points to be used only on specified stores. <br> <br> The Earn API uses the following formula for validating Payload: <br> 1) Amount Paid = Gross Amount - Discounts <br> 2) Net Amount = Gross Amount - Taxes - Discounts <br> 3) At the Transaction Item level: Item Price - (Discount/Quantity) = Net Amount / Quantity <br> 4) Total of all Transaction Items' Gross Amount = Total Gross Amount",
+        "tags": [
+          "Earn"
+        ],
+        "operationId": "earn_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Earn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EarnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v2/earn/get-transaction": {
+      "get": {
+        "summary": "Retrieve Transactions",
+        "description": "Retrieves transactions based on the limit (default: 20) and offset (default: 0) values. This endpoint serves to populate the transaction listing page and as a search function based on the query parameters such as date range, transaction ID, etc.",
+        "tags": [
+          "Earn"
+        ],
+        "operationId": "earn_get-transaction_list",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "query",
+            "description": "The profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync. The profileId is generated as part of the Enroll Member endpoint - POST /members.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bd2",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startTimestampUTC",
+            "in": "query",
+            "description": "The start date of the selected date range, in UTC format.",
+            "example": "2020-03-20T01:30:08.180856",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endTimestampUTC",
+            "in": "query",
+            "description": "The end date of the selected date range, in UTC format.",
+            "example": "2020-03-20T01:30:08.180856",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "transactionExternalReference",
+            "in": "query",
+            "description": "External reference (name or ID) of the transaction like POS Order Id or Ecommerce Order Id.",
+            "example": "2883-7273-61186",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionType",
+            "in": "query",
+            "description": "The field refers to the different type of transaction activities on a member account such as Earn Transaction, Burn Transaction, Earn Reverse Transaction and so on",
+            "example": "EARN",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "EARN",
+                "BURN",
+                "EXPIRY",
+                "EARN_REVERSE",
+                "BURN_REVERSE",
+                "ADJUSTMENT",
+                "DEDUCT",
+                "TRANSFER",
+                "MERGE",
+                "FORFEITED",
+                "CONVERT",
+                "UNMERGE"
+              ]
+            }
+          },
+          {
+            "name": "transactionCode",
+            "in": "query",
+            "description": "Transaction Code",
+            "example": "62660e74-02e3-11e8-b443-00163e990abc",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Indicates the starting record number (within the total number of records) in the response. When no value is provided, the default value is 0.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Indicates the final record number (from the offset number) in the response. When no value is provided, the default value is 20.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/earn/reverse": {
+      "post": {
+        "summary": "Reverse Earned Points",
+        "description": "When a member cancels a purchase transaction or returns an order, this endpoint cancels all the points earned in that transaction.",
+        "tags": [
+          "Earn"
+        ],
+        "operationId": "earn_reverse_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EarnReverse"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EarnReverseApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/redeem/reward/issue": {
+      "post": {
+        "summary": "Issue Reward",
+        "description": "Issues a reward certificate based on the member's request or when the points in the member's account reach a configurable threshold. <br> **Note** - A single reward is issued at a time. <br> When the redemptionChoice is set to 'auto', the points are automatically converted to rewards. When the redemptionChoice is 'bank,' the points are converted based on the member's request.<br> The response of this endpoint includes a redemptionCode, which is required to redeem the reward in the future.",
+        "tags": [
+          "Redeem"
+        ],
+        "operationId": "redeem_reward_issue_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueVariableReward"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/issuance"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/redeem/member-reward": {
+      "post": {
+        "summary": "Redeem Rewards",
+        "description": "Confirms the redemption and marks the reward as used. This is done based on the redemptionCode that is generated from the response of the 'Issue Variable Rewards' - POST /api/v1/redeem/reward/issue endpoint. <br> **Note**: <br> 1) Rewards have to be issued before they can be redeemed. <br> 2) Rewards must be within their expiration date.",
+        "tags": [
+          "Redeem"
+        ],
+        "operationId": "redeem_member-reward_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberReward"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/redeem-member-reward"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/redeem": {
+      "get": {
+        "summary": "Rewards History",
+        "description": "Gets status-wise (Active, Cancelled, Redeemed, Reversed, etc.) details of all the rewards of a member. <br> **Note**: When the profileId query-param is not specified, this endpoint retrieves all rewards for all members of a company.",
+        "tags": [
+          "Redeem"
+        ],
+        "operationId": "redeem_read",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "query",
+            "description": "A member's unique profileId, generated in the response of the Enroll Member endpoint - POST /v1/members.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The ending number of the record (from the offset number) in the response. When no value is provided, the default value is 20.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The starting number of the record (within the total number of records) in the response. When no value is provided, the default value is 0.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberRedeemRewardsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/redeem/reverse": {
+      "post": {
+        "summary": "Reverse Redeemed Rewards",
+        "description": "Converts rewards back to points when the order is cancelled or returned. <br> **Note**: Once a reward has been redeemed, it cannot be cancelled. To cancel the rewards (convert back to points) before redemption, use the ‘Cancel Reward’ endpoint - POST /api/v1/redeem/cancel.",
+        "tags": [
+          "Redeem"
+        ],
+        "operationId": "redeem_reverse_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReverseReward"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/reverse-reward-response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/redeem/cancel": {
+      "post": {
+        "summary": "Cancel Rewards",
+        "description": "Loyalty points that are converted into reward certificates have an expiration date. Members can cancel their rewards if they are unable to use them before expiration or do not want to use them. The endpoint converts the rewards back into points, for future use. <br> **Note**: Once the reward is redeemed, it cannot be cancelled. If the member cancels or returns an order, the rewards are reversed back to points using the ‘Reverse Redeemed Reward’ endpoint - POST v1/redeem/reverse.",
+        "tags": [
+          "Redeem"
+        ],
+        "operationId": "redeem_cancel_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelReward"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cancel-reward-response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/discounts": {
+      "post": {
+        "summary": "Retrieve Discounts",
+        "description": "Retrieves applicable discounts for a transaction. The discounts are categorized as <br> 1) **Transaction-level discounts**: Applied on the whole transaction. For example, if the transaction is for $100, the discount is applied by percentage or amount to the whole transaction amount. This category includes tier-specific discounts. <br> 2) **Item-level discounts**: Applied on specific SKU so that discount percentage or amount is applied to specific product (regardless of the quantity). <br> 3) **Miscellaneous discounts** - This category captures all other types of discounts.",
+        "tags": [
+          "Discounts"
+        ],
+        "operationId": "discounts_create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountAPIResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "data"
+      }
+    },
+    "/v1/inquire/{profileId}/member-points": {
+      "get": {
+        "summary": "Retrieve Member Points",
+        "description": "Retrieves all active and pending (excluding expired) member points along with the points breakdown.",
+        "tags": [
+          "Inquire"
+        ],
+        "operationId": "member-points_read",
+        "parameters": [
+          {
+            "name": "profileId",
+            "description": "Profile ID. It is generated in the response of the Enroll Member endpoint - POST /v1/members.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FetchMemberPointsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inquire/redeemable-points": {
+      "get": {
+        "summary": "Retrieve Redeemable Points",
+        "description": "Retrieves the redeemable points of a member on a given entity. <br> When points in the member account reach a defined threshold value, the points are converted to rewards, which can be redeemed in the future purchases. <br> **Note**: The points to rewards conversion may be manual or automatic depending on how it is configured.",
+        "tags": [
+          "Inquire"
+        ],
+        "operationId": "redeemable-points_list",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "query",
+            "required": true,
+            "description": "Profile ID. It is generated in the response of the Enroll Member endpoint - POST /v1/members.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ehtId",
+            "in": "query",
+            "description": "Entity Hierarchy Tree (EHT) ID. Either the EHT ID or the clubExternalReference must be specified along with the profileID.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "externalReference",
+            "in": "query",
+            "description": "External reference number of the entity/store.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clubExternalReference",
+            "in": "query",
+            "description": "External reference number of the club.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedeemablePointsOnEntityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inquire/get_action_reasons": {
+      "get": {
+        "summary": "Retrieve Action Reasons",
+        "description": "Retrieves reason codes and reason descriptions based on the actions defined for your business. This serves as a log for tracking and analysis. As an example, an action such as 'points transfer' has a specific code for it and a description such as 'transferring to relative' associated with it. In addition to the predefined actions, custom actions can be added.",
+        "tags": [
+          "Inquire"
+        ],
+        "operationId": "get_action_reasons_list",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FetchActionReasonResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inquire/point-type-choices": {
+      "get": {
+        "summary": "Retrieve Point Types",
+        "description": "Retrieve all the point types configured for your business. The point types are categorized as: <br> 1) Base points - Earned in any purchase transaction  based on the core rule. <br> 2) Bonus points - Earned as a bonus for example on a large purchase. <br> 3) Promotional Points - Earned as part of promotional events. <br> 4) Restricted Points - Points to be used only on specific entity/stores. <br> **Note**: You may choose only the point types that apply to your business.",
+        "tags": [
+          "Inquire"
+        ],
+        "operationId": "point-type-choices_list",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FetchPointTypeChoicesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inquire/points-expiry": {
+      "get": {
+        "summary": "Retrieve Points to be Expired",
+        "description": "Retrieves all points that will expire within a year starting at 30 days, 60 days, and up to one year.",
+        "tags": [
+          "Inquire"
+        ],
+        "operationId": "points-expiry_list",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "query",
+            "description": "Profile ID. It is generated in the response of the Enroll Member endpoint - POST /v1/members.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PointsExpiryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inquire/all-points-expiry/{profileId}": {
+      "get": {
+        "summary": "Retrieve Expired Points",
+        "description": "Retrieves expired points of a member for a date range, in UTC format. When date range is not specified, all the expired points are retrieved",
+        "tags": [
+          "Inquire"
+        ],
+        "operationId": "all-points-expiry_read",
+        "parameters": [
+          {
+            "name": "profileId",
+            "description": "ProfileId of the member, which is generated in the response of the Enroll Member endpoint - POST /v1/members.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startTimestampUTC",
+            "in": "query",
+            "description": "The start date of the date range, in UTC format.",
+            "example": "2020-03-20T01:30:08.180856",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endTimestampUTC",
+            "in": "query",
+            "description": "The end date of the date range, in UTC format.",
+            "example": "2020-03-20T01:30:08.180856",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FetchMemberExpiriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass1"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericResponseClass2"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "json_data": {
+        "type": "object",
+        "properties": {
+          "dateActivated": {
+            "title": "Dateactivated",
+            "type": "string",
+            "description": "The date when the member account was activated.",
+            "example": "1900-12-24",
+            "format": "date"
+          },
+          "tierReference": {
+            "title": "Tierreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Tier name",
+            "example": "BNZ"
+          },
+          "expirationDate": {
+            "title": "Expirationdate",
+            "type": "string",
+            "description": "Account expiry time, in UTC format.",
+            "example": "2022-09-17T14:26:32.192148+00:00",
+            "format": "date-time"
+          },
+          "tierExpireDate": {
+            "title": "Tierexpiredate",
+            "type": "string",
+            "description": "Account-tier expiry time, in UTC format.",
+            "example": "2022-09-17T14:26:32.192148+00:00",
+            "format": "date-time"
+          },
+          "memberSinceDate": {
+            "title": "Membersincedate",
+            "type": "string",
+            "description": "LMS enrollment date of the member",
+            "example": "1900-12-24",
+            "format": "date"
+          },
+          "enrolledAtCenter": {
+            "title": "Enrolledatcenter",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the store where the member is enrolled.",
+            "example": "ClubTier"
+          },
+          "nonEmailCustomer": {
+            "title": "Nonemailcustomer",
+            "type": "boolean",
+            "description": "true: Customer email is valid <br> false: Customer email is dummy.",
+            "example": false,
+            "nullable": true
+          },
+          "profileCompleted": {
+            "title": "Profilecompleted",
+            "type": "boolean",
+            "description": "True: Member profile is complete <br> false: Member profile is incomplete.",
+            "example": false,
+            "nullable": true
+          },
+          "lastPaidStatusDate": {
+            "title": "Lastpaidstatusdate",
+            "type": "string",
+            "description": "Date of last payment. Required for paid members.",
+            "example": "2021-12-24",
+            "format": "date"
+          },
+          "lastPaidStatusCenter": {
+            "title": "Lastpaidstatuscenter",
+            "type": "string",
+            "description": "Entity/store where the pro membership was purchased (for the paid tier).",
+            "example": "xyz",
+            "format": "date"
+          },
+          "profileCompletionDate": {
+            "title": "Profilecompletiondate",
+            "type": "string",
+            "description": "Date when the member profile was completed.",
+            "example": "2021-12-24",
+            "format": "date"
+          }
+        },
+        "description": "The member account details as shared by the entity/store (not validated by LMS)."
+      },
+      "MemberAccount": {
+        "type": "object",
+        "properties": {
+          "accountStatus": {
+            "title": "Accountstatus",
+            "minLength": 1,
+            "type": "string",
+            "description": "The account status such as enabled, disabled, etc.",
+            "example": "Enabled"
+          },
+          "clubReference": {
+            "title": "Clubreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Club name or ID where the member is enrolled.",
+            "example": "abc_club"
+          },
+          "clubTitle": {
+            "title": "Clubtitle",
+            "minLength": 1,
+            "type": "string",
+            "description": "Club name",
+            "example": "ABC Club"
+          },
+          "customAttributes": {
+            "title": "Customattributes",
+            "type": "object",
+            "properties": {},
+            "description": "Account details as shared by the business. The details are stored in the LMS as provided, and without validation.",
+            "example": {
+              "memberSinceDate": "2021-07-26",
+              "enrolledAtCenter": "Liberty Store",
+              "profileCompleted": false
+            }
+          },
+          "enrollmentEntity": {
+            "title": "enrollmententity",
+            "minLength": 1,
+            "type": "string",
+            "description": "Store where the member is enrollment.",
+            "example": "demo"
+          },
+          "enrollmentStatus": {
+            "title": "Enrollmentstatus",
+            "type": "boolean",
+            "description": "Status of the member's enrollment.",
+            "example": true
+          },
+          "entityReference": {
+            "title": "Entityreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name or ID for the store (or entity) where the member is enrolled.",
+            "example": "entity_level_1"
+          },
+          "loyaltyNumber": {
+            "title": "Loyaltynumber",
+            "type": "string",
+            "description": "The loyalty-number for this member account",
+            "example": "10000147371"
+          },
+          "paidStatus": {
+            "title": "Paidstatus",
+            "type": "boolean",
+            "description": "true: Paid membership <br> false: Free membership.",
+            "example": false,
+            "default": false
+          },
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "f90a1da5-c072-48b7-a9ea-eb35c5dd506b",
+            "format": "uuid"
+          },
+          "redemptionChoice": {
+            "title": "Redemptionchoice",
+            "minLength": 1,
+            "type": "string",
+            "description": "Redemption choices are Bank and Auto. When the redemptionChoice is 'auto,' the points are automatically converted to rewards. When the redemptionChoice is 'bank,' the points are converted to rewards at the member’s request.",
+            "example": "Auto",
+            "enum": [
+              "Bank",
+              "Auto"
+            ],
+            "nullable": true
+          },
+          "redemptionThreshold": {
+            "title": "Redemptionthreshold",
+            "type": "string",
+            "description": "Threshold value for redemption (configurable).",
+            "example": 10
+          },
+          "tierExpiryDate": {
+            "title": "Tierexpirydate",
+            "type": "string",
+            "description": "Tier expiry time, in UTC format.",
+            "example": "2022-09-17T14:26:32.192148+00:00",
+            "format": "date-time"
+          },
+          "tierExternalReference": {
+            "title": "Tierexternalreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "External reference of the tier.",
+            "example": "GLD"
+          },
+          "tierId": {
+            "title": "Tierid",
+            "type": "integer",
+            "description": "Tier ID",
+            "example": 4185,
+            "format": "int32"
+          },
+          "tierTitle": {
+            "title": "Tiertitle",
+            "minLength": 1,
+            "type": "string",
+            "description": "Tier name (configurable)",
+            "example": "ClubTier"
+          },
+          "updatedAt": {
+            "title": "Updatedat",
+            "type": "string",
+            "description": "The date when the member account was last updated, in UTC format.",
+            "example": "2021-11-01 12:15:53.831401+00:00",
+            "format": "date-time"
+          }
+        },
+        "description": "Member account details as shared by the business."
+      },
+      "PointActivationRequest": {
+        "required": [
+          "profileId"
+        ],
+        "type": "object",
+        "description": "Details required to activate points",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "description": "Profile ID of the member. It is generated in the response of the Enroll Member endpoint - POST /v1/members.",
+            "example": "f90a1da5-c072-48b7-a9ea-eb35c5dd506b",
+            "type": "string",
+            "format": "uuid"
+          },
+          "startDate": {
+            "title": "Startdate",
+            "description": "Start of the date range, in UTC format.",
+            "example": "2020-02-08 00:00:00",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "title": "Enddate",
+            "description": "End of the date range, in UTC format.",
+            "example": "2020-02-08 00:00:00",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "Member": {
+        "type": "object",
+        "description": "Member details",
+        "properties": {
+          "accounts": {
+            "type": "array",
+            "description": "Member account details",
+            "items": {
+              "$ref": "#/components/schemas/MemberAccount"
+            }
+          },
+          "addressLine1": {
+            "title": "Addressline1",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Line 1 of the address.",
+            "example": "10400 NE 4th St",
+            "nullable": true
+          },
+          "addressLine2": {
+            "title": "Addressline2",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Line 2 of the address.",
+            "example": "Suite 505",
+            "nullable": true
+          },
+          "addressLine3": {
+            "title": "Addressline3",
+            "maxLength": 500,
+            "type": "string",
+            "description": "For additional directional information.",
+            "example": "",
+            "nullable": true
+          },
+          "birthdate": {
+            "title": "Birthdate",
+            "type": "string",
+            "description": "Date of birth of the member.",
+            "example": "1990-11-16"
+          },
+          "channelExternalReference": {
+            "title": "Channelexternalreference",
+            "type": "string",
+            "description": "Sales channel.",
+            "example": "Web"
+          },
+          "city": {
+            "title": "City",
+            "maxLength": 50,
+            "type": "string",
+            "description": "City name",
+            "example": "Austin"
+          },
+          "country": {
+            "title": "Country",
+            "minLength": 1,
+            "type": "string",
+            "description": "Country abbreviation of the member",
+            "example": "US"
+          },
+          "emailAddress": {
+            "title": "Emailaddress",
+            "type": "string",
+            "description": "Email address of the member.",
+            "example": "user@abc.com"
+          },
+          "enrollReasonCode": {
+            "title": "Enrollreasoncode",
+            "type": "string",
+            "maxLength": 30,
+            "description": "Reason code for member enrollment",
+            "example": "1234"
+          },
+          "enrollReasonNote": {
+            "title": "Enrollreasonnote",
+            "type": "string",
+            "maxLength": 300,
+            "description": "Reason for member enrollment",
+            "example": "Guest"
+          },
+          "enrollmentTimestamp": {
+            "title": "Enrollmenttimestamp",
+            "type": "string",
+            "description": "Date of member enrollment, in UTC format.",
+            "example": "2021-09-14T11:32:55.508949Z",
+            "format": "date-time"
+          },
+          "firstName": {
+            "title": "Firstname",
+            "type": "string",
+            "description": "First name of the member.",
+            "example": "John"
+          },
+          "fullCountry": {
+            "title": "Fullcountry",
+            "type": "string",
+            "description": "Country name of the member.",
+            "example": "United States"
+          },
+          "fullRegion": {
+            "title": "Fullregion",
+            "type": "string",
+            "description": "Region name of the member.",
+            "example": "Texas"
+          },
+          "gender": {
+            "title": "Gender",
+            "type": "string",
+            "description": "Gender of the member.",
+            "enum": [
+              "None",
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "example": "Male"
+          },
+          "lastName": {
+            "title": "Lastname",
+            "type": "string",
+            "description": "Last name of the member.",
+            "example": "Wayne"
+          },
+          "maritalStatus": {
+            "title": "Maritalstatus",
+            "type": "string",
+            "enum": [
+              "None",
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed",
+              "Separated"
+            ]
+          },
+          "middleName": {
+            "title": "Middlename",
+            "type": "string",
+            "description": "Middle name of the member.",
+            "example": "Duke"
+          },
+          "nationality": {
+            "title": "Nationality",
+            "type": "string",
+            "description": "Nationality of the member.",
+            "example": ""
+          },
+          "phoneNumber": {
+            "title": "Phonenumber",
+            "minLength": 1,
+            "type": "string",
+            "description": "Phone number used for enrollment (without space or dash).",
+            "example": "923331234567"
+          },
+          "postalCode": {
+            "title": "Postalcode",
+            "type": "string",
+            "description": "Zip code of the address.",
+            "example": "98004"
+          },
+          "prefix": {
+            "title": "Prefix",
+            "type": "string",
+            "description": "Prefix associated with the member name.",
+            "example": "Mr",
+            "enum": [
+              "None",
+              "Mr",
+              "Mrs",
+              "Ms"
+            ]
+          },
+          "region": {
+            "title": "Region",
+            "maxLength": 150,
+            "type": "string",
+            "description": "Region abbreviation of the member",
+            "example": "TX"
+          },
+          "sourceExternalReference": {
+            "title": "Sourceexternalreference",
+            "type": "string",
+            "description": "Website of the parent company.",
+            "example": "www.abcdemo.com"
+          },
+          "suffix": {
+            "title": "Suffix",
+            "type": "string",
+            "description": "Suffix of the member name (if any)."
+          }
+        }
+      },
+      "MemberResponse": {
+        "type": "object",
+        "description": "Member details with enrollment status",
+        "properties": {
+          "message": {
+            "title": "Message",
+            "minLength": 1,
+            "type": "string",
+            "description": "Message corresponding to the API call.",
+            "example": "Result of requested Members",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "properties": {},
+            "description": "Dictionary of lists with different number of errors or exceptions.",
+            "example": {}
+          },
+          "data": {
+            "$ref": "#/components/schemas/Member"
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status code of the API call.",
+            "example": 200,
+            "format": "int32"
+          }
+        }
+      },
+      "adjusted-points": {
+        "type": "object",
+        "description": "Details of adjusted points",
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string",
+            "description": "Message corresponding to the API call.",
+            "example": "Member points adjusted"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "properties": {},
+            "description": "Error details, if any."
+          },
+          "data": {
+            "description": "Adjustment details.",
+            "$ref": "#/components/schemas/points-adjustment"
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status code of the API call.",
+            "example": 200,
+            "format": "int32"
+          }
+        }
+      },
+      "points-adjustment": {
+        "type": "object",
+        "description": "Details of points adjustment",
+        "properties": {
+          "Message": {
+            "title": "Message",
+            "type": "string",
+            "description": "Message corresponding to the API call. Indicates the points adjusted.",
+            "example": "100.0 points added"
+          },
+          "futureDate": {
+            "type": "boolean",
+            "description": "true: Adjustment will happen on a future date <br>false: Adjustment will happen instantly.",
+            "example": false,
+            "default": false
+          },
+          "ExceptionString": {
+            "type": "string",
+            "description": "Details of exception, if applicable",
+            "example": ""
+          },
+          "transactionCode": {
+            "title": "Transactioncode",
+            "type": "string",
+            "format": "uuid",
+            "description": "The Transaction ID for the points adjustment operation",
+            "example": "78660e74-02e3-11e8-b443-00163e911bd2"
+          }
+        }
+      },
+      "EnrollMember": {
+        "required": [
+          "clubReference",
+          "emailAddress",
+          "entityReference",
+          "firstName",
+          "lastName",
+          "phoneNumber"
+        ],
+        "type": "object",
+        "description": "Member details with contact information",
+        "properties": {
+          "firstName": {
+            "title": "Firstname",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "First name of the member.",
+            "example": "John"
+          },
+          "middleName": {
+            "title": "Middlename",
+            "maxLength": 100,
+            "type": "string",
+            "description": "Middle name of the member.",
+            "example": "Duke"
+          },
+          "lastName": {
+            "title": "Lastname",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Last name of the member.",
+            "example": "Wayne"
+          },
+          "suffix": {
+            "title": "Suffix",
+            "type": "string",
+            "description": "Suffix of the member name, if any.",
+            "nullable": true
+          },
+          "gender": {
+            "title": "Gender",
+            "type": "string",
+            "description": "Gender of the member.",
+            "enum": [
+              "None",
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "example": "Male"
+          },
+          "birthDate": {
+            "title": "Birthdate",
+            "type": "string",
+            "description": "Date of birth of the member.",
+            "example": "1990-11-16",
+            "format": "date"
+          },
+          "emailAddress": {
+            "title": "Emailaddress",
+            "maxLength": 254,
+            "minLength": 1,
+            "type": "string",
+            "description": "Email address of the member.",
+            "example": "user@abc.com",
+            "format": "email"
+          },
+          "phoneNumber": {
+            "title": "Phonenumber",
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string",
+            "description": "Phone number of the member (without space or dash).",
+            "example": "923331234567"
+          },
+          "addressLine1": {
+            "title": "Addressline1",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Line 1 of the address.",
+            "example": "10400 NE 4th St",
+            "nullable": true
+          },
+          "addressLine2": {
+            "title": "Addressline2",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Line 2 of the address.",
+            "example": "Suite 505",
+            "nullable": true
+          },
+          "addressLine3": {
+            "title": "Addressline3",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Additional line for directional information.",
+            "example": "",
+            "nullable": true
+          },
+          "city": {
+            "title": "City",
+            "maxLength": 50,
+            "type": "string",
+            "description": "City name of the address.",
+            "example": "Austin"
+          },
+          "region": {
+            "title": "Region",
+            "maxLength": 150,
+            "type": "string",
+            "description": "State name of the address.",
+            "example": "Texas"
+          },
+          "postalCode": {
+            "title": "Postalcode",
+            "type": "string",
+            "description": "Zip code of the address.",
+            "example": "98004"
+          },
+          "country": {
+            "title": "Country",
+            "minLength": 1,
+            "type": "string",
+            "description": "Country name.",
+            "example": "United States"
+          },
+          "nationality": {
+            "title": "Nationality",
+            "type": "string",
+            "description": "Nationality of the member.",
+            "example": ""
+          },
+          "maritalStatus": {
+            "title": "Maritalstatus",
+            "type": "string",
+            "description": "Marital status of the member.",
+            "example": "Single",
+            "enum": [
+              "None",
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed",
+              "Separated"
+            ]
+          },
+          "prefix": {
+            "title": "Prefix",
+            "type": "string",
+            "description": "Prefix (if appliable) of the member name.",
+            "example": "Mr",
+            "enum": [
+              "None",
+              "Mr",
+              "Mrs",
+              "Ms"
+            ]
+          },
+          "redemptionChoice": {
+            "title": "Redemptionchoice",
+            "minLength": 1,
+            "type": "string",
+            "description": "Redemption choices are Bank and Auto. When the choice is 'auto,' the points are automatically converted to rewards. When the choice is 'bank,' the points are converted to rewards at the member’s request.",
+            "example": "Auto",
+            "enum": [
+              "Bank",
+              "Auto"
+            ],
+            "nullable": true
+          },
+          "redemptionThreshold": {
+            "title": "Redemptionthreshold",
+            "type": "string",
+            "description": "Threshold value (configurable) to be able to redeem the reward.",
+            "example": 10,
+            "nullable": true
+          },
+          "entityReference": {
+            "title": "Entityreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name or ID for the store (or entity) where the member is enrolled.",
+            "example": "BOUNTEE_CLUB"
+          },
+          "enrollmentTimestamp": {
+            "title": "enrollmenttimestamp",
+            "type": "string",
+            "description": "Date of member enrollment.",
+            "example": "2021-01-25",
+            "format": "date-time",
+            "nullable": true
+          },
+          "clubReference": {
+            "title": "Clubreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Club name or ID where the member is enrolled.",
+            "example": "BLOCK_A"
+          },
+          "enrollReasonCode": {
+            "title": "Enrollreasoncode",
+            "maxLength": 30,
+            "type": "string",
+            "description": "Reason code for enrollment.",
+            "example": "1234",
+            "nullable": true
+          },
+          "enrollReasonNote": {
+            "title": "Enrollreasonnote",
+            "maxLength": 300,
+            "type": "string",
+            "description": "The enrollment reason.",
+            "example": "As guest member",
+            "nullable": true
+          },
+          "tierReference": {
+            "title": "Tierreference",
+            "type": "string",
+            "description": "Tiers are always setup at the club level and a number of tiers can be created. Tiers are categorized as Free (Predefined names are Bronze, Silver, Gold) and Paid (Example - Pro). <br> **Note**: The tier names and the rules to move up and down the tiers are configurable. In addition, points, rewards, and tier expiration can be setup at the tier level.",
+            "example": "Silver",
+            "nullable": true
+          },
+          "customAttributes": {
+            "title": "customAttributes",
+            "type": "object",
+            "properties": {},
+            "description": "Inputs from the store (if applicable) and stored without validation.",
+            "nullable": true
+          },
+          "sourceExternalReference": {
+            "title": "Sourceexternalreference",
+            "maxLength": 100,
+            "type": "string",
+            "description": "Website of the company used for member enrollment.",
+            "example": "example.com",
+            "nullable": true
+          },
+          "channelExternalReference": {
+            "title": "Channelexternalreference",
+            "maxLength": 100,
+            "type": "string",
+            "description": "Sales channel.",
+            "example": "WEB",
+            "nullable": true
+          }
+        }
+      },
+      "EnrollMemberResponse": {
+        "description": "Member details with current status",
+        "type": "object",
+        "properties": {
+          "message": {
+            "title": "Message",
+            "minLength": 1,
+            "type": "string",
+            "description": "Message corresponding to the API status.",
+            "default": "Exception message",
+            "example": "Created"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "properties": {},
+            "description": "A dictionary of lists with different number of errors or exceptions.",
+            "example": {}
+          },
+          "data": {
+            "$ref": "#/components/schemas/Member"
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status of the API request.",
+            "example": 201,
+            "format": "int32"
+          }
+        }
+      },
+      "UpdateMember": {
+        "required": [
+          "profileId"
+        ],
+        "type": "object",
+        "description": "Details to update in the member information. Fields that are allowed to update are governed by company configuration.",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member to update",
+            "example": "f90a1da5-c072-48b7-a9ea-eb35c5dd506b",
+            "format": "uuid"
+          },
+          "firstName": {
+            "title": "Firstname",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "First name of the member.",
+            "example": "John"
+          },
+          "middleName": {
+            "title": "Middlename",
+            "type": "string",
+            "description": "Middle name of the member.",
+            "example": "M"
+          },
+          "lastName": {
+            "title": "Lastname",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Last name of the member.",
+            "example": "Williams"
+          },
+          "suffix": {
+            "title": "Suffix",
+            "type": "string",
+            "description": "Suffix of the member name."
+          },
+          "gender": {
+            "title": "Gender",
+            "type": "string",
+            "description": "Gender of the member.",
+            "enum": [
+              "None",
+              "Male",
+              "Female",
+              "Other"
+            ],
+            "example": "Male"
+          },
+          "birthDate": {
+            "title": "Birthdate",
+            "type": "string",
+            "description": "Date of birth of the member.",
+            "example": "1980-11-30",
+            "format": "date"
+          },
+          "emailAddress": {
+            "title": "Emailaddress",
+            "maxLength": 254,
+            "minLength": 1,
+            "type": "string",
+            "description": "Email address given during enrollment.",
+            "example": "user@abc.com",
+            "format": "email"
+          },
+          "phoneNumber": {
+            "title": "Phonenumber",
+            "minLength": 1,
+            "type": "string",
+            "description": "Phone number given for enrollment (without space or dash).",
+            "example": "923331234567"
+          },
+          "addressLine1": {
+            "title": "Addressline1",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Line 1 of the address.",
+            "example": "10400 NE 4th St",
+            "nullable": true
+          },
+          "addressLine2": {
+            "title": "Addressline2",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Line 2 of the address.",
+            "example": "Suite 505",
+            "nullable": true
+          },
+          "addressLine3": {
+            "title": "Addressline3",
+            "maxLength": 500,
+            "type": "string",
+            "description": "An additional line for directional information.",
+            "example": "",
+            "nullable": true
+          },
+          "city": {
+            "title": "City",
+            "maxLength": 50,
+            "type": "string",
+            "description": "City name of the address.",
+            "example": "Bellevue"
+          },
+          "region": {
+            "title": "Region",
+            "maxLength": 150,
+            "type": "string",
+            "description": "State name of the address.",
+            "example": "Wisconsin"
+          },
+          "postalCode": {
+            "title": "Postalcode",
+            "type": "string",
+            "description": "Zip code of the address.",
+            "example": "98004"
+          },
+          "country": {
+            "title": "Country",
+            "minLength": 1,
+            "type": "string",
+            "description": "Country name of the address.",
+            "example": "United States"
+          },
+          "maritalStatus": {
+            "title": "Maritalstatus",
+            "type": "string",
+            "description": "Marital status of the member.",
+            "example": "Single",
+            "enum": [
+              "None",
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed",
+              "Separated"
+            ]
+          },
+          "prefix": {
+            "title": "Prefix",
+            "type": "string",
+            "description": "Prefix (if appliable) of the member name.",
+            "example": "Mr",
+            "enum": [
+              "None",
+              "Mr",
+              "Mrs",
+              "Ms"
+            ]
+          },
+          "redemptionChoice": {
+            "title": "Redemptionchoice",
+            "minLength": 1,
+            "type": "string",
+            "description": "The redemption options are Bank and Auto. If the redemptionChoice is 'auto,' the points are automatically converted to rewards. When the redemptionChoice is 'bank,' the points are converted to rewards at the member’s request.",
+            "example": "Auto",
+            "enum": [
+              "Bank",
+              "Auto"
+            ]
+          },
+          "redemptionThreshold": {
+            "title": "Redemptionthreshold",
+            "type": "string",
+            "description": "Points can be redeemed only when they reach a defined threshold value.",
+            "example": 10,
+            "default": "0.00"
+          },
+          "enrollmentStore": {
+            "title": "enrollmentstore",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the entity or store (physical entire/store or a website) where the member is enrolled.",
+            "example": "www.demostore.come"
+          },
+          "enrollmentDate": {
+            "title": "enrollmentdate",
+            "type": "string",
+            "description": "Date of member enrollment.",
+            "example": "2021-01-15",
+            "format": "date"
+          },
+          "lastPaidStatusCenter": {
+            "title": "Lastpaidstatuscenter",
+            "minLength": 1,
+            "type": "string",
+            "description": "Entity or store where the pro membership was purchased (for the paid tier).",
+            "example": "1201"
+          },
+          "lastPaidStatusDate": {
+            "title": "Lastpaidstatusdate",
+            "type": "string",
+            "description": "Date to update the paid status.",
+            "example": "2021-01-15",
+            "format": "date"
+          },
+          "tierReference": {
+            "title": "Tierreference",
+            "type": "string",
+            "description": "Reference-name of the tier to assign member to",
+            "example": "GOLD"
+          },
+          "tierExpirationDatetime": {
+            "title": "Tierexpirationdatetime",
+            "type": "string",
+            "description": "Tier expiration date-time. Only utilized if tierReference is specified",
+            "example": "2026-01-15T23:59:59.000Z",
+            "format": "date-time"
+          },
+          "customAttributes": {
+            "title": "customAttributes",
+            "type": "object",
+            "properties": {},
+            "description": "A dictionary representing the custom fields.",
+            "example": {
+              "joiningDate": "2021-07-26",
+              "confirmationDate": "2021-07-26"
+            }
+          }
+        }
+      },
+      "EnrollMemberUpdateResponse": {
+        "type": "object",
+        "description": "Response for the member update request",
+        "properties": {
+          "message": {
+            "title": "Message",
+            "minLength": 1,
+            "type": "string",
+            "description": "Message corresponding to the API call.",
+            "example": "Member updated",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "properties": {},
+            "description": "A dictionary of lists with different number of errors or exceptions.",
+            "example": {
+              "ExceptionString": []
+            }
+          },
+          "data": {
+            "$ref": "#/components/schemas/Member"
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status code of the API call.",
+            "example": 200,
+            "format": "int32"
+          }
+        }
+      },
+      "PointAdjustment": {
+        "required": [
+          "points"
+        ],
+        "type": "object",
+        "description": "Details needed to adjust points",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "f90a1da5-c072-48b7-a9ea-eb35c5dd506b",
+            "format": "uuid"
+          },
+          "pointType": {
+            "title": "Pointtype",
+            "minLength": 1,
+            "type": "string",
+            "description": "Points type. <br> They are categorized as: <br> 1) Base points - Earned in any purchase transaction, based on the core rule. <br> 2) Bonus points - Earned as a bonus for example on a large purchase. <br> 3) Promotional Points - Earned as part of promotional events. <br> 4) Restricted Points - Points to be used only on specified stores.",
+            "example": "Base",
+            "nullable": true
+          },
+          "billingEntity": {
+            "title": "Billingentity",
+            "minLength": 1,
+            "type": "string",
+            "description": "Billing entity for the adjustment transaction.",
+            "example": "Company_Club",
+            "nullable": true
+          },
+          "points": {
+            "title": "Points",
+            "type": "number",
+            "format": "float",
+            "description": "Number of points to adjust. Can be positive or negative.",
+            "example": 100
+          },
+          "reasonCode": {
+            "title": "Reasoncode",
+            "minLength": 1,
+            "type": "string",
+            "description": "Reason code for the point adjustment.",
+            "example": "7502",
+            "nullable": true
+          },
+          "setToPending": {
+            "title": "Settopending",
+            "type": "boolean",
+            "description": "true: Points in Pending status. <br> false: Points in Active status. <br>**Note**:The time period for Pending state is configurable.",
+            "default": false
+          }
+        }
+      },
+      "earn-discount": {
+        "required": [
+          "id",
+          "value"
+        ],
+        "type": "object",
+        "description": "Discount details",
+        "properties": {
+          "type": {
+            "title": "type",
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Type of discount (configurable).",
+            "example": "promotion"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "Description of the discount.",
+            "example": "Black Friday discount"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer",
+            "description": "Discount ID",
+            "example": 2345,
+            "format": "int32"
+          },
+          "value": {
+            "title": "Value",
+            "type": "integer",
+            "description": "Discount amount",
+            "example": 0,
+            "format": "int32"
+          }
+        }
+      },
+      "TransactionItemsSerializerEarn": {
+        "required": [
+          "SKU",
+          "grossAmount",
+          "itemPrice",
+          "itemQuantity",
+          "lineNumber",
+          "netAmount",
+          "taxAmount",
+          "totalAmountPaid"
+        ],
+        "type": "object",
+        "description": "Transaction details",
+        "properties": {
+          "grossAmount": {
+            "title": "Grossamount",
+            "type": "number",
+            "format": "float",
+            "description": "Gross amount of the item, before discount application.",
+            "example": 200
+          },
+          "totalAmountPaid": {
+            "title": "Totalamountpaid",
+            "type": "number",
+            "format": "float",
+            "description": "Amount paid for the item, including tax",
+            "example": 200
+          },
+          "taxAmount": {
+            "title": "Taxamount",
+            "type": "number",
+            "format": "float",
+            "description": "Tax on the item.",
+            "example": 20
+          },
+          "netAmount": {
+            "title": "Netamount",
+            "description": "Total amount of the item without tax, and after item-discount application.",
+            "example": 180,
+            "type": "number",
+            "format": "float"
+          },
+          "itemName": {
+            "title": "Itemname",
+            "minLength": 1,
+            "type": "string",
+            "description": "Item name",
+            "example": "demo item"
+          },
+          "itemPrice": {
+            "title": "Itemprice",
+            "type": "integer",
+            "description": "Item price",
+            "example": 90,
+            "format": "int32"
+          },
+          "itemQuantity": {
+            "title": "Itemquantity",
+            "type": "integer",
+            "description": "Item quantity",
+            "example": 2,
+            "format": "int32"
+          },
+          "SKU": {
+            "title": "Sku",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Stock Keeping Unit (SKU), a unique identifier of the item.",
+            "example": "1123455"
+          },
+          "UOM": {
+            "title": "Uom",
+            "minLength": 1,
+            "type": "string",
+            "description": "Unit of Measurement (UOM).",
+            "example": "unit"
+          },
+          "lineNumber": {
+            "title": "Linenumber",
+            "type": "integer",
+            "description": "Line number of the item in the purchase order.",
+            "example": 0,
+            "format": "int32"
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Discounts detail of the item.",
+            "items": {
+              "$ref": "#/components/schemas/earn-discount"
+            }
+          },
+          "couponCodes": {
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "type": "string",
+              "description": "Coupon Codes",
+              "example": "H4B-1000"
+            }
+          }
+        }
+      },
+      "Earn": {
+        "required": [
+          "ProfileId",
+          "activityTimestamp",
+          "checkForDuplicateTransaction",
+          "discountValue",
+          "entityReference",
+          "fetchUpdatedMemberPointTotals",
+          "netAmount",
+          "totalTax",
+          "transactionExternalReference",
+          "transactionGrossAmount",
+          "transactionTypeExternalReference",
+          "totalAmountPaid"
+        ],
+        "type": "object",
+        "description": "Details required to earn points",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "entityReference": {
+            "title": "Entityreference",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name or ID for the store (or entity) where the transaction took place.",
+            "example": "Company LIBERTY CENTER"
+          },
+          "transactionTypeExternalReference": {
+            "title": "Transactiontypeexternalreference",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "External reference for the transaction type such as purchase, return, or exchange (Configurable as per requirement).",
+            "example": "Supplements"
+          },
+          "activityTimestamp": {
+            "title": "Activitytimestamp",
+            "type": "string",
+            "description": "Activity date (in UTC format). An activity could be enrolling a member, making a transaction, etc.",
+            "example": "2020-02-08 09:30:26",
+            "format": "date-time"
+          },
+          "transactionExternalReference": {
+            "title": "Transactionexternalreference",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Order ID or receipt ID for a transaction (received from the store). It is needed to cancel or return an order.",
+            "example": "123321abc"
+          },
+          "transactionGrossAmount": {
+            "title": "Transactiongrossamount",
+            "minimum": 0,
+            "description": "Gross transaction amount (in currency unit) of the total items earn. For example the gross amount of item1 is 50.00 and gross amount of item2 is 100.00. The transactionGrossAmount is 150.00.",
+            "example": 200,
+            "type": "number",
+            "format": "float"
+          },
+          "checkForDuplicateTransaction": {
+            "title": "Checkforduplicatetransaction",
+            "type": "integer",
+            "description": "0 indicates the system allows duplicates and 1 indicates there is a validation in place to identity duplicate.",
+            "example": 1,
+            "format": "int32"
+          },
+          "fetchUpdatedMemberPointTotals": {
+            "title": "Fetchupdatedmemberpointtotals",
+            "type": "integer",
+            "description": "1 indicates the total points are calculated and shown to the member. 0 indicates the total points are not calculated and the member is only notified the earn is successful. **Note**: The response is faster when the value is 0 because the total points are not calculated on the fly.",
+            "example": 0,
+            "format": "int32"
+          },
+          "totalAmountPaid": {
+            "title": "Totalamountpaid",
+            "description": "Total amount paid for the items. For example, the amount paid for item1 is 100.00 and the amount of item2 is 200.00 so the total amount paid is 300.00.",
+            "example": 180,
+            "type": "number",
+            "format": "float"
+          },
+          "discountValue": {
+            "title": "Discountvalue",
+            "type": "integer",
+            "description": "Discount value on the transaction, if applicable.",
+            "example": 20,
+            "format": "int32"
+          },
+          "totalTax": {
+            "title": "Totaltax",
+            "type": "number",
+            "format": "float",
+            "description": "Total tax based on the number of items in the transaction. For example, the tax amount of item1 is 2.00 and tax amount of item2 is 1.00. The totalTax is 3.00.",
+            "example": 20
+          },
+          "netAmount": {
+            "title": "Netamount",
+            "minimum": 0,
+            "description": "Net transaction amount based on the total items in the transaction, after subtracting taxes and discounts.",
+            "example": 160,
+            "type": "number",
+            "format": "float"
+          },
+          "issueAuditUser": {
+            "title": "Issueaudituser",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who issued the earn transaction.",
+            "example": "Joe",
+            "nullable": true
+          },
+          "cancelAuditUser": {
+            "title": "Cancelaudituser",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who cancelled the earn transaction.",
+            "nullable": true,
+            "example": "John"
+          },
+          "redemptionCode": {
+            "description": "Redemption code to identify and link the rewards used in a specific transaction. This is generated in the response of the 'Issue Variable Rewards' endpoint - POST /api/v1/redeem/reward/issue.",
+            "example": [
+              "67460e74-02e3-11e8-b443-00163e990bdb"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "reasonCode": {
+            "title": "Reasoncode",
+            "maxLength": 30,
+            "minLength": 1,
+            "type": "string",
+            "description": "Reason code to categorize transactions. A parent company can configure custom codes for their stores as required.",
+            "example": "9393"
+          },
+          "reasonDescription": {
+            "title": "Reasondescription",
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string",
+            "description": "When reason codes are not configured, store can make use of the reason description to add notes on the transaction.",
+            "example": "earning item"
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Represents the discounts on the item.",
+            "items": {
+              "$ref": "#/components/schemas/Discount"
+            }
+          },
+          "transactionItems": {
+            "type": "array",
+            "description": "Details of the items in the transaction.",
+            "items": {
+              "$ref": "#/components/schemas/TransactionItemsSerializerEarn"
+            }
+          },
+          "setToPending": {
+            "title": "Settopending",
+            "type": "boolean",
+            "description": "true: Points in Pending status <br> false: Points in Active status. <br>**Note**:The time period for Pending state is configurable.",
+            "default": false
+          }
+        }
+      },
+      "DiscountData": {
+        "required": [
+          "id",
+          "value"
+        ],
+        "type": "object",
+        "description": "Discount details",
+        "properties": {
+          "type": {
+            "title": "Type",
+            "minLength": 1,
+            "type": "string",
+            "description": "Discount type (configurable).",
+            "example": "promotion"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "Description of the discount.",
+            "example": "Black Friday discount"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer",
+            "description": "Discount ID",
+            "example": 2345,
+            "format": "int32"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number",
+            "format": "float",
+            "description": "Discount amount",
+            "example": 20
+          }
+        }
+      },
+      "Reward": {
+        "type": "object",
+        "description": "Reward details",
+        "properties": {
+          "reward_id": {
+            "title": "Reward id",
+            "type": "integer",
+            "description": "Variable reward IDs (also referred to as reward certificate). **Note**:Multiple rewards can be used a transaction.",
+            "example": 111,
+            "format": "int32"
+          },
+          "core_rule_id": {
+            "title": "Core rule id",
+            "type": "integer",
+            "description": "ID of the core rule based on which the rewards are generated.",
+            "example": 2,
+            "format": "int32"
+          },
+          "reward_portion": {
+            "title": "Reward portion",
+            "type": "number",
+            "format": "float",
+            "description": "Total amount of the reward.",
+            "example": 10
+          }
+        }
+      },
+      "EarnApiResponse": {
+        "required": [
+          "profileId",
+          "transactionNumber",
+          "transactionType"
+        ],
+        "type": "object",
+        "description": "Details of points earned",
+        "properties": {
+          "transactionCode": {
+            "title": "Transactioncode",
+            "type": "string",
+            "description": "Transaction Code, which uniquely identifies each transaction",
+            "example": "78660e74-02e3-11e8-b443-00163e911bd2",
+            "format": "uuid"
+          },
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "transactionNumber": {
+            "title": "Transactionnumber",
+            "minLength": 1,
+            "type": "string",
+            "description": "Transaction number. It is same as the transactionExternalReference and indicates a unique order ID or receipt ID.",
+            "example": "LOYALTY-54321"
+          },
+          "transactionDateTime": {
+            "title": "Transactiondatetime",
+            "type": "string",
+            "description": "Transaction time, in UTC format.",
+            "example": "2020-03-20T14:28:23.382748",
+            "format": "date"
+          },
+          "activityTimestamp": {
+            "title": "ActivityTimestamp",
+            "type": "string",
+            "description": "Activty time, in UTC format.",
+            "example": "2020-03-20T14:28:23.382748",
+            "format": "date"
+          },
+          "totalAmountPaid": {
+            "title": "Totalamountpaid",
+            "type": "number",
+            "description": "Total amount paid for the items. For example, the amount paid for item1 is 100.00 and the amount of item2 is 200.00 so the total amount paid is 300.00.",
+            "example": 180,
+            "format": "float"
+          },
+          "totalTax": {
+            "title": "Totaltax",
+            "type": "integer",
+            "description": "Total tax applied on earning items.",
+            "example": 20,
+            "format": "int32"
+          },
+          "transactionNetAmount": {
+            "title": "Transactionnetamount",
+            "description": "Net total amount of the transaction.",
+            "example": 160,
+            "type": "number",
+            "format": "float"
+          },
+          "points": {
+            "title": "points",
+            "type": "number",
+            "format": "float",
+            "description": "Points earned by the member.",
+            "example": 16
+          },
+          "basePoints": {
+            "title": "Basepoints",
+            "type": "number",
+            "format": "float",
+            "description": "Base points earned in this transaction",
+            "example": 16
+          },
+          "bonusPoints": {
+            "title": "Bonuspoints",
+            "type": "number",
+            "format": "float",
+            "description": "Bonus points earned in this transaction",
+            "example": 0
+          },
+          "promotionalPoints": {
+            "title": "Promotionalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Promotional points earned in this transaction",
+            "example": 0
+          },
+          "currentPointsBalance": {
+            "title": "currentPointsBalance",
+            "type": "number",
+            "format": "float",
+            "description": "Total points currently available in the member's account.",
+            "example": 26
+          },
+          "reasonCode": {
+            "title": "Reasoncode",
+            "minLength": 1,
+            "type": "string",
+            "description": "Reason code used to categorize transactions. A parent company can configure custom codes for their stores as required.",
+            "example": "9393",
+            "nullable": true
+          },
+          "reasonDescription": {
+            "title": "Reasondescription",
+            "minLength": 1,
+            "type": "string",
+            "description": "When reason codes are not configured, store can make use of the reason description to add notes on the transaction.",
+            "example": "earning item"
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Represents the discount details.",
+            "items": {
+              "$ref": "#/components/schemas/DiscountData"
+            }
+          },
+          "discountValue": {
+            "title": "Discountvalue",
+            "type": "number",
+            "format": "float",
+            "description": "The discount amount for this transaction.",
+            "example": 20
+          },
+          "transactionItems": {
+            "type": "array",
+            "description": "Details of transaction items.",
+            "items": {
+              "$ref": "#/components/schemas/TransactionItemsSerializerEarn"
+            }
+          },
+          "rewards": {
+            "type": "array",
+            "description": "Represents the variable rewards details",
+            "items": {
+              "$ref": "#/components/schemas/Reward"
+            }
+          },
+          "issueAuditUser": {
+            "title": "Issueaudituser",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who issued the earn transaction.",
+            "example": "Joe",
+            "nullable": true
+          },
+          "cancelAuditUser": {
+            "title": "Cancelaudituser",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who cancelled the earn transaction.",
+            "example": "John",
+            "nullable": true
+          },
+          "deviceId": {
+            "title": "Deviceid",
+            "type": "string",
+            "description": "ID of the Device used to capture the transaction",
+            "example": "D10626"
+          },
+          "transactionType": {
+            "title": "Transactiontype",
+            "type": "string",
+            "description": "The field refers to the different types of transaction activities on a member account such as Earn Transaction, Burn Transaction, Earn Reverse Transaction and so on",
+            "example": "EARN",
+            "enum": [
+              "EARN",
+              "BURN",
+              "EXPIRY",
+              "EARN_REVERSE",
+              "BURN_REVERSE",
+              "ADJUSTMENT",
+              "DEDUCT",
+              "TRANSFER",
+              "MERGE",
+              "FORFEITED",
+              "CONVERT",
+              "UNMERGE"
+            ]
+          },
+          "transactionActivityType": {
+            "title": "Transactionactivitytype",
+            "type": "string",
+            "description": "An alias for the transactionType, configurable on a per-company basis",
+            "example": "BASE_POINTS_EARNED"
+          },
+          "transactionTypeExternalReference": {
+            "title": "Transactiontypeexternalreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "External reference for the transaction type such as purchase, return, or exchange. Supports any string value as configured by the store.",
+            "example": "PURCHASE"
+          },
+          "transactionExternalReference": {
+            "title": "Transactionexternalreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Order ID or receipt ID for a transaction (received from the store). This is unique and needed to cancel or return an order.",
+            "example": "SHOP-7654321"
+          },
+          "transactionEntityReference": {
+            "title": "Transactionentityreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Transaction entity reference.",
+            "example": "Liberty_center_store"
+          }
+        }
+      },
+      "EarnResponse": {
+        "type": "object",
+        "description": "Metadata for the 'Earn points' response",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status code for the API call.",
+            "example": 201,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "minLength": 1,
+            "type": "string",
+            "description": "Message corresponding to the status code.",
+            "example": "earned",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "description": "In a successful response, this is always a blank object.",
+            "properties": {}
+          },
+          "data": {
+            "description": "Earn details.",
+            "$ref": "#/components/schemas/EarnApiResponse"
+          }
+        }
+      },
+      "ActivatePointsResponseClass": {
+        "type": "object",
+        "description": "API Response Details",
+        "properties": {
+          "message": {
+            "title": "Message",
+            "minLength": 1,
+            "type": "string",
+            "description": "Message corresponding to the API call.",
+            "example": "Member points activated"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "properties": {},
+            "description": "A dictionary of lists with different number of errors or exceptions.",
+            "example": {}
+          },
+          "data": {
+            "title": "Data",
+            "type": "object",
+            "properties": {},
+            "description": "Returns data in the form of a list of dictionaries or null",
+            "example": null
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status code of the API call.",
+            "example": 200,
+            "format": "int32"
+          }
+        }
+      },
+      "TransactionDiscount": {
+        "type": "object",
+        "description": "Discount details",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer",
+            "description": "Discount rule ID",
+            "example": 101,
+            "format": "int32"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number",
+            "format": "float",
+            "description": "Discount amount applied on the transaction.",
+            "example": 20
+          },
+          "type": {
+            "title": "Type",
+            "minLength": 1,
+            "type": "string",
+            "description": "Type of discount availed.",
+            "example": "tier"
+          }
+        }
+      },
+      "TransactionsResponse": {
+        "type": "object",
+        "description": "Details of member transactions",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status code of the API call.",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "minLength": 1,
+            "type": "string",
+            "description": "Message corresponding to the API call.",
+            "example": ""
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "properties": {},
+            "description": "Dictionary of lists with different number of errors or exceptions.",
+            "example": {}
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponseData"
+            }
+          }
+        }
+      },
+      "TransactionResponseData": {
+        "type": "object",
+        "description": "Details of each transaction",
+        "properties": {
+          "profileId": {
+            "title": "Profile ID",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "transactionExternalReference": {
+            "title": "Transactionexternalreference",
+            "type": "string",
+            "description": "Order ID or receipt ID for a transaction (received from the store). This is needed to cancel or return an order.",
+            "example": "LOYALTY-8675309"
+          },
+          "transactionEntityReference": {
+            "title": "Transactionentityreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Transaction entity reference",
+            "example": "Liberty_center_store"
+          },
+          "transactionCode": {
+            "title": "Transactioncode",
+            "type": "string",
+            "description": "Transaction Code of the transaction.",
+            "example": "62660e74-02e3-11e8-b443-00163e990abc",
+            "format": "uuid"
+          },
+          "transactionTypeExternalReference": {
+            "title": "Transactiontypeexternalreference",
+            "type": "string",
+            "description": "External reference for the transaction type such as purchase, return, or exchange. Supports any string value as configured by the store.",
+            "example": "PURCHASE"
+          },
+          "transactionType": {
+            "title": "Transactiontype",
+            "type": "string",
+            "description": "The field refers to the different types of transaction activities on a member account such as Earn Transaction, Burn Transaction, Earn Reverse Transaction and so on",
+            "example": "EARN",
+            "enum": [
+              "EARN",
+              "BURN",
+              "EXPIRY",
+              "EARN_REVERSE",
+              "BURN_REVERSE",
+              "ADJUSTMENT",
+              "DEDUCT",
+              "TRANSFER",
+              "MERGE",
+              "FORFEITED",
+              "CONVERT",
+              "UNMERGE"
+            ]
+          },
+          "transactionActivityType": {
+            "title": "Transactionactivitytype",
+            "type": "string",
+            "description": "An alias for the transactionType, configurable on a per-company basis",
+            "example": "BASE_POINTS_EARNED"
+          },
+          "transactionDateTime": {
+            "title": "Transactiondatetime",
+            "type": "string",
+            "description": "Transaction time, in UTC format.",
+            "example": "2020-03-20T14:28:23.382748",
+            "format": "date-time"
+          },
+          "totalAmountPaid": {
+            "title": "Totalamountpaid",
+            "type": "number",
+            "format": "float",
+            "description": "Total amound paid for the transaction",
+            "example": 180
+          },
+          "totalTax": {
+            "title": "Totaltax",
+            "type": "number",
+            "format": "float",
+            "description": "Total tax on the transaction",
+            "example": 20
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionDiscount"
+            }
+          },
+          "discountValue": {
+            "title": "Discountvalue",
+            "type": "number",
+            "format": "float",
+            "description": "The discount amount for this transaction.",
+            "example": 20
+          },
+          "transactionNetAmount": {
+            "title": "Transactionnetamount",
+            "type": "number",
+            "format": "float",
+            "description": "The net amount for the transaction, after discounts",
+            "example": 160
+          },
+          "points": {
+            "title": "Points",
+            "type": "number",
+            "format": "float",
+            "description": "Points earned in this transaction",
+            "example": 160
+          },
+          "currentPointsBalance": {
+            "title": "Currentpointsbalance",
+            "type": "number",
+            "format": "float",
+            "description": "Total points balance after this transaction",
+            "example": 360
+          },
+          "basePoints": {
+            "title": "Basepoints",
+            "type": "number",
+            "format": "float",
+            "description": "Base points balance after this transaction",
+            "example": 260
+          },
+          "bonusPoints": {
+            "title": "Bonuspoints",
+            "type": "number",
+            "format": "float",
+            "description": "Bonus points balance after this transaction",
+            "example": 100
+          },
+          "promotionalPoints": {
+            "title": "Promotionalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Promotional points balance after this transaction",
+            "example": 0
+          },
+          "transactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionItemsSerializerEarn"
+            }
+          },
+          "activityTimestamp": {
+            "title": "Activitytimestamp",
+            "type": "string",
+            "description": "The activity date (in UTC format). An activity could be enrolling a member, making a transaction, etc.",
+            "example": "2020-02-08 09:30:26",
+            "format": "date-time"
+          },
+          "transactionNumber": {
+            "title": "Transactionnumber",
+            "type": "string",
+            "description": "Transaction number. It is same as the transactionExternalReference and indicates a unique order ID or receipt ID.",
+            "example": "LOYALTY-8675309"
+          },
+          "reasonCode": {
+            "title": "Reasoncode",
+            "type": "string",
+            "description": "The reason-code for this transaction, if any",
+            "example": "9393"
+          },
+          "reasonDescription": {
+            "title": "Reasondescription",
+            "type": "string",
+            "description": "The reason for this transaction, if any",
+            "example": "earning item"
+          },
+          "deviceId": {
+            "title": "Deviceid",
+            "type": "string",
+            "description": "ID of the Device used to capture the transaction",
+            "example": "D10626"
+          },
+          "issueAuditUser": {
+            "title": "Issueaudituser",
+            "type": "string",
+            "description": "The name of the representative who issued the transaction.",
+            "example": "Joe",
+            "nullable": true
+          },
+          "cancelAuditUser": {
+            "title": "Cancelaudituser",
+            "type": "string",
+            "description": "The name of the representative who cancelled the transaction.",
+            "example": "John",
+            "nullable": true
+          },
+          "rewards": {
+            "type": "array",
+            "description": "Represents the variable rewards details",
+            "items": {
+              "$ref": "#/components/schemas/Reward"
+            }
+          }
+        }
+      },
+      "TransactionItemsSerializerEarnReverse": {
+        "required": [
+          "SKU",
+          "grossAmount",
+          "itemPrice",
+          "itemQuantity",
+          "lineNumber",
+          "netAmount",
+          "taxAmount",
+          "totalAmountPaid"
+        ],
+        "type": "object",
+        "description": "Details of the items returned",
+        "properties": {
+          "grossAmount": {
+            "title": "Grossamount",
+            "type": "number",
+            "format": "float",
+            "description": "The gross amount of the item, before discount.",
+            "example": 100
+          },
+          "taxAmount": {
+            "title": "Taxamount",
+            "type": "number",
+            "format": "float",
+            "description": "The tax amount of the item.",
+            "example": 10
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Item-level Discounts.",
+            "items": {
+              "$ref": "#/components/schemas/DiscountData"
+            },
+            "example": []
+          },
+          "totalAmountPaid": {
+            "title": "Totalamountpaid",
+            "type": "number",
+            "format": "float",
+            "description": "The amount paid for the item",
+            "example": 100
+          },
+          "netAmount": {
+            "title": "Netamount",
+            "type": "number",
+            "format": "float",
+            "description": "The net amount of the item, after any item-level discounts.",
+            "example": 90
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "type": "string",
+              "description": "The category name of the item.",
+              "example": "Supplements"
+            }
+          },
+          "itemName": {
+            "title": "Itemname",
+            "minLength": 1,
+            "type": "string",
+            "description": "The name of the item.",
+            "example": "demo item"
+          },
+          "itemPrice": {
+            "title": "Itemprice",
+            "type": "number",
+            "description": "The price of the item.",
+            "example": 45,
+            "format": "float"
+          },
+          "itemQuantity": {
+            "title": "Itemquantity",
+            "type": "integer",
+            "description": "The item quantity.",
+            "example": 2,
+            "format": "int32"
+          },
+          "SKU": {
+            "title": "Sku",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The Stock Keeping Unit (SKU) of the item.",
+            "example": "12345"
+          },
+          "lineNumber": {
+            "title": "Linenumber",
+            "type": "integer",
+            "description": "The line number of the item in the overall transaction.",
+            "example": 1,
+            "format": "int32"
+          },
+          "UOM": {
+            "title": "Uom",
+            "minLength": 1,
+            "type": "string",
+            "description": "The Unit of Measurement (UOM).",
+            "example": "unit"
+          },
+          "couponCodes": {
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "type": "string",
+              "description": "Coupon Codes"
+            },
+            "example": []
+          }
+        }
+      },
+      "TransactionItemsSerializerEarnReverseResponse": {
+        "required": [
+          "SKU",
+          "categories",
+          "grossAmount",
+          "itemPrice",
+          "itemQuantity",
+          "lineNumber",
+          "netAmount",
+          "taxAmount"
+        ],
+        "type": "object",
+        "description": "Details of the items returned",
+        "properties": {
+          "grossAmount": {
+            "title": "Grossamount",
+            "type": "number",
+            "format": "float",
+            "description": "The gross amount of the item, before discount.",
+            "example": 100
+          },
+          "taxAmount": {
+            "title": "Taxamount",
+            "type": "number",
+            "format": "float",
+            "description": "The tax amount of the item.",
+            "example": 10
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Item-level Discounts.",
+            "items": {
+              "$ref": "#/components/schemas/DiscountData"
+            },
+            "example": []
+          },
+          "netAmount": {
+            "title": "Netamount",
+            "type": "number",
+            "format": "float",
+            "description": "The net amount of the item, after any item-level discounts.",
+            "example": 90
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "type": "string",
+              "description": "The category name of the item.",
+              "example": "Supplements"
+            }
+          },
+          "itemName": {
+            "title": "Itemname",
+            "minLength": 1,
+            "type": "string",
+            "description": "The name of the item.",
+            "example": "demo item"
+          },
+          "itemPrice": {
+            "title": "Itemprice",
+            "type": "number",
+            "description": "The price of the item.",
+            "example": 45,
+            "format": "float"
+          },
+          "itemQuantity": {
+            "title": "Itemquantity",
+            "type": "integer",
+            "description": "The item quantity.",
+            "example": 2,
+            "format": "int32"
+          },
+          "SKU": {
+            "title": "Sku",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The Stock Keeping Unit (SKU) of the item.",
+            "example": "12345"
+          },
+          "lineNumber": {
+            "title": "Linenumber",
+            "type": "integer",
+            "description": "The line number of the item in the overall transaction.",
+            "example": 1,
+            "format": "int32"
+          },
+          "UOM": {
+            "title": "Uom",
+            "minLength": 1,
+            "type": "string",
+            "description": "The Unit of Measurement (UOM).",
+            "example": "unit"
+          },
+          "couponCodes": {
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "type": "string",
+              "description": "Coupon Codes"
+            },
+            "example": []
+          }
+        }
+      },
+      "EarnReverse": {
+        "required": [
+          "profileId",
+          "activityTimestamp",
+          "checkForDuplicateTransaction",
+          "discountValue",
+          "entityReference",
+          "fetchUpdatedMemberPointTotals",
+          "netAmount",
+          "reverseTransactionExternalRef",
+          "totalTax",
+          "totalAmountPaid",
+          "transactionExternalReference",
+          "transactionGrossAmount",
+          "transactionTypeExternalReference"
+        ],
+        "type": "object",
+        "description": "Transaction details to reverse the earned points",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "The profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync. The profileId is generated as part of the Enroll Member endpoint - POST /members.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "entityReference": {
+            "title": "Entityreference",
+            "maxLength": 15,
+            "minLength": 3,
+            "type": "string",
+            "description": "A unique name or ID for the store (or entity) where the transaction took place.",
+            "example": "LIBERTY_STORE"
+          },
+          "reverseTransactionExternalRef": {
+            "title": "Reversetransactionexternalref",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "External reference number of the transaction to reverse.",
+            "example": "LOYALTY-12345"
+          },
+          "transactionTypeExternalReference": {
+            "title": "Transactiontypeexternalreference",
+            "maxLength": 15,
+            "minLength": 3,
+            "type": "string",
+            "description": "The external reference for the transaction type such purchase, return, or exchange (configurable as per requirement).",
+            "example": "RETURN"
+          },
+          "activityTimestamp": {
+            "title": "Activitytimestamp",
+            "type": "string",
+            "description": "The activity date (in UTC format). An activity could be enrolling a member, making a transaction, etc.",
+            "example": "2020-02-08 09:30:26",
+            "format": "date-time"
+          },
+          "transactionExternalReference": {
+            "title": "Transactionexternalreference",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The order ID or receipt ID for the transaction (received from the store). This is needed to cancel or return an order.",
+            "example": "LOYALTY-8675"
+          },
+          "checkForDuplicateTransaction": {
+            "title": "Checkforduplicatetransaction",
+            "type": "integer",
+            "description": "0 indicates the system allows duplicate and 1 indicates there is a validation in place to identify duplicates.",
+            "example": 1,
+            "format": "int32"
+          },
+          "fetchUpdatedMemberPointTotals": {
+            "title": "Fetchupdatedmemberpointtotals",
+            "type": "integer",
+            "description": "A value of 1 indicates the total points (including the points earned in the latest transaction) are calculated and displayed to the member. A value of 0 indicates the total points are not calculated and the member is only notified if the earn is successful. The response is faster when the value is 0 because there is no calculations involved.",
+            "example": 1,
+            "format": "int32"
+          },
+          "transactionGrossAmount": {
+            "title": "Transactiongrossamount",
+            "type": "number",
+            "format": "float",
+            "description": "The gross amount on the transaction. For example, gross amount of item1 is 50.00 and gross amount of item2 is 100.00, then transactionGrossAmount is 150.00",
+            "example": -100
+          },
+          "discountValue": {
+            "title": "Discountvalue",
+            "type": "number",
+            "description": "The discount amount applied on the transaction.",
+            "example": -20,
+            "nullable": true,
+            "format": "float"
+          },
+          "totalAmountPaid": {
+            "title": "Totalamountpaid",
+            "description": "Total amount paid for the items. For example, the amount paid for item1 is 100.00 and the amount of item2 is 200.00 so the total amount paid is 300.00.",
+            "example": -80,
+            "type": "number",
+            "format": "float"
+          },
+          "totalTax": {
+            "title": "Totaltax",
+            "type": "number",
+            "format": "float",
+            "description": "Final tax amount based on the number of items in the transaction. Example - the tax amount of item1 is 2.00; Tax amount of item2 is 2.00. The totalTax is 4.00.",
+            "example": -10
+          },
+          "netAmount": {
+            "title": "Netamount",
+            "type": "number",
+            "format": "float",
+            "description": "The net transaction amount. Example - the net amount of item1 is 100.00 and net amount of item2 is 200.00. So, the netAmount is 300.00.",
+            "example": -70
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Discount details.",
+            "items": {
+              "$ref": "#/components/schemas/DiscountData"
+            }
+          },
+          "issueAuditUser": {
+            "title": "Issueaudituser",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The name of the representative who issued the earn transaction.",
+            "example": "Joe",
+            "nullable": true
+          },
+          "cancelAuditUser": {
+            "title": "Cancelaudituser",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The name of the representative who cancelled the earn transaction.",
+            "example": "Mia",
+            "nullable": true
+          },
+          "redemptionCode": {
+            "description": "The redemption code used to identify and link the rewards used in a specific transaction. This code is generated in the response of the 'Issue Variable Rewards' endpoint - POST /api/v1/redeem/reward/issue.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "example": []
+          },
+          "setToPending": {
+            "title": "Settopending",
+            "type": "boolean",
+            "description": "true: Points in Pending status <br> false: Points in Active status. **Note**: The time period for Pending state is configurable."
+          },
+          "reasonCode": {
+            "title": "Reasoncode",
+            "maxLength": 4,
+            "minLength": 1,
+            "type": "string",
+            "description": "Reason code to categorize transactions. A parent company can configure custom codes for their stores as required.",
+            "example": "9393",
+            "nullable": true
+          },
+          "reasonDescription": {
+            "title": "Reasondescription",
+            "maxLength": 20,
+            "minLength": 1,
+            "type": "string",
+            "description": "When reason codes are not configured, store can make use of the reason description.",
+            "example": "returning item",
+            "nullable": true
+          },
+          "transactionItems": {
+            "type": "array",
+            "description": "Details of the transaction items to reverse.",
+            "items": {
+              "$ref": "#/components/schemas/TransactionItemsSerializerEarnReverse"
+            }
+          },
+          "isCompanyUser": {
+            "title": "Iscompanyuser",
+            "type": "boolean",
+            "description": "true: Company user is running the endpoint <br> false: Client user is running the endpoint.",
+            "default": false
+          }
+        }
+      },
+      "EarnReverseApiResponse": {
+        "type": "object",
+        "description": "Metadata for the 'Earn Reverse' response",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status code for the API call.",
+            "example": 201,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string",
+            "description": "Message corresponding to the status code.",
+            "example": "earn reversed"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "description": "In a successful response, this is always a blank object.",
+            "properties": {},
+            "example": {}
+          },
+          "data": {
+            "description": "Earn Reverse response details.",
+            "$ref": "#/components/schemas/EarnReverseApiResponseDetails"
+          }
+        }
+      },
+      "EarnReverseApiResponseDetails": {
+        "required": [
+          "profileId",
+          "transactionNumber",
+          "transactionType"
+        ],
+        "type": "object",
+        "description": "Details of points reversal",
+        "properties": {
+          "transactionCode": {
+            "title": "Transactioncode",
+            "type": "string",
+            "description": "Transaction Code",
+            "example": "62660e74-02e3-11e8-b443-00163e990abc",
+            "format": "uuid"
+          },
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "transactionNumber": {
+            "title": "Transactionnumber",
+            "minLength": 1,
+            "type": "string",
+            "description": "Transaction number. This is same as the transactionExternalReference and indicates a unique order ID or the receipt ID.",
+            "example": "LOYALTY-8675"
+          },
+          "transactionDateTime": {
+            "title": "Transactiondatetime",
+            "type": "string",
+            "description": "Transaction date, in UTC format.",
+            "example": "2020-03-20T14:28:23.382748",
+            "format": "date"
+          },
+          "activityTimestamp": {
+            "title": "Activitytimestamp",
+            "type": "string",
+            "description": "Transaction activity time, in UTC format.",
+            "example": "2020-03-20T14:28:23.382748",
+            "format": "date"
+          },
+          "totalAmountPaid": {
+            "title": "Totalamountpaid",
+            "description": "Total amount paid for the items. For example, the amount paid for item1 is 100.00 and the amount of item2 is 200.00 so the total amount paid is 300.00.",
+            "example": -80,
+            "type": "number",
+            "format": "float"
+          },
+          "totalTax": {
+            "title": "Totaltax",
+            "type": "number",
+            "description": "Total tax applied on items eligible for earning points.",
+            "example": -10,
+            "format": "float"
+          },
+          "transactionNetAmount": {
+            "title": "Transactionnetamount",
+            "type": "number",
+            "format": "float",
+            "description": "Net total amount of the transaction.",
+            "example": -70
+          },
+          "points": {
+            "title": "points",
+            "type": "number",
+            "format": "float",
+            "description": "Total points reversed in this transaction.",
+            "example": -70
+          },
+          "basePoints": {
+            "title": "Basepoints",
+            "type": "number",
+            "format": "float",
+            "description": "Base points reversed in this transaction",
+            "example": 70
+          },
+          "bonusPoints": {
+            "title": "Bonuspoints",
+            "type": "number",
+            "format": "float",
+            "description": "Bonus points reversed in this transaction",
+            "example": 0
+          },
+          "promotionalPoints": {
+            "title": "Promotionalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Promotional points reversed in this transaction",
+            "example": 0
+          },
+          "currentPointsBalance": {
+            "title": "currentPointsBalance",
+            "type": "number",
+            "format": "float",
+            "description": "Points available in the member's account after this transaction.",
+            "example": 500
+          },
+          "reasonCode": {
+            "title": "Reasoncode",
+            "minLength": 1,
+            "type": "string",
+            "description": "Reason code to categorize transactions. A parent company can configure custom codes for their stores as required.",
+            "example": "9393"
+          },
+          "reasonDescription": {
+            "title": "Reasondescription",
+            "minLength": 1,
+            "type": "string",
+            "description": "When reason codes are not configured, store can make use of the reason description to add notes on the transaction.",
+            "example": "returning item"
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Discount details.",
+            "items": {
+              "$ref": "#/components/schemas/DiscountData"
+            }
+          },
+          "discountValue": {
+            "title": "Discountvalue",
+            "type": "number",
+            "format": "float",
+            "description": "The discount amount for this transaction.",
+            "example": 20
+          },
+          "transactionItems": {
+            "type": "array",
+            "description": "Details of the reversed transaction items",
+            "items": {
+              "$ref": "#/components/schemas/TransactionItemsSerializerEarnReverseResponse"
+            }
+          },
+          "rewards": {
+            "type": "array",
+            "description": "Details of the variable rewards.",
+            "items": {
+              "$ref": "#/components/schemas/Reward"
+            },
+            "example": []
+          },
+          "issueAuditUser": {
+            "title": "Issueaudituser",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who issued the earn transaction.",
+            "example": "Joe",
+            "nullable": true
+          },
+          "cancelAuditUser": {
+            "title": "Cancelaudituser",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who cancelled the earn transaction.",
+            "example": "Mia",
+            "nullable": true
+          },
+          "deviceId": {
+            "title": "Deviceid",
+            "type": "string",
+            "description": "ID of the Device used to reverse the transaction",
+            "example": "D10626"
+          },
+          "transactionType": {
+            "title": "Transactiontype",
+            "type": "string",
+            "description": "This field specifies the type of transaction activity, ssuch as Earn Transaction, Burn Transaction, Earn Reverse Transaction and so on",
+            "example": "EARN_REVERSE",
+            "enum": [
+              "EARN",
+              "BURN",
+              "EXPIRY",
+              "EARN_REVERSE",
+              "BURN_REVERSE",
+              "ADJUSTMENT",
+              "DEDUCT",
+              "TRANSFER",
+              "MERGE",
+              "FORFEITED",
+              "CONVERT",
+              "UNMERGE"
+            ]
+          },
+          "transactionActivityType": {
+            "title": "Transactionactivitytype",
+            "type": "string",
+            "description": "An alias for the transactionType, configurable on a per-company basis",
+            "example": "TRANS_CANCEL"
+          },
+          "transactionTypeExternalReference": {
+            "title": "Transactiontypeexternalreference",
+            "type": "string",
+            "description": "External reference for the transaction type such as purchase, return, or exchange. Supports any string value as configured by the store.",
+            "example": "RETURN"
+          },
+          "transactionExternalReference": {
+            "title": "Transactionexternalreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Order ID or receipt ID for the transaction (received from the store). This is unique and needed to cancel or return an order.",
+            "example": "LOYALTY-8675"
+          },
+          "transactionEntityReference": {
+            "title": "Transactionentityreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Reference to the entity where the transaction occurred",
+            "example": "LIBERTY_STORE"
+          }
+        }
+      },
+      "CancelReward": {
+        "type": "object",
+        "required": [
+          "redemptionCode"
+        ],
+        "description": "Details to cancel reward",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "redemptionCode": {
+            "title": "Redemptioncode",
+            "type": "string",
+            "description": "Redemption code. This code must be specified. It is used to identify and link the rewards used in a specific transaction. This code is generated in the response of the 'Issue Variable Rewards' endpoint - POST /api/v1/redeem/reward/issue.",
+            "example": "04c229d7-03cb-421f-9d77-1c0ff1fc2641",
+            "format": "uuid"
+          },
+          "cancelAuditUser": {
+            "title": "Cancelaudituser",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who cancelled the audit.",
+            "example": "Joe"
+          }
+        }
+      },
+      "cancel-reward-response": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the status of the API call.",
+            "example": "Reward cancelled successfully.",
+            "minLength": 1,
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if any.",
+            "type": "object",
+            "properties": {}
+          },
+          "data": {
+            "title": "Data",
+            "description": "Additional details, if applicable.",
+            "example": null
+          }
+        }
+      },
+      "issuance": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 201,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "Created",
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "example": {}
+          },
+          "data": {
+            "description": "Details of the points issued as reward.",
+            "$ref": "#/components/schemas/points-issued"
+          }
+        }
+      },
+      "points-issued": {
+        "type": "object",
+        "description": "Details of points issued",
+        "properties": {
+          "rewardPointCost": {
+            "description": "Represents the ratio of dollar value of reward to the points consumed. E.g. a value of 0.5 indicates that 1 dollar redeemed consumed 2 points.",
+            "example": 0.5,
+            "minLength": 1,
+            "type": "number",
+            "format": "float"
+          },
+          "rewardValue": {
+            "description": "The number of points redeemed by the issuance of this reward.",
+            "example": 100,
+            "type": "number",
+            "format": "float"
+          },
+          "rewardName": {
+            "description": "Name of the reward.",
+            "example": "Demo Reward",
+            "type": "string"
+          },
+          "redemptionCode": {
+            "description": "Redemption code. It uniquely identifies each reward object.",
+            "example": "c48e8827-2a72-4a0f-a4d2-2347b11b4f34",
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "redeem-member-reward": {
+        "type": "object",
+        "description": "Response (metadata) of redeemed rewards",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "Redeem Member Reward succeed.",
+            "minLength": 1,
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "type": "object",
+            "properties": {},
+            "example": {}
+          },
+          "data": {
+            "title": "Data",
+            "description": "Reward details, if applicable.",
+            "example": null
+          }
+        }
+      },
+      "reverse-reward-response": {
+        "type": "object",
+        "description": "Response (metadata) of reward reversal",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "Reward reversed successfully.",
+            "minLength": 1,
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "type": "object",
+            "properties": {}
+          },
+          "data": {
+            "title": "Data",
+            "description": "Additional data, if applicable.",
+            "type": "object",
+            "properties": {},
+            "example": null
+          }
+        }
+      },
+      "MemberReward": {
+        "required": [
+          "locationExternalReference",
+          "redemptionCode"
+        ],
+        "description": "Reward details",
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "redemptionCode": {
+            "title": "Redemptioncode",
+            "type": "string",
+            "description": "Redemption code. This code must be specified. The redemption code is generated in the response of the 'Issue Variable Rewards' (POST /api/v1/redeem/reward/issue) endpoint.",
+            "example": "04c229d7-03cb-421f-9d77-1c0ff1fc2641",
+            "format": "uuid"
+          },
+          "locationExternalReference": {
+            "title": "Locationexternalreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "Represents the store where the rewards are being redeemed. Each store (online, physical or POS) has a unique locationExternalReference name or ID.",
+            "example": "Company_Club"
+          },
+          "redeemAuditUser": {
+            "title": "Redeemaudituser",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who is issuing the reward redemption.",
+            "example": "Joe"
+          }
+        }
+      },
+      "ReverseReward": {
+        "required": [
+          "redemptionCode"
+        ],
+        "type": "object",
+        "description": "Details of reverse rewards API",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "redemptionCode": {
+            "title": "Redemptioncode",
+            "type": "string",
+            "description": "Redemption code used to identify the rewards used in a specific transaction. This is generated in the response of the 'Issue Variable Rewards' endpoint - POST /api/v1/redeem/reward/issue.",
+            "example": "04c229d7-03cb-421f-9d77-1c0ff1fc2641",
+            "format": "uuid"
+          }
+        }
+      },
+      "IssueVariableReward": {
+        "required": [
+          "amountToRedeem",
+          "locationExternalReference",
+          "tierDiscountValue",
+          "profileId"
+        ],
+        "type": "object",
+        "description": "Details needed to issue a variable reward",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "locationExternalReference": {
+            "title": "Locationexternalreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "External reference ID (or name) of the location where the points are being redeemed.",
+            "example": "Company_Club"
+          },
+          "amountToRedeem": {
+            "title": "Amounttoredeem",
+            "type": "number",
+            "format": "float",
+            "description": "The dollar amount being redeemed. The maximum amount which can be redeemed (or the reward limit) is configurable. When a member has $100 in their loyalty account and the store has a reward limit of $50, they can use two rewards certificates to redeem the amount fully.",
+            "example": 50
+          },
+          "issueAuditUser": {
+            "title": "Issueaudituser",
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the representative who is issuing the reward.",
+            "example": "Joe"
+          },
+          "tierDiscountValue": {
+            "title": "Tierdiscountvalue",
+            "type": "number",
+            "format": "float",
+            "description": "Tier-based discounts can be offered by attaching members to different tiers, such as silver, gold, platinum, etc. The discount percentage or discount amounts can be customized.",
+            "example": 0
+          }
+        }
+      },
+      "MemberRewards": {
+        "type": "object",
+        "description": "Reward history details",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member. In an ecosystem, it acts as a primary ID to keep the various systems (apps, websites, etc.) in sync.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "redemptionCode": {
+            "title": "Redemptioncode",
+            "type": "string",
+            "description": "Redemption code to identify and link the rewards used in a specific transaction. This code is generated in the response of the 'Issue Variable Rewards' endpoint - POST /api/v1/redeem/reward/issue.",
+            "example": "04c229d7-03cb-421f-9d77-1c0ff1fc2641",
+            "format": "uuid"
+          },
+          "pointsToRedeem": {
+            "title": "Pointstoredeem",
+            "type": "number",
+            "format": "float",
+            "description": "The number of points to be redeemed.",
+            "example": 100
+          },
+          "pointCost": {
+            "title": "Pointcost",
+            "type": "number",
+            "format": "float",
+            "description": "Ratio of dollar value of reward to the points being redeemed. E.g. a value of 0.5 indicates that 1 dollar redeemed consumed 2 points.",
+            "example": 0.5
+          },
+          "status": {
+            "title": "Status",
+            "minLength": 1,
+            "type": "string",
+            "description": "Status of the reward. E.g. Active or Redeemed",
+            "example": "Redeemed"
+          },
+          "amountToRedeem": {
+            "title": "Amounttoredeem",
+            "type": "number",
+            "format": "float",
+            "description": "The dollar amount to be redeemed. The maximum amount to be redeemed (or the reward limit) is configurable. When a member has $100 in their loyalty account and the store has a reward limit of $50, they can use two rewards certificates to redeem the amount fully.",
+            "example": 50
+          },
+          "rewardTypeExternalReference": {
+            "title": "Rewardtypeexternalreference",
+            "description": "For internal usage only.",
+            "maxLength": 100,
+            "type": "string",
+            "example": "TYPE_A REWARD"
+          },
+          "redeemLocationExternalReference": {
+            "title": "Redeemlocationexternalreference",
+            "maxLength": 100,
+            "type": "string",
+            "description": "External reference (ID or name) of the location where the rewards were redeemed.",
+            "example": "STORE_A"
+          },
+          "redeemedTimestamp": {
+            "title": "Redeemedtimestamp",
+            "type": "string",
+            "description": "Date of redemption, in UTC format.",
+            "example": "2020-03-20T01:30:08.180856",
+            "format": "date-time"
+          },
+          "merchantId": {
+            "title": "Merchantid",
+            "maxLength": 100,
+            "type": "string",
+            "description": "Merchant ID. If configured, it is returned in the response.",
+            "example": 1234
+          },
+          "merchantName": {
+            "title": "Merchantname",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Merchant name",
+            "example": "adam horowitz"
+          },
+          "issueAuditUser": {
+            "title": "Issueaudituser",
+            "maxLength": 200,
+            "type": "string",
+            "description": "Name of the representative who issued the rewards.",
+            "example": "john"
+          },
+          "redeemAuditUser": {
+            "title": "Redeemaudituser",
+            "maxLength": 200,
+            "type": "string",
+            "description": "Name of the representative who redeemed the rewards.",
+            "example": "john"
+          },
+          "cancelAuditUser": {
+            "title": "Cancelaudituser",
+            "maxLength": 200,
+            "type": "string",
+            "description": "Name of the representative who cancelled the rewards.",
+            "example": ""
+          },
+          "eligibleRevenue": {
+            "title": "Eligiblerevenue",
+            "type": "number",
+            "format": "float",
+            "description": "Revenue generated from the items in a transaction that are configured as 'eligible' for earning points.",
+            "example": 0
+          },
+          "expirationDate": {
+            "title": "Expirationdate",
+            "type": "string",
+            "description": "Reward expiration time",
+            "example": "2020-03-31T23:59:59.000000",
+            "format": "date-time"
+          },
+          "activityDate": {
+            "title": "Activitydate",
+            "type": "string",
+            "description": "Activity time, in UTC format.",
+            "example": "2020-03-20T01:30:08.180856",
+            "format": "date-time"
+          }
+        }
+      },
+      "MemberRedeemRewardsResponse": {
+        "type": "object",
+        "description": "Metadata of issued rewards",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "The message corresponding to the API status.",
+            "type": "string",
+            "example": ""
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "description": "Error details, if applicable.",
+            "properties": {},
+            "example": {}
+          },
+          "data": {
+            "type": "array",
+            "description": "The rewards data, if applicable.",
+            "items": {
+              "$ref": "#/components/schemas/MemberRewards"
+            }
+          }
+        }
+      },
+      "DiscountRequestTransactionItems": {
+        "required": [
+          "SKU",
+          "categories",
+          "grossAmount",
+          "itemPrice",
+          "itemQuantity",
+          "netAmount"
+        ],
+        "type": "object",
+        "description": "Item details",
+        "properties": {
+          "grossAmount": {
+            "title": "Grossamount",
+            "type": "number",
+            "format": "float",
+            "description": "Gross amount of transaction.",
+            "example": 6
+          },
+          "taxAmount": {
+            "title": "Taxamount",
+            "type": "number",
+            "format": "float",
+            "description": "Tax amount",
+            "example": 1
+          },
+          "netAmount": {
+            "title": "Netamount",
+            "type": "number",
+            "format": "float",
+            "description": "Net amount of transaction.",
+            "example": 5
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of item categories.",
+            "example": [
+              "Proteins",
+              "Adults"
+            ],
+            "minLength": 1
+          },
+          "itemName": {
+            "title": "Itemname",
+            "minLength": 1,
+            "type": "string",
+            "description": "Item name",
+            "example": "Whey"
+          },
+          "itemPrice": {
+            "title": "Itemprice",
+            "type": "integer",
+            "description": "Item price",
+            "example": 5,
+            "format": "int32"
+          },
+          "itemQuantity": {
+            "title": "Itemquantity",
+            "type": "integer",
+            "description": "Item quantity",
+            "example": 1,
+            "format": "int32"
+          },
+          "SKU": {
+            "title": "Sku",
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Stock Keeping Unit (SKU), a unique ID of the item.",
+            "example": "123456"
+          }
+        }
+      },
+      "DiscountRequest": {
+        "required": [
+          "entityReference",
+          "grossAmount",
+          "netAmount",
+          "profileId",
+          "taxAmount",
+          "transactionTimestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "description": "Profile ID of the member.",
+            "example": "67460e74-02e3-11e8-b443-00163e990bdb",
+            "format": "uuid"
+          },
+          "entityReference": {
+            "title": "Entityreference",
+            "minLength": 1,
+            "type": "string",
+            "description": "External reference of the store where the transaction occurred.",
+            "example": "Company_Club"
+          },
+          "transactionTimestamp": {
+            "title": "Transactiontimestamp",
+            "type": "string",
+            "description": "Transaction date, in UTC format.",
+            "example": "2020-02-08 09:30:26",
+            "format": "date-time"
+          },
+          "taxAmount": {
+            "title": "Taxamount",
+            "type": "number",
+            "format": "float",
+            "description": "Tax amount.",
+            "example": 1
+          },
+          "grossAmount": {
+            "title": "Grossamount",
+            "type": "number",
+            "format": "float",
+            "description": "Gross amount of the transaction (before discount).",
+            "example": 6
+          },
+          "netAmount": {
+            "title": "Netamount",
+            "type": "number",
+            "format": "float",
+            "description": "Net amount of the transaction (after discount).",
+            "example": 5
+          },
+          "transactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountRequestTransactionItems"
+            }
+          }
+        }
+      },
+      "Discount": {
+        "required": [
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "title": "Type",
+            "minLength": 1,
+            "type": "string",
+            "description": "Discount type",
+            "example": "promotion"
+          },
+          "description": {
+            "title": "Description",
+            "minLength": 1,
+            "type": "string",
+            "description": "Description of the discount.",
+            "example": "Black Friday discount"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number",
+            "format": "float",
+            "description": "Monetary value of the discount.",
+            "example": 20
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer",
+            "description": "Discount ID",
+            "example": 23,
+            "format": "int32"
+          }
+        }
+      },
+      "DiscountDetails": {
+        "required": [
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "title": "Type",
+            "minLength": 1,
+            "type": "string",
+            "description": "Discount type",
+            "example": "tier"
+          },
+          "description": {
+            "title": "Description",
+            "minLength": 1,
+            "type": "string",
+            "description": "Description of the discount.",
+            "example": "20.0% discount from tier rule."
+          },
+          "value": {
+            "title": "Value",
+            "type": "number",
+            "format": "float",
+            "description": "Monetary value of the discount.",
+            "example": 1
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer",
+            "description": "Discount ID",
+            "example": 23,
+            "format": "int32"
+          },
+          "ruleName": {
+            "title": "Rulename",
+            "type": "string",
+            "description": "Name of the discount-rule",
+            "example": "tier-discount-rule"
+          },
+          "discountPercentage": {
+            "title": "Discountpercentage",
+            "type": "number",
+            "format": "float",
+            "description": "Percentage value of the discount",
+            "example": 20
+          },
+          "discountAmount": {
+            "title": "Discountamount",
+            "type": "number",
+            "format": "float",
+            "description": "Monetary value of the discount",
+            "example": 1
+          }
+        }
+      },
+      "DiscountTransactionItemsResponse": {
+        "type": "object",
+        "properties": {
+          "SKU": {
+            "title": "Sku",
+            "minLength": 1,
+            "type": "string",
+            "description": "Stock Keeping Unit (SKU), a unique ID of the item.",
+            "example": "123456"
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountDetails"
+            },
+            "example": []
+          }
+        }
+      },
+      "TierRulesResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "title": "Type",
+            "minLength": 1,
+            "type": "string",
+            "description": "Discount type",
+            "example": "Tier Promotions"
+          },
+          "shipping_type": {
+            "title": "Shipping type",
+            "minLength": 1,
+            "type": "string",
+            "description": "Shipping type - Free, Discounted, etc.",
+            "example": "Free Shipping"
+          },
+          "shipping_value": {
+            "title": "Shipping value",
+            "minLength": 1,
+            "type": "number",
+            "format": "float",
+            "description": "Shipping amount",
+            "example": 10
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer",
+            "description": "Tier rule ID",
+            "example": 23,
+            "format": "int32"
+          },
+          "rule_name": {
+            "title": "Rule name",
+            "minLength": 1,
+            "type": "string",
+            "description": "Rule name",
+            "example": "Bronze Tier Discount"
+          }
+        }
+      },
+      "DiscountAPIResponse": {
+        "type": "object",
+        "description": "Response of the Discounts API",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "Created",
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "type": "object",
+            "properties": {},
+            "example": {}
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountResponseDetails"
+            }
+          }
+        }
+      },
+      "DiscountResponseDetails": {
+        "type": "object",
+        "properties": {
+          "grossAmount": {
+            "title": "Grossamount",
+            "type": "number",
+            "format": "float",
+            "description": "Gross amount of transaction (before discount).",
+            "example": 6
+          },
+          "taxAmount": {
+            "title": "Taxamount",
+            "type": "number",
+            "format": "float",
+            "description": "Tax amount on transaction.",
+            "example": 1
+          },
+          "netAmount": {
+            "title": "Netamount",
+            "type": "number",
+            "format": "float",
+            "description": "Net amount of transaction (after discount).",
+            "example": 4
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountDetails"
+            }
+          },
+          "transactionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountTransactionItemsResponse"
+            }
+          },
+          "miscellaneous": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {}
+            },
+            "example": []
+          }
+        }
+      },
+      "FetchMemberExpiriesResponse": {
+        "type": "object",
+        "description": "Response of the All-points Expiry API",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "Success",
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "type": "object",
+            "properties": {},
+            "example": {}
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FetchMemberExpiriesResponseDetails"
+            }
+          }
+        }
+      },
+      "FetchMemberExpiriesResponseDetails": {
+        "type": "object",
+        "properties": {
+          "memberExpirations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberExpirationDetails"
+            }
+          }
+        }
+      },
+      "MemberExpirationDetails": {
+        "type": "object",
+        "properties": {
+          "expirationTimestamp": {
+            "title": "Expirationtimestamp",
+            "description": "Time at which this set of points expired.",
+            "example": "2020-03-20T23:59:59.000000",
+            "type": "string",
+            "format": "date-time"
+          },
+          "pointsExpired": {
+            "title": "Pointsexpired",
+            "type": "number",
+            "format": "float",
+            "description": "Number of points expired on this date.",
+            "example": 100
+          }
+        }
+      },
+      "FetchActionReasonResponse": {
+        "type": "object",
+        "description": "Response of the FetchActionReasons API",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "",
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "type": "string",
+            "example": ""
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FetchActionReasonResponseDetails"
+            }
+          }
+        }
+      },
+      "FetchActionReasonResponseDetails": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer",
+            "description": "Incremental ID",
+            "example": 1001,
+            "format": "int32"
+          },
+          "code": {
+            "title": "Code",
+            "minLength": 1,
+            "type": "string",
+            "description": "Reason code configured for the action type.",
+            "example": "5726"
+          },
+          "reason": {
+            "title": "Reason",
+            "minLength": 1,
+            "type": "string",
+            "description": "Reason for the action.",
+            "example": "Unmerge Accounts with consent of both members"
+          },
+          "action": {
+            "title": "Action",
+            "minLength": 1,
+            "type": "string",
+            "description": "Represents an action or action type.",
+            "example": "Unmerge Accounts"
+          },
+          "companyId": {
+            "title": "Companyid",
+            "type": "integer",
+            "description": "Company ID",
+            "example": 15
+          },
+          "codeDescription": {
+            "title": "Code description",
+            "type": "string",
+            "description": "Description for the given reason code.",
+            "example": ""
+          }
+        }
+      },
+      "PointsExpiryResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "title": "Message",
+            "maxLength": 200,
+            "type": "string",
+            "description": "Message corresponding to the API call.",
+            "example": "Success",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FetchMemberPointsExpiryResponse"
+            }
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status of the API call.",
+            "example": 200,
+            "format": "int32"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if any.",
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "FetchMemberPointsExpiryResponse": {
+        "type": "object",
+        "properties": {
+          "expiryDuration": {
+            "title": "Expiryduration",
+            "type": "integer",
+            "description": "Expiry duration bracket, in number of days.",
+            "example": 30,
+            "format": "int32"
+          },
+          "unRestrictedTotalPoints": {
+            "title": "Unrestrictedtotalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Total number of unrestricted points (base + promotional + bonus).",
+            "example": 100
+          },
+          "restrictedTotalPoints": {
+            "title": "Restrictedtotalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Total number of restricted points.",
+            "example": 12
+          },
+          "totalPoints": {
+            "title": "Totalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Total number of all points.",
+            "example": 112
+          },
+          "pointValue": {
+            "description": "Total monetary value of all points.",
+            "title": "Pointvalue",
+            "type": "number",
+            "format": "float",
+            "example": 112
+          },
+          "restrictedPoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RestrictedPoint"
+            }
+          },
+          "expiryDate": {
+            "title": "Expirydate",
+            "type": "string",
+            "description": "Points expiry time, in UTC format.",
+            "example": "2020-03-20T01:30:08.180856",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "RestrictedPoint": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "title": "Points",
+            "type": "number",
+            "format": "float",
+            "description": "Number of restricted points.",
+            "example": 12
+          },
+          "restrictedLocation": {
+            "title": "Restricted location",
+            "type": "string",
+            "description": "Name of the entity/store where the restricted points can be used.",
+            "example": "demo_store"
+          }
+        }
+      },
+      "PointsbyType": {
+        "type": "object",
+        "properties": {
+          "pointType": {
+            "title": "Pointtype",
+            "minLength": 1,
+            "type": "string",
+            "description": "Point type. Categorized as: <br> 1) Base points - Earned in any purchase transaction  based on the core rule. <br> 2) Bonus points - Earned as a bonus for example on a large purchase. <br> 3) Promotional Points - Earned as part of promotional events. <br> 4) Restricted Points - Points to be used only on specific entity/stores.",
+            "example": "Base"
+          },
+          "points": {
+            "title": "Points",
+            "type": "number",
+            "format": "float",
+            "description": "Total number of points.",
+            "example": 300
+          },
+          "subType": {
+            "title": "Subtype",
+            "type": "string",
+            "description": "Subtypes of the points (configurable, if required).",
+            "example": null,
+            "nullable": true
+          }
+        }
+      },
+      "PointBalance": {
+        "type": "object",
+        "properties": {
+          "memberPointsEarned": {
+            "title": "Memberpointsearned",
+            "type": "number",
+            "format": "float",
+            "description": "Represents the total points earned by this member.",
+            "example": 600,
+            "nullable": true
+          },
+          "memberPointsDeducted": {
+            "title": "Memberpointsdeducted",
+            "type": "number",
+            "format": "float",
+            "description": "Represents the total points deducted for this member.",
+            "example": 100,
+            "nullable": true
+          },
+          "memberPointsUsed": {
+            "title": "Memberpointsused",
+            "type": "number",
+            "format": "float",
+            "description": "Represents the total points redeemed (burned) by this member.",
+            "example": 100,
+            "nullable": true
+          },
+          "memberPointsExpired": {
+            "title": "Memberpointsexpired",
+            "type": "number",
+            "format": "float",
+            "description": "Represents the total points that have expired for this member.",
+            "example": 100,
+            "nullable": true
+          },
+          "memberPointsAvailable": {
+            "title": "Memberpointsavailable",
+            "type": "number",
+            "format": "float",
+            "description": "Represents the total points available for use by this member.",
+            "example": 300,
+            "nullable": true
+          },
+          "memberPointsLocked": {
+            "title": "Memberpointslocked",
+            "type": "number",
+            "format": "float",
+            "description": "Represents the restricted points that can be used only at a specific entity/store.",
+            "example": 100,
+            "nullable": true
+          }
+        }
+      },
+      "UnrestrictedPointsItems": {
+        "required": [
+          "points"
+        ],
+        "type": "object",
+        "properties": {
+          "points": {
+            "title": "Points",
+            "type": "number",
+            "format": "float",
+            "description": "The number of unrestricted points of this particular point-type.",
+            "example": 200
+          },
+          "pointType": {
+            "title": "Pointtype",
+            "minLength": 1,
+            "type": "string",
+            "description": "The type of points. Categorized as: <br> 1) Base points - Earned in any purchase transaction, based on the core rule. <br> 2) Bonus points - Earned as a bonus for example on a large purchase. <br> 3) Promotional Points - Earned as part of promotional events.",
+            "example": "Base",
+            "nullable": true
+          }
+        }
+      },
+      "UnRestrictedPoints": {
+        "required": [
+          "totalCurrencyValue",
+          "totalpoints"
+        ],
+        "type": "object",
+        "properties": {
+          "totalPoints": {
+            "title": "Totalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Total number of unrestricted points (Base + Bonus + Promotional).",
+            "example": 200
+          },
+          "totalCurrencyValue": {
+            "title": "Totalcurrencyvalue",
+            "type": "number",
+            "format": "float",
+            "description": "Monetary value of the unrestricted points.",
+            "example": 100
+          },
+          "unrestrictedPointsItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnrestrictedPointsItems"
+            }
+          }
+        }
+      },
+      "RestrictedPointsItems": {
+        "required": [
+          "points"
+        ],
+        "type": "object",
+        "properties": {
+          "points": {
+            "title": "Points",
+            "type": "number",
+            "format": "float",
+            "description": "The number of restricted points that can be used at this location/store.",
+            "example": 100
+          },
+          "pointType": {
+            "title": "Pointtype",
+            "minLength": 1,
+            "type": "string",
+            "description": "Represents the entity/store specific (restricted) point type.",
+            "example": "Base",
+            "nullable": true
+          },
+          "restrictedLocation": {
+            "title": "Restrictedlocation",
+            "minLength": 1,
+            "type": "string",
+            "description": "ID of the entity/store where the restricted points can be redeemed.",
+            "example": "4321",
+            "nullable": true
+          }
+        }
+      },
+      "RestrictedPoints": {
+        "required": [
+          "restrictedPointsItems",
+          "totalCurrencyValue",
+          "totalPoints"
+        ],
+        "type": "object",
+        "properties": {
+          "totalPoints": {
+            "title": "Totalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Total number of restricted points that can be used only at a specific entity/store.",
+            "example": 100
+          },
+          "totalCurrencyValue": {
+            "title": "Totalcurrencyvalue",
+            "type": "number",
+            "format": "float",
+            "description": "Monetary value of the restricted points.",
+            "example": 50
+          },
+          "restrictedPointsItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RestrictedPointsItems"
+            }
+          }
+        }
+      },
+      "PointsBreakdown": {
+        "type": "object",
+        "properties": {
+          "totalPoints": {
+            "title": "Totalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Total number of available points.",
+            "example": 300,
+            "nullable": true
+          },
+          "totalCurrencyValue": {
+            "title": "Totalcurrencyvalue",
+            "type": "number",
+            "format": "float",
+            "description": "Monetary value of the total number of points.",
+            "example": 150,
+            "nullable": true
+          },
+          "unrestrictedPoints": {
+            "description": "Details of unrestricted available points.",
+            "$ref": "#/components/schemas/UnRestrictedPoints"
+          },
+          "restrictedPoints": {
+            "description": "Details of restricted available points.",
+            "$ref": "#/components/schemas/RestrictedPoints"
+          }
+        }
+      },
+      "FetchMemberPointsResponse": {
+        "type": "object",
+        "description": "Response of the FetchMemberPoints API",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "",
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "type": "object",
+            "properties": {},
+            "example": {}
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FetchMemberPointsResponseData"
+            }
+          }
+        }
+      },
+      "FetchMemberPointsResponseData": {
+        "type": "object",
+        "properties": {
+          "totalPoints": {
+            "title": "Totalpoints",
+            "type": "number",
+            "format": "float",
+            "description": "Total number of active and pending points (excluding the expired points).",
+            "example": 300
+          },
+          "pointsByType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PointsbyType"
+            }
+          },
+          "pointsBalance": {
+            "$ref": "#/components/schemas/PointBalance"
+          },
+          "breakdown": {
+            "$ref": "#/components/schemas/PointsBreakdown"
+          }
+        }
+      },
+      "PointType": {
+        "required": [
+          "pointTypeId",
+          "pointTypeName"
+        ],
+        "type": "object",
+        "properties": {
+          "pointTypeId": {
+            "title": "Pointtypeid",
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer",
+            "description": "ID of the point-type (between 1- 4)",
+            "example": 1,
+            "format": "int32"
+          },
+          "pointTypeName": {
+            "title": "Pointtypename",
+            "minLength": 1,
+            "type": "string",
+            "description": "Point types. Categorized as: <br> 1) Base points - Earned in any purchase transaction based on the core rule. <br> 2) Bonus points - Earned as a bonus for example on a large purchase. <br> 3) Promotional Points - Earned as part of promotional events. <br> 4) Restricted Points - Points to be used only on specific entity/ stores.",
+            "example": "BASE"
+          }
+        }
+      },
+      "FetchPointTypeChoicesResponse": {
+        "type": "object",
+        "description": "Response of the Retrieve Redeemable Points API",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "Success",
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "type": "object",
+            "properties": {},
+            "example": {}
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FetchPointTypeChoicesResponseDetails"
+            }
+          }
+        }
+      },
+      "FetchPointTypeChoicesResponseDetails": {
+        "required": [
+          "pointTypeChoices"
+        ],
+        "type": "object",
+        "properties": {
+          "pointTypeChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PointType"
+            }
+          }
+        }
+      },
+      "GenericResponseClass1": {
+        "type": "object",
+        "description": "Bad request",
+        "properties": {
+          "message": {
+            "title": "Message",
+            "minLength": 1,
+            "type": "string",
+            "description": "Message corresponding to the API call.",
+            "example": "Error message string"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "object",
+            "properties": {},
+            "description": "A dictionary of lists with different number of errors or exceptions.",
+            "example": {
+              "ExceptionString": [
+                "Invalid Field"
+              ]
+            }
+          },
+          "data": {
+            "title": "Data",
+            "type": "object",
+            "properties": {},
+            "description": "Returns data in the form of a list of dictionaries or null",
+            "example": null
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer",
+            "description": "Status code of the API call.",
+            "example": 400,
+            "format": "int32"
+          }
+        }
+      },
+      "GenericResponseClass2": {
+        "type": "object",
+        "description": "Unauthorized",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string",
+            "description": "Message detailing the API response.",
+            "example": "Authentication Failed"
+          }
+        }
+      },
+      "RedeemablePointsOnEntityResponse": {
+        "type": "object",
+        "description": "Response of the Retrieve Redeemable Points API",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "description": "Status of the API call.",
+            "type": "integer",
+            "example": 200,
+            "format": "int32"
+          },
+          "message": {
+            "title": "Message",
+            "description": "Message corresponding to the API call.",
+            "example": "Success",
+            "type": "string",
+            "default": "Exception message"
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "Error details, if applicable.",
+            "type": "object",
+            "properties": {},
+            "example": {}
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RedeemablePointsOnEntityResponseDetails"
+            }
+          }
+        }
+      },
+      "RedeemablePointsOnEntityResponseDetails": {
+        "type": "object",
+        "properties": {
+          "totalPoints": {
+            "title": "Total points",
+            "type": "number",
+            "format": "float",
+            "description": "Total redeemable points.",
+            "example": 1000
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

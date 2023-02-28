@@ -1,0 +1,744 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "z8jhkw342bm18"
+  },
+  "info": {
+    "title": "BackPreOrder service OpenAPI specification",
+    "description": "V2 BackPreOrder Apis For MultiTenant Service",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/backpre-order",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/backpre-order",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/backpre-order",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "BackOrderPreOrderReservation Controller",
+      "description": "These Endpoints help in performing BackOrderPreOrderReservation creation and updating operations"
+    },
+    {
+      "name": "BackOrderPreOrderAck Controller",
+      "description": "These Endpoints help in performing BackOrderPreOrder consent to delay operations"
+    },
+    {
+      "name": "BackOrderPreOrderUpdating Controller",
+      "description": "These Endpoints help in performing BackOrderPreOrder Updating operations"
+    }
+  ],
+  "paths": {
+    "/backorderpreorder-reserve/{lineItemId}/{orderNumber}": {
+      "put": {
+        "tags": [
+          "BackOrderPreOrderReservation Controller"
+        ],
+        "summary": "Update BackOrderPreOrderReservation",
+        "operationId": "updateBackOrderPreOrderReservation",
+        "parameters": [
+          {
+            "name": "lineItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "backOrderedQuantity": 2,
+                  "toReleaseQuantity": 3,
+                  "locationNum": 23,
+                  "channelId": "channel_12",
+                  "vendorId": "vendor_123",
+                  "consentToDelay": "true",
+                  "consentDate": "2022-07-12T09:30:31.198Z",
+                  "lastNotificationDate": "2022-06-12T09:30:31.198Z",
+                  "toNotify": "false",
+                  "orderStatusCode": "Created",
+                  "lineItemStatus": "CANCELLED",
+                  "paymentStatus": "OK"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "BackOrderPreOrderReservation object Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackOrderPreOrderReservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/order/backorder/consent-to-delay": {
+      "post": {
+        "tags": [
+          "BackOrderPreOrderAck Controller"
+        ],
+        "summary": "To handle user response on consent of delay.",
+        "operationId": "consentToDelay",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentToDelay"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "backOrderPreOrderAck ping",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackOrderPreOrderReservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/backorderpreorder-update": {
+      "post": {
+        "tags": [
+          "BackOrderPreOrderUpdating Controller"
+        ],
+        "summary": "called when outer service updated any order has back/pre items, Allocation service after release",
+        "operationId": "updateBackOrderPreOrderReservationFromOrderDoc",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "orderNumbers": [
+                    "order-1656594188",
+                    "order-1656594944"
+                  ]
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "BackOrderPreOrder service will get back/pre items from order models",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/backorderpreorder-reserve": {
+      "get": {
+        "tags": [
+          "BackOrderPreOrderReservation Controller"
+        ],
+        "summary": "Get backOrderPreOrderReservation",
+        "operationId": "getBackOrderPreOrderReservationById",
+        "parameters": [
+          {
+            "name": "BackOrderPreOrderReservationId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "backOrderPreOrderReservation  returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackOrderPreOrderReservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "BackOrderPreOrderReservation Controller"
+        ],
+        "summary": "Create backOrderPreOrderReservation",
+        "operationId": "createBackOrderPreOrderReservation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackOrderPreOrderReservation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "backOrderPreOrderReservation Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackOrderPreOrderReservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "BackOrderPreOrderReservation Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "BackOrderPreOrderReservation Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/backorderpreorder-reserve/{identifier}": {
+      "get": {
+        "tags": [
+          "BackOrderPreOrderReservation Controller"
+        ],
+        "summary": "Get backOrderPreOrderReservation list",
+        "operationId": "getBackOrderPreOrderReservation",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "description": "orderNumber",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "orderNumber"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "backOrderPreOrderReservation list returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BackOrderPreOrderReservation"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BackOrderPreOrderReservation Controller"
+        ],
+        "summary": "Delete BackOrderPreOrderReservation",
+        "operationId": "deleteBackorderPreorderById",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "description": "backPreorderId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "backPreorderId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BackOrderPreOrderReservation object deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackOrderPreOrderReservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "ErrorResponse Model"
+      },
+      "BackOrderPreOrderReservation": {
+        "required": [
+          "backOrderedQuantity",
+          "channelId",
+          "lineItemId",
+          "locationNum",
+          "orderDate",
+          "orderNumber",
+          "orderStatusCode",
+          "sku",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1"
+          },
+          "orderNumber": {
+            "type": "string",
+            "example": "order_123"
+          },
+          "sku": {
+            "type": "string",
+            "example": "sku_123"
+          },
+          "lineItemId": {
+            "type": "string",
+            "example": "0"
+          },
+          "itemId": {
+            "type": "string",
+            "example": "123"
+          },
+          "type": {
+            "type": "string",
+            "example": "BACKORDER"
+          },
+          "cartId": {
+            "type": "string",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "orderDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-12T09:30:31.198Z"
+          },
+          "backOrderedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 5
+          },
+          "toReleaseQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 0
+          },
+          "locationNum": {
+            "type": "integer",
+            "format": "int32",
+            "example": 23
+          },
+          "channelId": {
+            "type": "string",
+            "example": "channel_12"
+          },
+          "vendorId": {
+            "type": "string",
+            "example": "vendor_123"
+          },
+          "consentToDelay": {
+            "type": "string",
+            "example": "true"
+          },
+          "consentDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-07-12T09:30:31.198Z"
+          },
+          "lastNotificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-06-12T09:30:31.198Z"
+          },
+          "toNotify": {
+            "type": "string",
+            "example": "false"
+          },
+          "orderStatusCode": {
+            "type": "string",
+            "example": "Created"
+          },
+          "lineItemStatus": {
+            "type": "string",
+            "example": "CANCELLED"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "OK"
+          }
+        },
+        "description": "BackOrderPreOrderReservation Model"
+      },
+      "ConsentToDelay": {
+        "required": [
+          "action",
+          "backOrderId"
+        ],
+        "type": "object",
+        "properties": {
+          "backOrderId": {
+            "type": "string",
+            "example": "1"
+          },
+          "action": {
+            "type": "string",
+            "example": "accept"
+          }
+        },
+        "description": "ConsentToDelay Model"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "description": "API Key for the user provided by fabric",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}

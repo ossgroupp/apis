@@ -1,0 +1,530 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "5057oe3yxhvpv"
+  },
+  "info": {
+    "title": "Cross Border service OpenAPI specification",
+    "version": "v2",
+    "description": "Fabric's Cross Border APIs provide high performance, multi-tenant service."
+  },
+  "servers": [
+    {
+      "url": "https://dev02.oms.libertytreemedia.com",
+      "description": "dev"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com",
+      "description": "stg"
+    },
+    {
+      "url": "https://uat01.oms.libertytreemedia.com",
+      "description": "sandbox"
+    },
+    {
+      "url": "https://prod01.oms.libertytreemedia.com",
+      "description": "prod01"
+    }
+  ],
+  "paths": {
+    "/api/v2/order/cross-border/validate-order": {
+      "post": {
+        "tags": [
+          "Service APIs"
+        ],
+        "summary": "Request to re-validate orders",
+        "description": "Request to re-validate orders that were on hold state at cross border",
+        "operationId": "validateOrder",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ValidateOrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/order/cross-border/release-order": {
+      "post": {
+        "tags": [
+          "Service APIs"
+        ],
+        "summary": "Request to release an order",
+        "description": "Request to release an order that is on hold state at cross border",
+        "operationId": "releaseOrder",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/event/cross-border-service": {
+      "post": {
+        "tags": [
+          "Events API"
+        ],
+        "summary": "Request to release an order",
+        "description": "Request to realese or validate orders that is on hold state at cross border",
+        "operationId": "crossBorderEvents",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Event"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "detail": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/ValidationOrderRequestedEvent"
+                          },
+                          {
+                            "$ref": "#/components/schemas/ReleaseOrderRequestedEvent"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ValidateOrderRequest": {
+        "type": "object",
+        "required": [
+          "orderNumbers"
+        ],
+        "properties": {
+          "orderNumbers": {
+            "type": "array",
+            "description": "order numbers list to be re-validated",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ValidateOrderResponse": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "description": "results for re-validated requests",
+            "items": {
+              "type": "object",
+              "properties": {
+                "orderNumber": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "string",
+                  "enum": [
+                    "SUCCESS",
+                    "FAIL"
+                  ]
+                },
+                "message": {
+                  "description": "contains details when the result is fail",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationOrderRequestedEvent": {
+        "type": "object",
+        "required": [
+          "orderNumber"
+        ],
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "order number to be re-validated"
+          }
+        }
+      },
+      "ReleaseOrderRequest": {
+        "type": "object",
+        "required": [
+          "orderNumber",
+          "releaseType"
+        ],
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "order number to be released"
+          },
+          "releaseType": {
+            "type": "string",
+            "description": "type of release for the order",
+            "enum": [
+              "RELEASE",
+              "CANCEL"
+            ]
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "reason for release the order"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "sub reason for release the order"
+          },
+          "note": {
+            "type": "string",
+            "description": "general note for release the order"
+          }
+        }
+      },
+      "ReleaseOrderRequestedEvent": {
+        "type": "object",
+        "required": [
+          "orderNumber",
+          "releaseType"
+        ],
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "order number to be released"
+          },
+          "releaseType": {
+            "type": "string",
+            "description": "type of release for the order",
+            "enum": [
+              "RELEASE",
+              "CANCEL"
+            ]
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "reason for release the order"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "sub reason for release the order"
+          },
+          "note": {
+            "type": "string",
+            "description": "general note for release the order"
+          }
+        }
+      },
+      "ValidateOrderWebhookPayload": {
+        "type": "object",
+        "description": "webhook payolad for the event CROSSBORDER_VALIDATION",
+        "required": [
+          "orderNumber"
+        ],
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "order number to be re-validated"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "order id to be re-validated"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "example": 1
+          },
+          "id": {
+            "type": "string",
+            "example": "ca4f7be6-35a5-7630-6ddb-714555ad708e"
+          },
+          "detail-type": {
+            "type": "string",
+            "example": "ValidationOrderRequested or ReleaseOrderRequested"
+          },
+          "source": {
+            "type": "string",
+            "example": "order-service"
+          },
+          "account": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-04-20T10:24:36.162Z"
+          },
+          "region": {
+            "type": "string",
+            "example": "us-east-1"
+          }
+        }
+      },
+      "SiteContext": {
+        "description": "JSON object containing `channel`, `account`, `stage`, `date`, and `site`.",
+        "type": "object",
+        "required": [
+          "channel",
+          "account",
+          "stage"
+        ],
+        "properties": {
+          "channel": {
+            "description": "Sales channel",
+            "type": "number",
+            "example": 12
+          },
+          "account": {
+            "description": "Merchant account ID",
+            "type": "string",
+            "example": "5f328bf0b"
+          },
+          "stage": {
+            "description": "Stage name",
+            "type": "string",
+            "example": "dev"
+          },
+          "date": {
+            "description": "Localized date and time",
+            "type": "string",
+            "example": "2021-04-20T10:24:36.162Z"
+          },
+          "site": {
+            "description": "Source origin (or storefront) of the request",
+            "type": "string",
+            "example": "libertytreemedia.com"
+          }
+        }
+      },
+      "ClientError": {
+        "description": "Client error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "Invalid request payload or parameter"
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Server error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "An internal error occurred. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not-found error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "Resource not found. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      }
+    }
+  }
+}

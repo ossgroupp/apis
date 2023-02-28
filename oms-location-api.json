@@ -1,0 +1,1497 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "vo303jlzut2tx"
+  },
+  "info": {
+    "title": "Location APIs",
+    "description": "fabric's `Location` APIs provide high performance, multi-tenancy, and configurability to the end-to-end location lifecycle events.These location APIs are mapped with inventory.",
+    "contact": {
+      "name": "Location Support",
+      "url": "https://www.libertytreemedia.com/",
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Inc",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com",
+      "description": "Development"
+    },
+    {
+      "url": "https://stg01.oms.libertytreemedia.com",
+      "description": "Staging"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Location",
+      "description": "Location endpoints let you create, read, update, and delete location."
+    },
+    {
+      "name": "Attribute",
+      "description": "Location attribute endpoints let you create, read, update, and delete location attributes. These location attributes are used while creating or updating locations. When the attribute is configured  as required, it is mandatory to add the attribute while creating location."
+    }
+  ],
+  "paths": {
+    "/api/v2/location": {
+      "get": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Get all locations",
+        "description": "Retrieves a paginated list of all locations",
+        "operationId": "getAllLocations",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "locationSearchModel",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LocationSearchModel"
+            }
+          },
+          {
+            "name": "paginationModel",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PaginationModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedLocationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Create location",
+        "description": "Creates a location with all of its details, such as location number, name, address, operating hours, operation type, location coordinates, and so on.",
+        "operationId": "createLocation",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Location"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Either Location number or coordinates already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/location/{locationNum}": {
+      "get": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Get specific location",
+        "description": "Retrieves details of a specific location based on specified location number",
+        "operationId": "getLocation",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "locationNum",
+            "description": "Unique number to identify the location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 13
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Location"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Update location by overriding existing details",
+        "description": "This endpoint updates details of a location by overriding the existing values with the details that are specified in the request body, or creates a location if location does not exist. If an existing property is not mentioned in the request body, then the value for the existing property will be displayed as null or zero. Location is identified based on the location number.",
+        "operationId": "updateLocation",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "locationNum",
+            "description": "Unique number to identify the location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 13
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Location"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Update location by adding new property",
+        "description": "This endpoint does not override all the existing properties, rather it updates location by adding only those properties or by updating the existing location properties that are specified in the request body. Location is identified by the unique location number.",
+        "operationId": "patchLocation",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "locationNum",
+            "description": "location number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 13
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Location Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Location"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Location"
+        ],
+        "summary": "Delete specific location",
+        "description": "Deletes a specific location based on specified location number",
+        "operationId": "deleteLocation",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "locationNum",
+            "description": "Location number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 13
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Location Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Location"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/location/attribute": {
+      "post": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Create location attribute",
+        "description": "Creates a unique location attribute",
+        "operationId": "createAttribute",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationAttributeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationAttribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictError"
+                },
+                "example": {
+                  "message": "Entered code is a duplicated code"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Get all location attributes",
+        "description": "Retrieves attributes for all the locations",
+        "operationId": "listAttribute",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationAttributeList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictError"
+                },
+                "example": {
+                  "message": "Entered code is a duplicated code"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/location/attribute/{code}": {
+      "get": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Get location attribute by code",
+        "description": "Retrieves details of the location attribute by attribute code",
+        "operationId": "getAttributeByCode",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "code",
+            "description": "Attribute code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "isBopis"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationAttribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Update location attribute by code",
+        "description": "Updates the location attribute by attribute code",
+        "operationId": "updateAttributeByCode",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "code",
+            "description": "Attribute code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "isBopis"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationAttributeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationAttribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Delete location attribute by code",
+        "description": "deletes the location attribute by attribute code",
+        "operationId": "deleteAttributeByCode",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "code",
+            "description": "Attribute code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "isBopis"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationAttribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "description": "Location address details",
+        "type": "object",
+        "properties": {
+          "addressLine1": {
+            "description": "Address line 1",
+            "type": "string",
+            "example": "2800 Ashcraft Court"
+          },
+          "addressLine2": {
+            "description": "Address line 2",
+            "type": "string",
+            "example": "Fairview road"
+          },
+          "addressLine3": {
+            "description": "Address line 3",
+            "type": "string",
+            "example": "N 9 1/2 street"
+          },
+          "addressLine4": {
+            "description": "Address line 4",
+            "type": "string",
+            "example": "Coronado school"
+          },
+          "city": {
+            "description": "city",
+            "type": "string",
+            "example": "Coronado"
+          },
+          "state": {
+            "description": "State name the location belongs to",
+            "type": "string",
+            "example": "California"
+          },
+          "country": {
+            "description": "Country name of the location",
+            "type": "string",
+            "example": "USA"
+          },
+          "postalCode": {
+            "description": "Postal code",
+            "type": "string",
+            "example": 92118
+          },
+          "type": {
+            "description": "Address type",
+            "type": "string",
+            "example": "2800 Ashcraft Court"
+          },
+          "contact": {
+            "description": "Contact list",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          }
+        }
+      },
+      "Contact": {
+        "description": "Location contact details",
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "Contact type",
+            "type": "string",
+            "example": "Residence"
+          },
+          "email": {
+            "description": "Email address of the location",
+            "type": "string",
+            "example": "mark@email.com"
+          },
+          "phone": {
+            "description": "Phone list",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Phone"
+            }
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          }
+        }
+      },
+      "Hours": {
+        "type": "object",
+        "properties": {
+          "open": {
+            "description": "Location opening time",
+            "type": "string",
+            "example": "10:00"
+          },
+          "close": {
+            "description": "Location closing time",
+            "type": "string",
+            "example": "16:00"
+          },
+          "type": {
+            "description": "operating type",
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "PICK_UP"
+            ]
+          }
+        }
+      },
+      "Name": {
+        "description": "Name object contains full name of the individual to contact, who reside in the location",
+        "type": "object",
+        "properties": {
+          "first": {
+            "description": "First name",
+            "type": "string",
+            "example": "John"
+          },
+          "middle": {
+            "description": "Middle name",
+            "type": "string",
+            "example": "Mark"
+          },
+          "last": {
+            "description": "Last name",
+            "type": "string",
+            "example": "Doe"
+          }
+        }
+      },
+      "OperatingHours": {
+        "description": "Operating hours of the location",
+        "type": "object",
+        "properties": {
+          "day": {
+            "description": "Day of the week",
+            "type": "string",
+            "example": "Monday"
+          },
+          "hours": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hours"
+            }
+          }
+        }
+      },
+      "Phone": {
+        "description": "Phone details",
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "example": "555-555-5555"
+          },
+          "type": {
+            "type": "string",
+            "example": "mobile"
+          }
+        }
+      },
+      "GeoJsonPoint": {
+        "description": "coordinate details of the location in Geo Json format",
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "Coordinate type",
+            "type": "string",
+            "example": "Point"
+          },
+          "coordinates": {
+            "description": "Coordinate list, x and y coordinates in degree",
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double",
+              "example": [
+                "-22.95239063733024",
+                "-43.21034257655916"
+              ]
+            }
+          }
+        }
+      },
+      "LocationRequest": {
+        "description": "Location details",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "description": "Custom location attributes",
+            "type": "object",
+            "example": {
+              "isReturns": true
+            }
+          },
+          "locationNum": {
+            "description": "Unique number to identify the location",
+            "type": "integer",
+            "format": "int32",
+            "example": 13
+          },
+          "name": {
+            "description": "Name of the location",
+            "type": "string",
+            "example": "CA"
+          },
+          "isActive": {
+            "description": "true indicates location is active<br>false indicates location is inactive.",
+            "type": "boolean",
+            "example": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "type": {
+            "description": "Type of inventory location",
+            "type": "string",
+            "example": "Warehouse"
+          },
+          "operatingHours": {
+            "description": "Operating hours of the location",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OperatingHours"
+            }
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/GeoJsonPoint"
+          }
+        }
+      },
+      "Location": {
+        "description": "This object contains location details",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "description": "Location attribute object",
+            "type": "object",
+            "example": {
+              "isReturns": true
+            }
+          },
+          "id": {
+            "description": "Unique location identifier",
+            "type": "string",
+            "example": "622fae9a065d9e62a4029f79"
+          },
+          "locationNum": {
+            "description": "Unique number to identify the location",
+            "type": "integer",
+            "format": "int32",
+            "example": 13
+          },
+          "name": {
+            "description": "Location name",
+            "type": "string",
+            "example": "CA"
+          },
+          "isActive": {
+            "description": "true indicates location is active<br>false indicates location is inactive.",
+            "type": "boolean",
+            "example": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "type": {
+            "description": "Location type",
+            "type": "string",
+            "example": "warehouse"
+          },
+          "createdAt": {
+            "description": "Date on which the location is created",
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "description": "Date on which the location is updated",
+            "type": "string",
+            "format": "date-time"
+          },
+          "operatingHours": {
+            "description": "Operating hours of the location",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OperatingHours"
+            }
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/GeoJsonPoint"
+          }
+        }
+      },
+      "LocationSearchModel": {
+        "type": "object",
+        "properties": {
+          "locationNums": {
+            "description": "To query location based on a single or multiple location numbers. For multiple location numbers, add comma separated values.",
+            "type": "string",
+            "example": "13,12,15"
+          },
+          "locationTypes": {
+            "description": "To query location based on single or multiple location types. For multiple location types, add comma separated values.",
+            "type": "string",
+            "example": "warehouse, pickup"
+          }
+        }
+      },
+      "PaginationModel": {
+        "description": "Pagination object represents the process of separating data into different pages",
+        "type": "object",
+        "properties": {
+          "total": {
+            "description": "Total number of location records",
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "limit": {
+            "description": "Number of records returned on a single page",
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "offset": {
+            "description": "Number of records skipped before selecting the records, default is `zero`",
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "example": 0
+          }
+        }
+      },
+      "PaginatedLocationResponse": {
+        "description": "Paginated location details",
+        "type": "object",
+        "properties": {
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Location"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationModel"
+          }
+        }
+      },
+      "ClientError": {
+        "description": "Client error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "Invalid payload or parameter"
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Server error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "An internal error occurred. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not-found error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "Resource not found. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "ConflictError": {
+        "description": "Resource conflict",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "Resource conflict. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "LocationAttributeRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "Location attribute code",
+            "type": "string",
+            "example": "isBopis"
+          },
+          "name": {
+            "description": "Location attribute name",
+            "type": "string",
+            "example": "isBopis"
+          },
+          "description": {
+            "description": "Detailed description of the attribute",
+            "type": "string",
+            "example": "To check the status of the BOPIS(Buy-Online-Pickup-In-Store)"
+          },
+          "type": {
+            "description": "Data type of an attribute",
+            "type": "string",
+            "enum": [
+              "BOOLEAN",
+              "INTEGER",
+              "NUMBER",
+              "STRING"
+            ]
+          },
+          "required": {
+            "description": "Flag to define the attribute as mandatory while creating location. If it's configured as true, this attribute is mandatory while creating location.",
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "LocationAttributeList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/LocationAttribute"
+        }
+      },
+      "LocationAttribute": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Location attribute ID that is generated automatically for the location",
+            "type": "string",
+            "example": "622786ae0bdb19221a24fb61"
+          },
+          "code": {
+            "description": "Location attribute code",
+            "type": "string",
+            "example": "isBopis"
+          },
+          "name": {
+            "description": "Location attribute name",
+            "type": "string",
+            "example": "Is Bopis"
+          },
+          "description": {
+            "description": "Detailed description about attribute",
+            "type": "string",
+            "example": "To check the status of the BOPIS (Buy-Online_Pickup-In-Store)"
+          },
+          "type": {
+            "description": "Data type of an attribute",
+            "type": "string",
+            "enum": [
+              "BOOLEAN",
+              "INTEGER",
+              "NUMBER",
+              "STRING"
+            ]
+          },
+          "required": {
+            "description": "Flag to define the attribute as mandatory while creating location. If it's configured as true, this attribute is needed while creating location",
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "SiteContext": {
+        "description": "JSON object containing `channel`, `account`, `stage`, `date`, and `site`.",
+        "type": "object",
+        "required": [
+          "channel",
+          "account",
+          "stage"
+        ],
+        "properties": {
+          "channel": {
+            "description": "Sales channel",
+            "type": "number",
+            "example": 12
+          },
+          "account": {
+            "description": "Merchant account ID. It is a 24 character alphanumeric account value of merchants copilot account, provided by fabric",
+            "type": "string",
+            "example": "5z689abc4216v8000930d1ef"
+          },
+          "stage": {
+            "description": "Stage name",
+            "type": "string",
+            "example": "sandbox"
+          },
+          "date": {
+            "description": "UTC date and time",
+            "type": "string",
+            "example": "2021-04-20T10:24:36.162Z"
+          },
+          "site": {
+            "description": "Source origin (or storefront) of the request",
+            "type": "string",
+            "example": "libertytreemedia.com"
+          }
+        }
+      }
+    }
+  }
+}

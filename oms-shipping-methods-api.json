@@ -1,0 +1,1151 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "fbx6g947r28pt"
+  },
+  "info": {
+    "title": "service for Shipping Methods",
+    "description": "provides multi-carrier shipping and logistics solution to address all of your common shipping issues, without the addition of expensive infrastructure. You can explore various shipping methods with rates, and configure them to your ecommerce store. This will help provide your customers with options that are most suitable for their needs, since some are willing to add additional items to the cart in order to qualify for free shipping, while others are willing to pay more for same-day or next-day delivery. Therefore, offering the right options is crucial for a delightful shopping experience. Shipping rates are the most crucial part of shipping methods and are dependent on shipment's dimensions, weight, size, source of origin and destination, and type of packaging.",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/shipping",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/shipping",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/shipping",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Shipping Method",
+      "description": "Endpoints to perform operations related to shipping methods"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [
+          "Shipping Method"
+        ],
+        "summary": "Create shipping method",
+        "description": "Creates shipping method. Response includes **shippingMethodId**, which is required for subsequent calls such as *GET /{shipmethodId}*, *PATCH/{shipmethodId}*, *DELETE /{shipmethodId}*, and *GET /{shipMethodId}/items*.",
+        "operationId": "createShipmethod",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipMethod"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipMethod"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ship method Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{shipmethodId}": {
+      "get": {
+        "tags": [
+          "Shipping Method"
+        ],
+        "summary": "Get shipping method",
+        "description": "Gets details of a shipping method by its ID.",
+        "operationId": "getShipmethodById",
+        "parameters": [
+          {
+            "name": "shipmethodId",
+            "in": "path",
+            "description": "24-character system-generated unique ID of shipping method",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipMethod"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ShipMethod Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "ShipMethod Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Shipping Method"
+        ],
+        "summary": "Delete shipping method",
+        "description": "Deletes a shipping method by its ID",
+        "operationId": "deleteShipmethodById",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          },
+          {
+            "name": "shipmethodId",
+            "in": "path",
+            "description": "24-character system-generated unique ID of shipping method",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "62fa3796841ea417fa71d2a9"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipMethod"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ShipMethod Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "ShipMethod Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Shipping Method"
+        ],
+        "summary": "Update shipping method",
+        "description": "Updates shipping method by its Id",
+        "operationId": "updateShipmethodById",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          },
+          {
+            "name": "shipmethodId",
+            "description": "24-character system-generated unique ID of shipping method",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "62fa3796841ea417fa71d2a9"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipMethod"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipMethod"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ShipMethod Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "ShipMethod Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{shipMethodId}/item": {
+      "post": {
+        "tags": [
+          "Shipping Method"
+        ],
+        "summary": "Add items to shipping methods",
+        "description": "Associated items to a shipping method",
+        "operationId": "addItemsToShipMethod",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          },
+          {
+            "name": "shipMethodId",
+            "in": "path",
+            "required": true,
+            "description": "24-character system-generated unique ID for shipping method",
+            "schema": {
+              "type": "string"
+            },
+            "example": "62fa3796841ea417fa71d2a9"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemIds"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShipMethodItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ShipMethod Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query": {
+      "post": {
+        "tags": [
+          "Shipping Method"
+        ],
+        "summary": "Filter shipping methods",
+        "description": "Gets shipping method by specified filter criteria.",
+        "operationId": "getShipMethodsByQuery",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShippingMethodQueryModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibQueryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ShipMethod Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{shipMethodId}/items": {
+      "get": {
+        "tags": [
+          "Shipping Method"
+        ],
+        "summary": "Get ItemIds for a shipping method",
+        "description": "Gets items associated with a shipping method",
+        "operationId": "getItemIdsForShippingMethod",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          },
+          {
+            "name": "shipMethodId",
+            "in": "path",
+            "description": "24-character system-generated shipping method ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "62fa3796841ea417fa71d2a9"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Ending record number (from the offset number) in the response. When no value is provided, the default value is 10.",
+            "schema": {
+              "type": "string",
+              "example": 10
+            },
+            "example": 10
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Starting number of the record (within the total number of records) in the response. Offset is zero-based. That is, the 10th record is at offset 9 starting from the 0th record. When no value is provided, the default value is 0",
+            "schema": {
+              "type": "string",
+              "example": 0
+            },
+            "example": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemIdsPaginationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ShipMethod Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "ShipMethod Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shippingMethods/{itemId}": {
+      "get": {
+        "tags": [
+          "Shipping Method"
+        ],
+        "summary": "Get shipping methods for an item",
+        "description": "Gets shipping methods for an item",
+        "operationId": "getShippingMethodsForItem",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "Item ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 1234
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShippingMethodsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ShipMethod Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "ShipMethod Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "XSiteContext": {
+        "required": [
+          "account",
+          "stage"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "Time of endpoint execution",
+            "type": "string",
+            "example": "2022-11-28T10:31:31.454Z"
+          },
+          "channel": {
+            "description": "Sales channel ID",
+            "type": "number",
+            "example": 12
+          },
+          "account": {
+            "description": "24 character client's co-pilot account ID",
+            "type": "string",
+            "example": "61ef7087d2f68100124b706d"
+          },
+          "stage": {
+            "description": "Environment shared with the client during onboarding",
+            "type": "string",
+            "example": "Sandbox"
+          }
+        },
+        "description": "JSON object containing `account`, `stage`, `date`, and `site`."
+      },
+      "Dimension": {
+        "type": "object",
+        "properties": {
+          "height": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2,
+            "description": "Height of shipment"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3,
+            "description": "Width of shipment"
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32",
+            "example": 4,
+            "description": "Length of shipment"
+          }
+        },
+        "description": "Dimension details"
+      },
+      "MinMaxDimension": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "$ref": "#/components/schemas/Dimension"
+          },
+          "max": {
+            "$ref": "#/components/schemas/Dimension"
+          }
+        },
+        "description": "Min-Max dimension details"
+      },
+      "MinMaxValue": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2,
+            "description": "Minimum value"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3,
+            "description": "Maximum value"
+          }
+        },
+        "description": "Min-max value"
+      },
+      "ShipMethod": {
+        "required": [
+          "addressType",
+          "channel",
+          "cost",
+          "createdBy",
+          "cutOffTime",
+          "description",
+          "maximumDays",
+          "minimumDays",
+          "name",
+          "taxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "shippingMethodId": {
+            "type": "string",
+            "example": "5349b4ddd2781d08c09890f4",
+            "description": "24-character system-generated unique shipping method ID. Optional in the request body"
+          },
+          "name": {
+            "type": "string",
+            "example": "Express Delivery",
+            "description": "Shipping method name"
+          },
+          "description": {
+            "type": "string",
+            "example": "Express Delivery 2 - 5 days",
+            "description": "Brief description of shipping method"
+          },
+          "taxCode": {
+            "type": "string",
+            "example": "tax_1",
+            "description": "Tax code based on the state"
+          },
+          "minimumDays": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2,
+            "description": "Minimum days for delivery"
+          },
+          "maximumDays": {
+            "type": "integer",
+            "format": "int32",
+            "example": 5,
+            "description": "Maximum days for delivery"
+          },
+          "cutOffTime": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1330,
+            "description": "Cut off delivery time"
+          },
+          "cost": {
+            "type": "number",
+            "example": 20,
+            "description": "Shipping cost"
+          },
+          "channel": {
+            "type": "string",
+            "example": "12",
+            "description": "Sales channel"
+          },
+          "region": {
+            "description": "Region or state of shipping",
+            "type": "string",
+            "example": "CA"
+          },
+          "deleted": {
+            "type": "boolean",
+            "example": false,
+            "description": "true: Shipping method is deleted <br> false: Shipping method is active"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "User1",
+            "description": "User who created the shipping method"
+          },
+          "updatedBy": {
+            "type": "string",
+            "example": "User2",
+            "description": "User who last modified the shipping method"
+          },
+          "configuredBy": {
+            "type": "string",
+            "example": "User3",
+            "description": "User who configured the shipping method"
+          },
+          "addressType": {
+            "type": "string",
+            "example": "APO",
+            "description": "Address type of delivery"
+          },
+          "weight": {
+            "$ref": "#/components/schemas/MinMaxValue"
+          },
+          "cartValue": {
+            "$ref": "#/components/schemas/MinMaxValue"
+          },
+          "dimension": {
+            "$ref": "#/components/schemas/MinMaxDimension"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time of shipping method creation"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time of shipping method creation"
+          }
+        },
+        "description": "Details of shipping method"
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "Error details"
+      },
+      "ItemIds": {
+        "required": [
+          "itemIds"
+        ],
+        "type": "object",
+        "properties": {
+          "itemIds": {
+            "description": "List of item IDs",
+            "example": [
+              "234553",
+              "12345"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "List of item IDs"
+      },
+      "ShipMethodItem": {
+        "required": [
+          "itemId",
+          "shippingMethodId"
+        ],
+        "type": "object",
+        "properties": {
+          "shippingMethodId": {
+            "type": "string",
+            "example": "5349b4ddd2781d08c09890f4",
+            "description": "24-character system-generated shipping method ID"
+          },
+          "itemId": {
+            "type": "string",
+            "example": "1234",
+            "description": "Item ID"
+          },
+          "deleted": {
+            "type": "boolean",
+            "example": false,
+            "description": "true: Item is deleted <br> false: Item is not deleted"
+          }
+        },
+        "description": "Details of item and shipping method"
+      },
+      "ShippingMethodQueryModel": {
+        "required": [
+          "filters",
+          "sortBy"
+        ],
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Ending record number (from the offset number) in the response. When no value is provided, the default value is 10.",
+            "format": "int32",
+            "example": 10,
+            "default": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Starting number of the record (within the total number of records) in the response. Offset is zero-based. That is, the 10th record is at offset 9 starting from the 0th record. When no value is provided, the default value is 0",
+            "format": "int64",
+            "example": 0,
+            "default": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "example": "createdBy",
+            "default": "createdAt",
+            "description": "Sorting criteria"
+          },
+          "sortDirection": {
+            "type": "string",
+            "example": "desc",
+            "default": "asc",
+            "description": "Sorting direction - ascending or descending",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "name": "UPS",
+                "description": "UPS for 2-5 days",
+                "deleted": "false",
+                "addressType": [
+                  "APO"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                },
+                "createdBy": "USER-1"
+              },
+              "default": {}
+            },
+            "example": {
+              "name": "UPS",
+              "description": "UPS for 2-5 days",
+              "deleted": "false",
+              "addressType": [
+                "APO"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              },
+              "createdBy": "USER-1"
+            },
+            "default": {}
+          }
+        },
+        "description": "Filter criteria"
+      },
+      "LibQueryResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "example": 100,
+            "description": "Total number of records"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10,
+            "description": "Ending record number (from the offset number) in the response. When no value is provided, the default value is 10"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "description": "Starting number of the record (within the total number of records) in the response. Offset is zero-based. That is, the 10th record is at offset 9 starting from the 0th record. When no value is provided, the default value is 0"
+          }
+        },
+        "description": "Pagination details"
+      },
+      "ItemIdsPaginationResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "example": 100,
+            "description": "Total number of records"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "description": "Starting number of the record (within the total number of records) in the response. Offset is zero-based. That is, the 10th record is at offset 9 starting from the 0th record. When no value is provided, the default value is 0"
+          },
+          "itemIds": {
+            "type": "array",
+            "description": "List of item IDs",
+            "example": [
+              "1233434",
+              "223333"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Paginated response of items"
+      },
+      "ShippingMethodsResponse": {
+        "type": "object",
+        "properties": {
+          "shippingMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipMethod"
+            }
+          }
+        },
+        "description": "Details of shippng method"
+      },
+      "ShippingMethodItemList": {
+        "required": [
+          "shipMethodItems"
+        ],
+        "type": "object",
+        "properties": {
+          "shipMethodItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipMethodItem"
+            }
+          }
+        },
+        "description": "Details of items associated with shipping method"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

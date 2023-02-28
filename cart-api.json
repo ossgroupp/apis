@@ -1,0 +1,4223 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "uia0qdfm7t45v"
+  },
+  "info": {
+    "title": "Cart",
+    "description": "Cart API lets you add, update, and remove items from your Storefront cart, either as a guest user or as a logged-in user. It also provides functionality to merge carts when you switch from guest user to logged-in user, and apply coupon codes and other attributes (for example, gift wrapping) to the cart items. Additionally, it supports more advanced use cases such as using multiple carts within a B2B organization and sharing of carts, as well as supporting a unified cart experience for multi-region and multi-brand businesses. <br><br>This API provides high performance, scalability, multi-tenancy, and configurability to the end-to-end order processing actions that start from an item being added to the cart, through the pre-checkout stage that includes billing, shipping, and payment details, to the checkout stage where the order is processed and confirmed by the Order Management System (OMS).<br><br>**Note:** This is the new Cart v2 API. To view 's legacy Cart v1 API, navigate to `OMS > Commerce APIs > Cart` from the left side navigation pane.",
+    "contact": {
+      "name": "Cart Support",
+      "email": "support.cnc@libertytreemedia.com"
+    },
+    "license": {
+      "name": " Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://dev.cart.libertytreemedia.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Cart",
+      "description": "Cart endpoints let you do basic cart operations, such as create a cart, add item to the cart, update items, remove items, delete cart, update status of the cart, and more."
+    },
+    {
+      "name": "Attribute",
+      "description": "Attribute endpoints let you add, update, and remove different types of attributes to and from the cart, and items in the cart."
+    },
+    {
+      "name": "Shipping",
+      "description": "Shipping endpoints let you do shipping related activities, such as create or update shipping details ID, add shipping information to all items of the cart, add different shipping details for different items, and more."
+    }
+  ],
+  "paths": {
+    "/v2/carts": {
+      "get": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Get all carts",
+        "description": "Get all carts belonging to the user or to a merchant by authorization token",
+        "operationId": "getCarts",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Cart"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/items": {
+      "post": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Add items to cart",
+        "description": "Add items to cart, or create a new cart if cart does not exist",
+        "operationId": "addItem",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user. Required only while accessing a logged-in user cart.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for adding items to, or updating items in the cart",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddItemPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/search": {
+      "post": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Search for carts",
+        "description": "Search for carts meeting specified criteria, including creation date, status, user, approver, and purchase order",
+        "operationId": "searchCarts",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for search cart",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchCartPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchCartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}": {
+      "get": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Get specific cart",
+        "description": "Get cart for specified cart ID",
+        "operationId": "getCartById",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "Cart ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Delete cart items",
+        "description": "Deletes cart information after purchase of cart items is complete. This is a soft delete that sets the status of the cart to *deleted* after the cart items are purchased and the order moves to shipping. The cart ID is not deleted.",
+        "operationId": "deleteCart",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart to be deleted",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          },
+          {
+            "name": "orderNumber",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2947-5955-82579",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/attributes": {
+      "patch": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Add or update cart attributes",
+        "description": "Add or update attributes for a specified cart",
+        "operationId": "updateCartAttribute",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart for which attributes will be added or updated",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Cart attribute information to be added or updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCartAttributePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/attributes/{attributeId}": {
+      "delete": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Delete specific cart attribute",
+        "description": "Deletes a specified attribute and metadata from a specified cart",
+        "operationId": "deleteCartAttribute",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          },
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart for which attribute is to be deleted",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "attributeId",
+            "in": "path",
+            "description": "ID of attribute to be deleted",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "60c2a368eb2ec30008ae70a2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/item/attribute": {
+      "patch": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Add or update specific item attribute",
+        "description": "Add or update specified cart item attribute",
+        "operationId": "updateCartItemAttribute",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart for which item attribute needs to be updated",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body containing item attribute information to be updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PricedItemAttributeIdValue"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/item/attribute/{attributeId}/{lineItemId}": {
+      "delete": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Delete a specific item attribute",
+        "description": "Deletes a specified attribute from a specified item in a specified cart",
+        "operationId": "deleteCartItemAttribute",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart containing item whose attribute is to be deleted",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          },
+          {
+            "name": "attributeId",
+            "in": "path",
+            "description": "ID of attribute to be deleted",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "60c2a368eb2ec30008ae70a2"
+            }
+          },
+          {
+            "name": "lineItemId",
+            "in": "path",
+            "description": "Cart item sequence number (starts at 1) of item whose attribute is to be deleted",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/items": {
+      "delete": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Delete items from specific cart",
+        "description": "Removes all items from specified cart",
+        "operationId": "removeItems",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart for which all the items need to be removed",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Update items in specific cart",
+        "description": "Updates item information, such as quantity, price, attributes, in a specified cart",
+        "operationId": "updateItems",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart for which items need to be updated",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body containing item information to be updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyItemPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/shipping-details": {
+      "post": {
+        "tags": [
+          "Shipping"
+        ],
+        "summary": "Create shipping details for all items specific cart",
+        "description": "Create shipping details for all items in a specified cart. Shipping details are identified by a unique `shippingDetailsId`, and include the shipment's delivery address, shipment method, pickup persons' details, warehouse ID, store ID, and more.",
+        "operationId": "createShipTo",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart for which shipping data is being created",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user. Required only while accessing a logged-in user cart.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body containing shipping details to be created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShipToPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Shipping"
+        ],
+        "summary": "Update shipping details for all items in a specific cart",
+        "description": "Update shipping details for all items in a specified cart. Shipping details include the shipment's delivery address, shipment method, pickup persons' details, warehouse ID, store ID, and more.",
+        "operationId": "updateShipTo",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart for which shipping data is being updated",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body containing shipping details to be updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateShipToPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/items/shipping-details": {
+      "patch": {
+        "tags": [
+          "Shipping"
+        ],
+        "summary": "Create shipping details for specific items in specific cart",
+        "description": "Create shipping details for specified items in a specified cart. Shipping details are identified by a unique `shippingDetailsId`, and include the shipment's delivery address, shipment method, pickup persons' details, warehouse ID, store ID, and more.",
+        "operationId": "addShipToCart",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "Cart ID for which shipping details are being created",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user. Required only while accessing a logged-in user cart.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for adding shipping details to specified items in the specified cart",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddShipToLineItems"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/items/{lineItemId}": {
+      "delete": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Remove an item from the cart",
+        "description": "Deletes a specified item from a specified cart",
+        "operationId": "removeItem",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart for which the specified item needs to be removed",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "lineItemId",
+            "in": "path",
+            "description": "Cart item sequence number (starts at 1) of item to be removed from cart",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user. Required only while accessing a logged-in user cart.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/merge": {
+      "patch": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Merge carts",
+        "description": "Merges guest cart and logged-in user cart",
+        "operationId": "mergeCart",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of guest cart which is to be merged",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token for the user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/promo/{promoCode}": {
+      "delete": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Remove an individual promotion from all items in a specific cart",
+        "description": "Removes a specified promotion from all items in specified cart",
+        "operationId": "removePromo",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart ID from which promotion needs to be removed",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "promoCode",
+            "in": "path",
+            "description": "Code of promotion to be removed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/promos/{promoCode}": {
+      "post": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Apply a specific promotion to all items in a specific cart",
+        "description": "Apply a specified promotion or coupon to all items of a specific cart",
+        "operationId": "applyPromo",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart ID to which promotion needs to be applied",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "promoCode",
+            "in": "path",
+            "description": "Code of promotion to be applied",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/shipping-details/{shippingDetailsId}": {
+      "get": {
+        "tags": [
+          "Shipping"
+        ],
+        "summary": "Get specific shipping details for a specific cart",
+        "description": "Get specified shipping details of items in a specified cart",
+        "operationId": "getShipTo",
+        "parameters": [
+          {
+            "name": "shippingDetailsId",
+            "in": "path",
+            "description": "ID of shipping details that are being retrieved",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID of cart whose shipping details are being retrieved",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/carts/{cartId}/status/{cartStatus}": {
+      "patch": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Update status of specific cart",
+        "description": "Update status of specified cart",
+        "operationId": "updateCartStatus",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "description": "ID for cart whose status is to be updated",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+            }
+          },
+          {
+            "name": "cartStatus",
+            "in": "path",
+            "description": "New cart status",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CartState"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "description": "API Key for Gateway",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "xSiteContext": {
+        "description": "JSON object containing `channel`, `account`, `stage`, `date`, and `site`.",
+        "type": "object",
+        "required": [
+          "channel",
+          "account",
+          "stage"
+        ],
+        "properties": {
+          "channel": {
+            "description": "Sales channel",
+            "type": "number",
+            "example": 12
+          },
+          "account": {
+            "description": "Merchant account ID",
+            "type": "string",
+            "example": "5f328bf0b"
+          },
+          "stage": {
+            "description": "Stage name",
+            "type": "string",
+            "example": "dev"
+          },
+          "date": {
+            "description": "UTC date and time",
+            "type": "string",
+            "example": "2021-04-20T10:24:36.162Z",
+            "default": "current date and time"
+          },
+          "site": {
+            "description": "Source origin (or storefront) of the request",
+            "type": "string",
+            "example": "libertytreemedia.com"
+          }
+        }
+      },
+      "AddItemPayload": {
+        "description": "Items (with details) to add to cart",
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "description": "Existing cart ID, or NULL for new cart",
+            "nullable": true,
+            "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "items": {
+            "description": "Items to add to cart",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemPayload"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the cart",
+            "nullable": true,
+            "example": "cart_it"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for the cart",
+            "nullable": true,
+            "example": "cart for the IT department"
+          },
+          "networkCode": {
+            "type": "string",
+            "description": "networkCode for the cart. Required when using inventoryV2 with CartV2",
+            "nullable": true,
+            "example": "ShipToHome"
+          }
+        }
+      },
+      "AddShipToLineItems": {
+        "description": "Ship-to line items (with details) to add to cart",
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "description": "Cart ID",
+            "type": "string",
+            "nullable": true,
+            "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "items": {
+            "description": "Ship-to line items to add to cart",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipToItem"
+            }
+          },
+          "channel": {
+            "type": "integer",
+            "description": "Channel ID",
+            "format": "int32",
+            "nullable": true,
+            "example": 12,
+            "default": 12
+          }
+        }
+      },
+      "Address": {
+        "description": "Shipping address details",
+        "required": [
+          "city",
+          "country",
+          "state",
+          "street1",
+          "zipCode"
+        ],
+        "type": "object",
+        "properties": {
+          "attention": {
+            "type": "string",
+            "description": "Address recipient",
+            "nullable": true,
+            "example": "Billing manager"
+          },
+          "street1": {
+            "type": "string",
+            "description": "Primary street address",
+            "example": "100 NE 100th St."
+          },
+          "street2": {
+            "type": "string",
+            "description": "Second address line",
+            "nullable": true,
+            "example": "Suite 710"
+          },
+          "city": {
+            "type": "string",
+            "description": "City name",
+            "example": "Seattle"
+          },
+          "state": {
+            "type": "string",
+            "description": "State name",
+            "example": "Washington"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country name",
+            "example": "USA"
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "Zip code",
+            "example": "98125"
+          },
+          "email": {
+            "type": "string",
+            "description": "Receiver's email address",
+            "nullable": true,
+            "example": "test@mail.com"
+          },
+          "kind": {
+            "type": "string",
+            "description": "Address type",
+            "nullable": true,
+            "example": "shipping"
+          },
+          "name": {
+            "description": "Recipient's name",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Name"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "phone": {
+            "description": "address details for the shipping",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Phone"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        }
+      },
+      "CartError": {
+        "description": "Cart error object",
+        "required": [
+          "inventory",
+          "price",
+          "promo"
+        ],
+        "type": "object",
+        "properties": {
+          "price": {
+            "description": "Offers",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Offers"
+            }
+          },
+          "promo": {
+            "description": "Promo exception details",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExceptionDetail"
+            }
+          },
+          "inventory": {
+            "description": "Inventory exception details",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExceptionDetail"
+            }
+          }
+        }
+      },
+      "CartItem": {
+        "description": "Cart item details",
+        "required": [
+          "items",
+          "quantity",
+          "sku"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "List of items in cart",
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            }
+          },
+          "cartItemId": {
+            "type": "string",
+            "description": "Cart item ID",
+            "nullable": true,
+            "example": "12gved0f-7645-40cb-y7b0-167f8bggdb3z"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "nullable": true,
+            "example": "1730902008"
+          },
+          "title": {
+            "type": "string",
+            "description": "Item name",
+            "nullable": true,
+            "example": "Light Cover"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": "13B9CL6WT2SLW"
+          },
+          "attributes": {
+            "description": "Additional item options",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ProductAttributes"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Item creation time",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-18T15:12:40.974580"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last time item was updated",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-18T15:12:40.974580"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "description": "total quantity of the line item",
+            "example": 15
+          },
+          "type": {
+            "type": "string",
+            "description": "ItemType(WEB_SHIP/WEB_PICKUP/WEB_SDD/INTERNATIONAL/POS/POS_SHIP/POS_PICKUP)",
+            "nullable": true,
+            "example": "WEB_SHIP"
+          },
+          "subType": {
+            "type": "string",
+            "description": "ItemSubType(For International type, provide subType as Border-free)",
+            "nullable": true,
+            "example": "Border-free"
+          },
+          "priceListId": {
+            "type": "string",
+            "description": "Item price list ID",
+            "nullable": true,
+            "example": "108674"
+          },
+          "lineItemId": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Cart item sequence number (starts at 1)",
+            "format": "int32",
+            "example": 1
+          },
+          "isActive": {
+            "description": "true = Item is active<br>false = Item is not active",
+            "type": "boolean",
+            "nullable": false,
+            "example": true,
+            "default": true
+          },
+          "unitPrice": {
+            "description": "Individual item price",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CartPrice"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "totalPrice": {
+            "description": "Total price for the full quantity of this item",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CartPrice"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "attributeTotalPrice": {
+            "type": "number",
+            "description": "Total price of item attributes",
+            "format": "double",
+            "nullable": true,
+            "example": 10
+          },
+          "group": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "description": "Group or Category ID to which item belongs",
+              "example": "61d38e117162b7dba69c3d6d"
+            }
+          },
+          "extra": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Extra metadata passed by caller",
+            "nullable": true,
+            "example": {
+              "productFamily": "Laptop computers"
+            }
+          },
+          "channel": {
+            "description": "Sales channel",
+            "type": "number",
+            "example": 12
+          },
+          "isPickup": {
+            "description": "true: Item is set for pickup<br>false: Item is set for delivery",
+            "type": "boolean",
+            "example": true
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "Warehouse ID",
+            "nullable": true,
+            "example": "XYZ-1234"
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Shipping ID",
+            "nullable": true,
+            "example": "fef78121-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "shipTo": {
+            "description": "Shipment details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipObject"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        }
+      },
+      "CartItemModifyPayload": {
+        "description": "Item information to be updated",
+        "required": [
+          "itemId",
+          "lineItemId",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Cart item sequence number (starts at 1)",
+            "format": "int32",
+            "example": 1
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "nullable": true,
+            "example": "13B9CL6WT2SLW"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Updated number of items in cart",
+            "format": "int32",
+            "example": 2
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "1000000006"
+          },
+          "priceListId": {
+            "type": "string",
+            "description": "Item price list ID",
+            "nullable": true,
+            "example": "100000"
+          },
+          "price": {
+            "description": "Price of all items in the cart",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CartPrice"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "attributes": {
+            "description": "Additional item options",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ProductAttributes"
+            }
+          }
+        }
+      },
+      "CartItemPayload": {
+        "description": "Payload data of items to add to cart",
+        "required": [
+          "itemId",
+          "price",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "nullable": true,
+            "example": "16B2GS8LD5FDS"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "1000000001"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Number of items in cart",
+            "format": "int32",
+            "example": 1
+          },
+          "priceListId": {
+            "type": "string",
+            "description": "Item price list ID",
+            "nullable": true,
+            "example": "100000"
+          },
+          "type": {
+            "type": "string",
+            "description": "ItemType",
+            "nullable": true,
+            "example": "WEB_SHIP",
+            "enum": [
+              "WEB_SHIP",
+              "WEB_PICKUP",
+              "WEB_SDD",
+              "INTERNATIONAL",
+              "POS",
+              "POS_SHIP",
+              "POS_PICKUP"
+            ]
+          },
+          "subType": {
+            "type": "string",
+            "description": "ItemSubType(For International type, provide subType as Border-free)",
+            "nullable": true,
+            "example": "Border-free"
+          },
+          "price": {
+            "$ref": "#/components/schemas/CartPrice"
+          },
+          "extra": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Extra metadata passed by the caller",
+            "nullable": true,
+            "example": {
+              "productFamily": "Laptop computers"
+            }
+          },
+          "group": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "description": "Group or Category ID which item belongs to",
+              "example": "61d38e117162b7dba69c3d6d"
+            }
+          }
+        }
+      },
+      "CartItemResponse": {
+        "description": "Cart item details",
+        "required": [
+          "quantity",
+          "sku",
+          "cartItemId"
+        ],
+        "type": "object",
+        "properties": {
+          "cartItemId": {
+            "type": "string",
+            "description": "Cart item ID",
+            "nullable": true,
+            "example": "88cded0f-1439-40eb-a7a0-167e8bffdb3b"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "nullable": true,
+            "example": "1000000001"
+          },
+          "title": {
+            "type": "string",
+            "description": "Item name",
+            "nullable": true,
+            "example": "Varnet Garden Light Kit"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": "16B2GS8LD5FDS"
+          },
+          "items": {
+            "type": "array",
+            "description": "Cart item details",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            }
+          },
+          "attributeTotalPrice": {
+            "type": "number",
+            "description": "Total price of attributes",
+            "format": "double",
+            "nullable": true,
+            "example": 10
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Item creation time",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-18T15:12:40.974580"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last time item was updated",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-18T15:12:40.974580"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Number of items in cart",
+            "format": "int32",
+            "example": 60
+          },
+          "priceListId": {
+            "type": "string",
+            "description": "Item price list ID",
+            "nullable": true,
+            "example": "100000"
+          },
+          "lineItemId": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Cart item sequence number (starts at 1)",
+            "format": "int32",
+            "example": 1
+          },
+          "isActive": {
+            "description": "true = Item is active<br>false = Item is not active",
+            "type": "boolean",
+            "nullable": true,
+            "example": true
+          },
+          "unitPrice": {
+            "description": "Individual item price",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CartPrice"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "totalPrice": {
+            "description": "Total price for the full quantity of this item",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CartPrice"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "attributes": {
+            "description": "Additional item options",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ProductAttributes"
+            }
+          },
+          "isPickup": {
+            "description": "true: Item is set for pickup<br>false: Item is set for delivery",
+            "type": "boolean",
+            "example": true
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "Warehouse ID",
+            "nullable": true,
+            "example": "XYZ-1234"
+          },
+          "shipTo": {
+            "description": "Shipment details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipObject"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "channel": {
+            "description": "Sales channel",
+            "type": "number",
+            "example": 12
+          },
+          "group": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "description": "Group or Category ID to which item belongs",
+              "example": "61d38e117162b7dba69c3d6d"
+            }
+          }
+        }
+      },
+      "CartPrice": {
+        "description": "Price of all items in the cart",
+        "required": [
+          "amount",
+          "currency",
+          "discount"
+        ],
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency type",
+            "example": "USD",
+            "default": "USD"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Price before discount",
+            "format": "double",
+            "example": 60.5
+          },
+          "sale": {
+            "type": "number",
+            "description": "Price after discount",
+            "format": "double",
+            "nullable": true,
+            "example": 40
+          },
+          "discount": {
+            "description": "Offer discount details. Empty list {} should be passed in case of no discount.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OfferDiscount"
+              }
+            ]
+          }
+        }
+      },
+      "CartPromo": {
+        "description": "Promotions or coupons for cart items",
+        "required": [
+          "promoId"
+        ],
+        "type": "object",
+        "properties": {
+          "promoId": {
+            "type": "string",
+            "description": "Unique promotion/coupon ID",
+            "example": "fza065tdr787"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "General promotion/coupon code",
+            "nullable": true,
+            "example": "coupon123"
+          },
+          "value": {
+            "type": "string",
+            "description": "Promotion/coupon code discount value",
+            "nullable": true,
+            "example": 5
+          },
+          "unit": {
+            "type": "string",
+            "description": "Promotion/coupon code discount unit",
+            "nullable": true,
+            "example": "%OFF"
+          }
+        }
+      },
+      "Cart": {
+        "required": [
+          "allPromosApplied",
+          "currency",
+          "error",
+          "items",
+          "metadata",
+          "sharedCartIds",
+          "sharedUserIds",
+          "subTotal",
+          "totalAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalUniqueItems": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "cartState": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CartState"
+              },
+              {
+                "nullable": true
+              }
+            ],
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "networkCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "subTotal": {
+            "type": "number"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "allPromosApplied": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartPromo"
+            }
+          },
+          "attributes": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ProductAttributes"
+            }
+          },
+          "sharedUserIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sharedCartIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/CartError"
+          }
+        },
+        "description": "POJO that represents a cart object."
+      },
+      "CartResponse": {
+        "description": "Cart details",
+        "required": [
+          "allPromosApplied",
+          "currency",
+          "error",
+          "items",
+          "sharedUserIds",
+          "metadata"
+        ],
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "description": "Cart ID",
+            "nullable": true,
+            "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "items": {
+            "description": "Items in cart",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemResponse"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Cart creation time",
+            "nullable": true,
+            "example": "2022-02-11T14:09:40.836703"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last time cart was updated",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-22T22:36:40.194293"
+          },
+          "totalItems": {
+            "type": "integer",
+            "description": "Number of items in the cart",
+            "format": "int32",
+            "nullable": true,
+            "example": 3
+          },
+          "totalUniqueItems": {
+            "type": "integer",
+            "description": "Number of unique items in the cart based on line item ID",
+            "format": "int32",
+            "nullable": true,
+            "example": 2
+          },
+          "cartState": {
+            "description": "Cart status",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CartState"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "tenantId": {
+            "type": "string",
+            "description": "Merchant ID",
+            "nullable": true,
+            "example": "5f689caa4216e7000750d1ef"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Customer account ID",
+            "nullable": true,
+            "example": "5f689caa4216e7000750d1ef"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID",
+            "nullable": true,
+            "example": "61b8e921d0cf2e000882b09f"
+          },
+          "totalAmount": {
+            "type": "number",
+            "description": "Total price of cart items after discount including Shipping and Shipping Discount",
+            "format": "double",
+            "nullable": true,
+            "example": 55.1
+          },
+          "subTotal": {
+            "type": "number",
+            "description": "Total price of cart items including Shipping without any discount",
+            "format": "double",
+            "nullable": true,
+            "example": 60
+          },
+          "totalDiscount": {
+            "type": "number",
+            "description": "Total discount applied to cart",
+            "format": "double",
+            "nullable": true,
+            "example": 4.9
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency type",
+            "example": "USD",
+            "default": "USD"
+          },
+          "attributes": {
+            "description": "Additional item options",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ProductAttributes"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Metadata for this cart",
+            "example": {
+              "approver": "620d8896058edb0009385311"
+            }
+          },
+          "allPromosApplied": {
+            "description": "All promotions or coupons for items in this cart",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartPromo"
+            }
+          },
+          "sharedUserIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "description": "UserIds that represent the users who share the cart",
+              "example": "[\"*\"] or [userId1,userId2]"
+            }
+          },
+          "error": {
+            "description": "Errors in this cart",
+            "$ref": "#/components/schemas/CartError"
+          }
+        }
+      },
+      "CartState": {
+        "type": "string",
+        "description": "Cart status",
+        "example": "PENDING",
+        "enum": [
+          "ACTIVE",
+          "PENDING",
+          "PENDING_APPROVAL",
+          "APPROVED",
+          "SUBMITTED",
+          "DELETED",
+          "REJECTED"
+        ]
+      },
+      "CreateShipToPayload": {
+        "description": "Request body used to create shipping details for a cart",
+        "required": [
+          "cartId",
+          "shipToType"
+        ],
+        "type": "object",
+        "properties": {
+          "shipMethod": {
+            "description": "Shipping method",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipMethod"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "address": {
+            "description": "Shipping address",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "shipToType": {
+            "type": "string",
+            "description": "Shipping type",
+            "example": "SHIP_TO_ADDRESS"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Shipping tax code",
+            "nullable": true,
+            "example": "FR1000"
+          },
+          "isPickup": {
+            "description": "true: Item is set for pickup<br>false: Item is set for delivery",
+            "type": "boolean",
+            "example": true
+          },
+          "altPickupPerson": {
+            "description": "Alternative pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "pickupPerson": {
+            "description": "Designated pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PickupPerson"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "Warehouse ID",
+            "nullable": true,
+            "example": "XYZ-1234"
+          },
+          "storeId": {
+            "type": "string",
+            "description": "Store ID",
+            "nullable": true,
+            "example": "ABC-123"
+          }
+        }
+      },
+      "Discount": {
+        "description": "Promotion or coupon applied to an item",
+        "required": [
+          "promoId"
+        ],
+        "type": "object",
+        "properties": {
+          "promoId": {
+            "type": "string",
+            "description": "Unique promotion/coupon ID",
+            "example": "fza065tdr787"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "General promotion/coupon code",
+            "nullable": true,
+            "example": "coupon123"
+          },
+          "promoTitle": {
+            "type": "string",
+            "description": "Promotion name",
+            "nullable": true,
+            "example": "New Year discount"
+          },
+          "quantity": {
+            "type": "string",
+            "description": "Quantity of this item in the cart",
+            "format": "int32",
+            "nullable": true,
+            "example": 1
+          },
+          "amount": {
+            "type": "number",
+            "description": "Total amount of discount applied",
+            "format": "double",
+            "nullable": true,
+            "example": 5
+          },
+          "value": {
+            "type": "number",
+            "description": "Promotion value",
+            "format": "double",
+            "nullable": true,
+            "example": 5
+          },
+          "groupId": {
+            "type": "string",
+            "description": "Promotion group ID",
+            "nullable": true,
+            "example": "new-items"
+          },
+          "promotionType": {
+            "type": "string",
+            "description": "Promotion type",
+            "nullable": true,
+            "example": "PROMOTION"
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Promotion priority",
+            "format": "int32",
+            "nullable": true,
+            "example": 1
+          },
+          "stackable": {
+            "type": "boolean",
+            "description": "true = This promotion is stackable with other promotions<br>false = This promotion cannot be stacked with other promotions",
+            "nullable": true,
+            "example": false
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU to which promotion is applied",
+            "nullable": true,
+            "example": "13B9CL6WT2SLW"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "ID of item to which promotion is applied",
+            "nullable": true,
+            "example": "1000000006"
+          },
+          "itemKey": {
+            "type": "string",
+            "description": "Key of item to which promotion is applied",
+            "nullable": true,
+            "example": "Key1234"
+          },
+          "message": {
+            "type": "string",
+            "description": "Coupon code description",
+            "nullable": true,
+            "example": "New Year Promotion"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Discount unit",
+            "nullable": true,
+            "example": "%OFF"
+          }
+        }
+      },
+      "SearchCartPayload": {
+        "description": "Cart search parameters and response pagination details /// Search for carts meeting specified criteria, including creation date, status, user, approver, and purchase order",
+        "required": [
+          "filter",
+          "limit",
+          "offset"
+        ],
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "description": "Pagination offset (starts with zero)",
+            "format": "int32",
+            "example": 0
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of cart responses per page",
+            "format": "int32",
+            "example": 10
+          },
+          "filter": {
+            "description": "Cart search parameters",
+            "$ref": "#/components/schemas/CartFilter"
+          }
+        }
+      },
+      "SearchCartResponse": {
+        "description": "Cart search response object",
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "description": "Pagination offset (starts with zero)",
+            "format": "int32",
+            "example": 0
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of cart responses per page",
+            "format": "int32",
+            "example": 10
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of available carts meeting search criteria",
+            "format": "int32",
+            "example": 10
+          },
+          "carts": {
+            "description": "Details for carts meeting search criteria",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartResponse"
+            }
+          }
+        }
+      },
+      "CartFilter": {
+        "description": "Parameters used to search for carts",
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "Creation date range of carts to be returned",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CartDateRange"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "status": {
+            "description": "Status of carts to be returned",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartState"
+            }
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID of carts to be returned",
+            "nullable": true,
+            "example": "61b8e921d0cf2e000882b09f"
+          },
+          "approver": {
+            "type": "string",
+            "description": "Either approver ID or approver name of carts to be returned",
+            "nullable": true,
+            "example": "100000"
+          },
+          "purchaseOrder": {
+            "type": "string",
+            "description": "Purchase order number of carts to be returned",
+            "nullable": true,
+            "example": "10000023243"
+          },
+          "account": {
+            "type": "string",
+            "description": "Account id metadata",
+            "nullable": true,
+            "example": "sub-account-id"
+          },
+          "company": {
+            "type": "string",
+            "description": "Company name for the cart",
+            "nullable": true,
+            "example": " Inc"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the cart",
+            "nullable": true,
+            "example": "cart_it"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for the cart",
+            "nullable": true,
+            "example": "Cart for the IT department"
+          },
+          "sharedCarts": {
+            "type": "boolean",
+            "description": "Get all shared carts within account",
+            "nullable": true,
+            "example": "true or false"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Custom Search attributes within extra Block of Cart",
+            "nullable": true,
+            "example": "{requestId: 620d8896058edb0009385311}"
+          }
+        }
+      },
+      "CartDateRange": {
+        "description": "Date range filter used to search for carts",
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "description": "Earliest cart creation time for carts to be returned",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-24T15:12:40.974"
+          },
+          "end": {
+            "type": "string",
+            "description": "Latest cart creation time for carts to be returned",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-03-02T15:12:40.974"
+          }
+        }
+      },
+      "ErrorEnum": {
+        "description": "List of error codes",
+        "type": "string",
+        "enum": [
+          "UNKNOWN_ERROR",
+          "BAD_REQUEST",
+          "INVALID_TOKEN",
+          "ACCOUNT_ID_NOT_CONFIGURED",
+          "ACCOUNT_ID_ALREADY_EXISTS",
+          "DEPLOYMENT_IN_PROGRESS",
+          "INVALID_CART_ID",
+          "CART_NOT_FOUND",
+          "ITEM_NOT_FOUND",
+          "UNABLE_TO_GET_CART",
+          "UNABLE_TO_GET_INVENTORY",
+          "ITEM_OUT_OF_STOCK",
+          "UPDATE_CART_ERROR",
+          "DELETE_CART_ATTRIBUTE_ERROR",
+          "EMPTY_CART_ERROR",
+          "UNABLE_TO_GET_PRICE",
+          "UNABLE_TO_GET_PROMO",
+          "UNABLE_TO_GET_ITEM",
+          "PROMO_ALREADY_APPLIED_ERROR",
+          "CART_ALREADY_SHARED_ERROR",
+          "PROMO_NOT_FOUND_ERROR",
+          "PROMO_NOT_APPLICABLE_ERROR",
+          "USER_NOT_FOUND",
+          "ATTRIBUTE_NOT_FOUND",
+          "INCORRECT_ATTRIBUTE_LEVEL",
+          "INCORRECT_ATTRIBUTE_VALUE",
+          "ITEM_ATTRIBUTE_ALREADY_EXIST",
+          "LINE_ITEM_ID_NOT_FOUND",
+          "ITEM_ID_NOT_APPLICABLE",
+          "CART_STATUS_NOT_FOUND",
+          "CART_STATUS_CANNOT_BE_UPDATED",
+          "GUEST_CART_STATUS_CANNOT_BE_UPDATED",
+          "CART_STATUS_ALREADY_ASSIGNED",
+          "TOKEN_INTROSPECT_ERROR",
+          "MAX_CARTS_LIMIT_REACHED",
+          "UNAUTHORIZED_USER_ERROR",
+          "API_PERMISSION_UNDEFINED",
+          "INVALID_DATE_RANGE",
+          "INVALID_DATE_FORMAT",
+          "INVALID_SEARCH_ATTRIBUTE",
+          "ITEM_SERVICE_NOT_CONFIGURED",
+          "ATTRIBUTE_SERVICE_NOT_CONFIGURED",
+          "SHIP_ID_NOT_FOUND",
+          "NEGATIVE_SHIPPING_COST",
+          "REQUEST_DENIED",
+          "BAD_CONFIGURATION",
+          "SERVICE_NOT_ENABLED"
+        ]
+      },
+      "ExceptionDetail": {
+        "description": "Exception details",
+        "required": [
+          "code",
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "description": "ID of item to which exception applies",
+            "type": "string",
+            "nullable": true,
+            "example": "1000000001"
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU of item to which exception applies",
+            "nullable": true,
+            "example": "16B2GS8LD5FDS"
+          },
+          "code": {
+            "description": "Error code",
+            "$ref": "#/components/schemas/ErrorEnum"
+          },
+          "detail": {
+            "description": "Error detail",
+            "type": "string",
+            "example": "Item is out of stock"
+          },
+          "lineItemId": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Cart item sequence number (starts at 1)",
+            "format": "int32",
+            "example": 1
+          }
+        }
+      },
+      "ModifyItemPayload": {
+        "description": "Cart and item information to be updated",
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "description": "Cart ID",
+            "nullable": true,
+            "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "items": {
+            "description": "Items to be updated",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemModifyPayload"
+            }
+          }
+        }
+      },
+      "Name": {
+        "description": "Person's name",
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "description": "First name of the person",
+            "nullable": true,
+            "example": "Pat E"
+          },
+          "last": {
+            "type": "string",
+            "description": "Last name of the person",
+            "nullable": true,
+            "example": "Kake"
+          }
+        }
+      },
+      "OfferDiscount": {
+        "description": "Offer discount details",
+        "required": [
+          "discounts",
+          "price",
+          "promosApplied"
+        ],
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "description": "Discounted price of the item",
+            "format": "double",
+            "minimum": 0,
+            "example": 20.5
+          },
+          "discountAmount": {
+            "type": "number",
+            "description": "Discounted percentage amount of the item",
+            "format": "double",
+            "example": 5,
+            "minimum": 0
+          },
+          "promosApplied": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartPromo"
+            }
+          },
+          "discounts": {
+            "description": "List of discounts applied",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discount"
+            }
+          }
+        }
+      },
+      "Offers": {
+        "description": "Offer details for cart error response",
+        "required": [
+          "channel",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "price": {
+            "description": "Item or discount price details",
+            "$ref": "#/components/schemas/Price"
+          },
+          "kind": {
+            "description": "Offer type",
+            "type": "string",
+            "nullable": true,
+            "example": "PROMOTION"
+          },
+          "channel": {
+            "description": "Offer channel",
+            "type": "integer",
+            "format": "int32",
+            "example": 12
+          },
+          "lineItemId": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Cart item sequence number (starts at 1)",
+            "format": "int32",
+            "example": 1
+          },
+          "discounts": {
+            "description": "List of discounts",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Discount"
+            }
+          }
+        }
+      },
+      "Phone": {
+        "description": "Phone number details",
+        "required": [
+          "number"
+        ],
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "description": "Phone number",
+            "example": "123-456-7899"
+          },
+          "kind": {
+            "type": "string",
+            "description": "Phone number type",
+            "nullable": true,
+            "example": "Mobile"
+          }
+        }
+      },
+      "PickupPerson": {
+        "description": "Details of the designated or alternative person who will pick up the cart items",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Name"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "phone": {
+            "description": "Number of pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Phone"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "email": {
+            "type": "string",
+            "description": "Receiver's email address",
+            "nullable": true,
+            "example": "test@mail.com"
+          }
+        }
+      },
+      "Price": {
+        "description": "Item price details",
+        "required": [
+          "base"
+        ],
+        "type": "object",
+        "properties": {
+          "sale": {
+            "description": "Item's sale price",
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "example": 10
+          },
+          "cost": {
+            "description": "Item's full price",
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "example": 20
+          },
+          "base": {
+            "description": "Item's base price",
+            "type": "number",
+            "format": "double",
+            "example": 20
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency type",
+            "example": "USD",
+            "nullable": true
+          },
+          "finalPrice": {
+            "description": "Price after the increments have been added over base",
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "example": 10
+          },
+          "totalPrice": {
+            "description": "Price for all units of this item, including discounts",
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "example": 20
+          },
+          "kind": {
+            "description": "Price type",
+            "type": "string",
+            "nullable": true,
+            "example": "Promotion"
+          },
+          "discount": {
+            "description": "Discount amount",
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "example": 5.5
+          }
+        }
+      },
+      "PricedAttributeIdValue": {
+        "description": "Cart-level attribute ID and value",
+        "required": [
+          "attributeId",
+          "attributeValue"
+        ],
+        "type": "object",
+        "properties": {
+          "attributeId": {
+            "type": "string",
+            "description": "attribute ID",
+            "example": "60c2a368eb2ec30008ae70a2"
+          },
+          "attributeValue": {
+            "type": "string",
+            "description": "Attribute applicability",
+            "example": "true"
+          }
+        }
+      },
+      "PricedItemAttributeIdValue": {
+        "description": "Item-level attribute ID and value",
+        "required": [
+          "attributeId",
+          "attributeValue",
+          "lineItemId"
+        ],
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Cart item sequence number (starts at 1)",
+            "format": "int32",
+            "example": 1
+          },
+          "attributeId": {
+            "type": "string",
+            "description": "Attribute ID",
+            "example": "60c2a368eb2ec30008ae70a2"
+          },
+          "attributeValue": {
+            "type": "string",
+            "description": "Attribute applicability",
+            "example": "true"
+          }
+        }
+      },
+      "ProductAttributes": {
+        "description": "Additional item options",
+        "required": [
+          "attributeId",
+          "name",
+          "price",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "attributeId": {
+            "type": "string",
+            "description": "Attribute ID",
+            "example": "60c2a358eb2ec30008ae70a1"
+          },
+          "name": {
+            "type": "string",
+            "description": "Attribute name",
+            "example": "gift wrapping (small)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Attribute description",
+            "nullable": true,
+            "example": "Gift wrapping for a small package"
+          },
+          "mapping": {
+            "type": "string",
+            "description": "ITEM: Item-level attribute<br>ORDER: Cart-level attribute",
+            "nullable": true,
+            "example": "ITEM"
+          },
+          "type": {
+            "type": "string",
+            "description": "Attribute type",
+            "example": "GIFT"
+          },
+          "value": {
+            "type": "string",
+            "description": "Attribute applicability",
+            "nullable": true,
+            "example": "true"
+          },
+          "price": {
+            "type": "number",
+            "description": "Attribute price",
+            "format": "float",
+            "example": 5.5
+          },
+          "level": {
+            "type": "string",
+            "description": "Attribute level",
+            "nullable": true,
+            "example": "order"
+          },
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "description": "Discount object",
+              "example": "1000000005"
+            }
+          }
+        }
+      },
+      "ShipCost": {
+        "description": "Shipping cost and details",
+        "required": [
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Shipping cost",
+            "format": "double",
+            "example": 5
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency type",
+            "example": "USD",
+            "nullable": true
+          },
+          "discount": {
+            "description": "Shipping discount",
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "example": 5.5
+          }
+        }
+      },
+      "ShipMethod": {
+        "description": "Shipping method and details",
+        "required": [
+          "shipMethodId"
+        ],
+        "type": "object",
+        "properties": {
+          "cost": {
+            "description": "Shipping cost",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipCost"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "shipMethodId": {
+            "type": "string",
+            "description": "Shipping method ID",
+            "example": "1234"
+          },
+          "shipmentCarrier": {
+            "type": "string",
+            "description": "Shipment carrier",
+            "nullable": true,
+            "example": "FedEx"
+          },
+          "shipmentMethod": {
+            "type": "string",
+            "description": "Shipment method type",
+            "nullable": true,
+            "example": "Next Day"
+          }
+        }
+      },
+      "ShipObject": {
+        "description": "Cart shipping details",
+        "type": "object",
+        "properties": {
+          "shipToId": {
+            "type": "string",
+            "description": "Shipping details ID",
+            "nullable": true,
+            "example": "fef78121-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "cartId": {
+            "type": "string",
+            "description": "Cart ID",
+            "nullable": true,
+            "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Shipping details creation time",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-18T15:12:40.974580"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last time shipping details were updated",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-18T15:12:40.974580"
+          },
+          "shipMethod": {
+            "description": "Shipping method and details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipMethod"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "address": {
+            "description": "Shipping address",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "shipToType": {
+            "type": "string",
+            "description": "Shipping type",
+            "nullable": true,
+            "example": "SHIP_TO_ADDRESS"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Shipping tax code",
+            "nullable": true,
+            "example": "FR1000"
+          },
+          "isPickup": {
+            "description": "true = Item is set for pickup<br>false = Item is set for delivery",
+            "type": "boolean",
+            "example": true
+          },
+          "altPickupPerson": {
+            "description": "Alternative pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PickupPerson"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "pickupPerson": {
+            "description": "Designated pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PickupPerson"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "Warehouse ID",
+            "nullable": true,
+            "example": "XYZ-1234"
+          },
+          "storeId": {
+            "type": "string",
+            "description": "Store ID",
+            "nullable": true,
+            "example": "ABC-123"
+          }
+        }
+      },
+      "ShipResponse": {
+        "description": "Shipping response body",
+        "type": "object",
+        "properties": {
+          "shipToId": {
+            "type": "string",
+            "description": "Shipping details ID",
+            "nullable": true,
+            "example": "fef78121-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "cartId": {
+            "type": "string",
+            "description": "Cart ID",
+            "nullable": true,
+            "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Shipping details creation time",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-18T15:12:40.974580"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last time shipping details were updated",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-02-18T15:12:40.974580"
+          },
+          "shipMethod": {
+            "description": "Shipping method and details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipMethod"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "address": {
+            "description": "Shipping address",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "shipToType": {
+            "type": "string",
+            "description": "Shipping type",
+            "nullable": true,
+            "example": "SHIP_TO_ADDRESS"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Shipping tax code",
+            "nullable": true,
+            "example": "FR1000"
+          },
+          "isPickup": {
+            "description": "true: Item is set for pickup<br>false: Item is set for delivery",
+            "type": "boolean",
+            "example": true
+          },
+          "altPickupPerson": {
+            "description": "Alternative pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PickupPerson"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "pickupPerson": {
+            "description": "Designated pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PickupPerson"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "Warehouse ID",
+            "nullable": true,
+            "example": "XYZ-1234"
+          },
+          "storeId": {
+            "type": "string",
+            "description": "Store ID",
+            "nullable": true,
+            "example": "ABC-123"
+          }
+        }
+      },
+      "ShipToItem": {
+        "description": "Ship-to line items",
+        "type": "object",
+        "required": [
+          "lineItemId",
+          "shippingDetailsId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "nullable": true,
+            "example": "1000000005"
+          },
+          "lineItemId": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Cart item sequence number (starts at 1)",
+            "format": "int32",
+            "example": 1
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Shipping details ID",
+            "nullable": true,
+            "example": "fef78121-bee3-4448-bf1c-d5b5461dbda2"
+          }
+        }
+      },
+      "UpdateCartAttributePayload": {
+        "description": "Cart attribute information",
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "string",
+            "description": "Cart account ID",
+            "nullable": true,
+            "example": "61b8e921d0cf2e000882b09f"
+          },
+          "approver": {
+            "type": "string",
+            "description": "Cart approver ID",
+            "nullable": true,
+            "example": "620d8896058edb0009385311"
+          },
+          "purchaseOrder": {
+            "type": "string",
+            "description": "Cart purchase order",
+            "nullable": true,
+            "example": "112-2624363-4906652"
+          },
+          "pricedAttributes": {
+            "description": "Attributes added at the cart level",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/PricedAttributeIdValue"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the cart",
+            "nullable": true,
+            "example": "cart-sales"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for the cart",
+            "nullable": true,
+            "example": "cart for sales team"
+          },
+          "company": {
+            "type": "string",
+            "description": "Company name for the cart",
+            "nullable": true,
+            "example": " Inc"
+          },
+          "sharedUserIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "description": "UserIds that represents the users who share the cart",
+              "example": "[\"*\"] or [userId1,userId2]"
+            }
+          },
+          "extra": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true,
+            "description": "Extra metadata for the cart",
+            "example": {
+              "productFamily": "Laptop computers"
+            }
+          }
+        }
+      },
+      "UpdateShipToPayload": {
+        "description": "Shipping details to be updated",
+        "required": [
+          "cartId",
+          "shippingDetailsId"
+        ],
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "description": "Cart id",
+            "example": "d7e78a21-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Shipping details ID",
+            "example": "fef78121-bee3-4448-bf1c-d5b5461dbda2"
+          },
+          "shipMethod": {
+            "description": "Shipping method and details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShipMethod"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "address": {
+            "description": "Shipping address",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "shipToType": {
+            "type": "string",
+            "description": "Shipping type",
+            "nullable": true,
+            "example": "SHIP_TO_ADDRESS"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Shipping tax code",
+            "nullable": true,
+            "example": "FR1000"
+          },
+          "isPickup": {
+            "description": "true: Item is set for pickup<br>false: Item is set for delivery",
+            "type": "boolean",
+            "example": true,
+            "nullable": true
+          },
+          "altPickupPerson": {
+            "description": "Alternative pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PickupPerson"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "pickupPerson": {
+            "description": "Designated pickup person",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PickupPerson"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "warehouseId": {
+            "type": "string",
+            "description": "Warehouse ID",
+            "nullable": true,
+            "example": "XYZ-1234"
+          },
+          "storeId": {
+            "type": "string",
+            "description": "Store ID",
+            "nullable": true,
+            "example": "ABC-123"
+          }
+        }
+      },
+      "ClientError": {
+        "description": "Client error details",
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "Error code, meant for machine consumption",
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "User ID or Cart ID does not exist"
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Server error details",
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "Error code, meant for machine consumption",
+            "type": "string",
+            "example": "Internal Server Error"
+          },
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "An internal error occurred. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not-found error details",
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "Error code, meant for machine consumption",
+            "type": "string",
+            "example": "Cart or item not found"
+          },
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      }
+    }
+  }
+}

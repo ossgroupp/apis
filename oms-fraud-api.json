@@ -1,0 +1,173 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "0ej4l1a8krgh7"
+  },
+  "info": {
+    "title": "Fraud service OpenAPI specification",
+    "description": "Fabrics v2 Fraud Apis for multi tenant service",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5065/api/v2/fraud",
+      "description": "local"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/fraud",
+      "description": "dev"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/fraud",
+      "description": "stg02"
+    },
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/fraud",
+      "description": "uat01"
+    },
+    {
+      "url": "https://prod01.oms.libertytreemedia.com/api/v2/fraud",
+      "description": "prod01"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "paths": {
+    "/release": {
+      "post": {
+        "tags": [
+          "fraud-controller"
+        ],
+        "summary": "Fraud Release Order",
+        "operationId": "fraudReleaseHandler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inc.fabric.oms.lib.models.EventDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Release request completed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/inc.fabric.fraud.models.GenericResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cancel": {
+      "post": {
+        "tags": [
+          "fraud-controller"
+        ],
+        "summary": "Fraud Cancel Order",
+        "operationId": "fraudCancelHandler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inc.fabric.oms.lib.models.EventDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Cancel request completed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/inc.fabric.fraud.models.GenericResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "inc.fabric.oms.lib.client.feign.omsconfiguration.beans.TargetServiceResponse": {
+        "type": "object",
+        "properties": {
+          "serviceName": {
+            "type": "string"
+          },
+          "serviceAttributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "inc.fabric.oms.lib.models.EventDetail": {
+        "type": "object",
+        "properties": {
+          "orderNumber": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "tenant": {
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/inc.fabric.oms.lib.client.feign.omsconfiguration.beans.TargetServiceResponse"
+          }
+        }
+      },
+      "inc.fabric.fraud.models.GenericResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "SUCCESS"
+          },
+          "message": {
+            "type": "string",
+            "example": "Order has been cancelled"
+          },
+          "errors": {
+            "type": "array",
+            "example": "[MerchantId is not configured]",
+            "items": {
+              "type": "string",
+              "example": "[MerchantId is not configured]"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "name": "x-site-context",
+        "in": "header"
+      }
+    }
+  }
+}

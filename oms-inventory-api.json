@@ -1,0 +1,2799 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "rasux99d38fj4"
+  },
+  "info": {
+    "title": "Inventory APIs",
+    "description": "fabric's OMS Inventory APIs are high performance endpoints built on highly scalable architecture, and include a configurable data model to orchestrate the inventory lifecycle events. These endpoints provide functionality to create inventory records, keep a record of inventory quantities, set up inventory availability rules, and update items in the inventory. The endpoints provide support to configure inventory positions (also called as counters), create custom attributes for the inventory records, and set up network rules to control inventory accuracy and collect inventory across locations to create channel-specific inventory availability.<br>**Network:** Set inventory availability and accuracy rules using conditional rule builder to create a pool of inventory aggregated from multiple locations.<br>**Counter:** Configure the positions of the inventory such as available, in-transit, on-hand, or other custom positions to measure inventory quantities of assortment.<br>**Virtual Counter:** Quantify the inventory that is available to sell by calculating the difference between available inventory and reserved for purchase inventory. It helps prevent over-promising of inventory by subtracting the *reserved-for-purchase* inventory count from the *in-warehouse* inventory count.<br>**Overlay:** Send daily refresh feeds to update the on-hand inventory data in OMS. It includes a configurable failsafe to prevent inventory overrides. It makes easy for merchants to integrate OMS with storefront and warehouse APIs.<br>**Adjustment:** Incrementally reserve inventory in real time.<br>**Inventory by Geography:** View the list of locations with available inventory, sorted by distance, specifying the radius and customer location.<br>**Safety Stock:** Set a threshold level to reserve inventory from purchase, for common use cases such as preventing oversell and retaining inventory in physical locations.<br>**Low Stock Level:** Set a threshold level to flag inventory as low stock.<br>**Backorder:** Manage the expected restock dates and backorder quantity per inventory.",
+    "contact": {
+      "name": "Inventory Support",
+      "url": "https://www.libertytreemedia.com/",
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Inc",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "externalDocs": {
+    "description": "See for more information",
+    "url": "https://knowledgebase.libertytreemedia.com/knowledgebase/oms/inventory"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com",
+      "description": "Development"
+    },
+    {
+      "url": "https://stg01.oms.libertytreemedia.com",
+      "description": "Staging"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Network",
+      "description": "Network refers to a group of locations having a group of SKUs in each location. Network endpoints let you read, create, and manage an inventory-network by location, brand, or any other custom attributes."
+    },
+    {
+      "name": "Inventory",
+      "description": "These endpoints let you read, create and bulk update inventory across all locations."
+    },
+    {
+      "name": "Inventory Upload Log",
+      "description": "These endpoints let you view the record of the inventory uploads."
+    },
+    {
+      "name": "Bulk Operation",
+      "description": "Bulk Operation endpoints let you upload and download inventory details, in bulk, using a  CSV file to and from AWS (Amazon Web Service) server presigned S3 URL that is generated from the Order service."
+    },
+    {
+      "name": "Attribute",
+      "description": "Attribute refers to a set of characteristics that define inventory. Attribute endpoints let you create, read, update, and delete inventory attributes at any hierarchy level (location, SKU, item, channel) or at counter level."
+    },
+    {
+      "name": "Counter",
+      "description": "Counter refers to inventory positions such as, available, in-transit, on-hand, or other custom positions. These endpoints let you read, update, and create custom counters that suit your business use case."
+    }
+  ],
+  "paths": {
+    "/api/v2/inventory/network": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Get all networks",
+        "description": "Retrieves paginated list of all networks that were previously created",
+        "operationId": "getPaginatedNetwork",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "paginationQueryModel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PaginationQueryModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedNetworkResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Create network",
+        "description": "Creates network using conditional rule to add locations and SKU to the network.",
+        "operationId": "createNetwork",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NetworkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/network/{networkId}": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Get specific network",
+        "description": "Retrieves details of a specific network by specified network ID",
+        "operationId": "getNetwork",
+        "parameters": [
+          {
+            "name": "networkId",
+            "description": "Unique identifier of a network",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "62278e49167b6079755aa5e7"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                },
+                "example": {
+                  "message": "Counter code: on-hand already exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Updates specific network",
+        "description": "Updates details of a specific network by specified network ID. Details to be updated include network code, name, safety stock, and conditional rule for a specific network.",
+        "operationId": "updateNetwork",
+        "parameters": [
+          {
+            "name": "networkId",
+            "description": "Unique identifier of a network",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "62278e49167b6079755aa5e7"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NetworkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                },
+                "example": {
+                  "message": "Counter code: on-hand already exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Delete specific network",
+        "description": "Deletes a specific network, with all of its details, by specified network ID. Once deleted, it cannot be undone.",
+        "operationId": "deleteNetwork",
+        "parameters": [
+          {
+            "name": "networkId",
+            "description": "Network ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "62278e49167b6079755aa5e7"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get inventories",
+        "description": "Retrieves a paginated list of inventories by network, and at different locations.",
+        "operationId": "getInventories",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "inventorySearchModel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/InventorySearchModel"
+            }
+          },
+          {
+            "name": "inventoryNetworkSearchModel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/InventoryNetworkSearchModel"
+            }
+          },
+          {
+            "name": "paginationQueryModel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PaginationQueryModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedInventoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Create inventory",
+        "description": "Enables you to create inventory based on the combination of location number, channel ID, and item ID or item SKU.",
+        "operationId": "addNewInventory",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inventory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Update inventory by overriding existing values",
+        "description": "This endpoint updates inventory by overriding the existing values with all the new inventory properties that are specified in the request body, or creates a new inventory if inventory does not exist. If an existing property is not mentioned in the request body, then the value for the existing property will be displayed as `null` or `zero`. Inventory is identified based on the combination of location number, channel ID, and item ID or item SKU.",
+        "operationId": "updateInventory",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inventory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Update inventory by adding new property",
+        "description": "This endpoint does not override all the existing properties, rather it updates inventory by adding new properties or by updating the existing inventory properties that are specified in the request body. Inventory is identified based on the combination of location number, channel ID, and item ID or item SKU.",
+        "operationId": "patchInventory",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inventory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/counter": {
+      "post": {
+        "tags": [
+          "Counter"
+        ],
+        "summary": "Create counter",
+        "description": "Creates counter (also known as inventory position) for better tracking of inventories.",
+        "operationId": "createCounter",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CounterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Counter"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Counter"
+        ],
+        "summary": "Get all counters",
+        "description": "Retrieves all the counters that were previously created",
+        "operationId": "getAllCounters",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Counter"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/counter/{code}": {
+      "get": {
+        "tags": [
+          "Counter"
+        ],
+        "summary": "Get specific counter",
+        "description": "Retrieves details of a specific counter by specified counter code.",
+        "operationId": "getCounterByCode",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "code",
+            "description": "Counter code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "on-hand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Counter"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Counter"
+        ],
+        "summary": "Update specific counter",
+        "description": "Updates a specific counter based on specified counter-code",
+        "operationId": "updateCounterByCode",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "code",
+            "description": "Counter code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "on-hand"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCounterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Counter"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/aws/upload-url": {
+      "post": {
+        "tags": [
+          "Bulk Operation"
+        ],
+        "summary": "Create URL to bulk upload inventory",
+        "description": "Enables you to create a URL for uploading a CSV file to apply bulk changes to inventory models. This endpoint generates a key ID associated with the URL, and this keyId will be used to fetch the status of an uploaded file or to fetch the error file afterwards.",
+        "operationId": "generateSignedUrl",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignedUploadUrlBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadUrlResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/aws/download-url": {
+      "post": {
+        "tags": [
+          "Bulk Operation"
+        ],
+        "summary": "Create URL to download error details for an uploaded file",
+        "description": "Enables you to create a URL to download error details for a file that was previously uploaded to apply bulk changes to inventory records. This endpoint generates a key ID associated with the URL, and this keyId will be used to fetch the status of an upload file or to fetch the error file afterwards.",
+        "operationId": "generateDownloadSignedUrl",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignedUploadUrlBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadUrlResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/attribute": {
+      "post": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Create inventory attribute",
+        "description": "Creates a unique inventory attribute",
+        "operationId": "createAttribute",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttributeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Attribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictError"
+                },
+                "example": {
+                  "message": "Entered code is a duplicated code"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/adjustment": {
+      "put": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Update inventory position or create inventory",
+        "description": "This endpoint updates inventory position (also known as counter) as per specified request body, Or it creates inventory if inventory does not exist, and thereby updates the counter. Inventory is identified based on the combination of location number, channel ID, and item ID or item SKU.",
+        "operationId": "updateCounter",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustInventoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inventory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Update inventory position",
+        "description": "This endpoint is very specific to counter update. It updates inventory position (also known as counter), or displays error if inventory does not exist. Inventory is identified based on the combination of location number, channel ID, and item ID or item SKU.",
+        "operationId": "patchCounter",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustInventoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inventory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/{itemId}": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get inventory of specific item",
+        "description": "Retrieves inventory details of a specific item based on specified item ID",
+        "operationId": "getInventoryByItemId",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "itemId",
+            "description": "Item ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 4225678911
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Inventory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/upload/log": {
+      "get": {
+        "tags": [
+          "Inventory Upload Log"
+        ],
+        "summary": "Get inventory upload status for specific file",
+        "description": "This endpoint checks the progress of bulk upload, for a specific Key ID, triggered by uploading a CSV file to the database.",
+        "operationId": "getInventoryUploadStatus",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "keyId",
+            "description": "Key ID of the uploaded file.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "981628612_inventory"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/upload/log/all": {
+      "get": {
+        "tags": [
+          "Inventory Upload Log"
+        ],
+        "summary": "Get inventory upload record for all files",
+        "description": "Retrieves a paginated list of inventory bulk upload status for all the files that were uploaded to the database to perform inventory operations.",
+        "operationId": "getPaginatedInventoryUploadStatus",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "PaginationQueryModel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PaginationQueryModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedLogResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/geography": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get inventories in specific region",
+        "description": "Retrieves list of inventories in a specific region based on postal code, sku, radius within which the inventories are to be retrieved, latitude and longitude of the location.",
+        "operationId": "findInventoriesInRange",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "InventoryGeoSearchModel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/InventoryGeoSearchModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryGeographyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                },
+                "example": {
+                  "message": "Please enter postalCode OR Latitude - Longitude"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/attribute/{code}": {
+      "get": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Get inventory attribute by code",
+        "description": "Retrieves details of a specific attribute by specified attribute code",
+        "operationId": "readAttribute",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "code",
+            "description": "Attribute code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "on-hand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Attribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inventory/aggregatedNetwork/query": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Get aggregated networks",
+        "description": "This endpoint lets you view the aggregated count of the inventory-network based on the network rule configuration (either by network ID or by SKU, or by both).",
+        "operationId": "getPaginatedAggregatedNetwork",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          },
+          {
+            "name": "networkSearchModel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/NetworkSearchModel"
+            }
+          },
+          {
+            "name": "paginationQueryModel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PaginationQueryModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedNetworkAggregationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NetworkRequest": {
+        "type": "object",
+        "description": "Network create or update payload",
+        "properties": {
+          "code": {
+            "description": "Network code. It's a unique identifier for the network.",
+            "type": "string",
+            "example": "DC"
+          },
+          "name": {
+            "description": "Name of the network",
+            "type": "string",
+            "example": "Distribution Center"
+          },
+          "safetyStock": {
+            "description": "Safety stock count. This indicates the reserve quantity of an item, to fulfill an emergency requirement incase of damage of the product that is reserved for sell.",
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "rules": {
+            "description": "Rule specific to location.",
+            "type": "object",
+            "example": {
+              "locationData.attributes.channel": "Frontline",
+              "productData.attributes.subclass": {
+                "$nin": 778942701
+              }
+            }
+          }
+        }
+      },
+      "Network": {
+        "type": "object",
+        "properties": {
+          "networkId": {
+            "description": "Network ID",
+            "type": "string",
+            "example": "62278e49167b6079755aa5e7"
+          },
+          "code": {
+            "description": "Unique identifier for the network",
+            "type": "string",
+            "example": "DC"
+          },
+          "name": {
+            "description": "Name of the network",
+            "type": "string",
+            "example": "Distribution Center"
+          },
+          "safetyStock": {
+            "description": "Safety stock count. This indicates the reserve quantity of an item to fulfill an emergency requirement incase of damage of the product that is reserved for sell.",
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "rules": {
+            "description": "Conditional rule specific to location",
+            "type": "object",
+            "example": {
+              "locationData.attributes.channel": "Frontline",
+              "productData.attributes.subclass": {
+                "$nin": 778942701
+              }
+            }
+          }
+        }
+      },
+      "Inventory": {
+        "type": "object",
+        "properties": {
+          "virtualCounters": {
+            "description": "View quantity of inventory, based on pre configured value. For example, 'availableToPurchase' can be a custom attribute configured by merchants.",
+            "type": "object",
+            "example": {
+              "availableToPurchase": 10
+            }
+          },
+          "id": {
+            "description": "Inventory ID",
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "sku": {
+            "description": "SKU of  the item",
+            "type": "string",
+            "example": "SKU00025"
+          },
+          "itemId": {
+            "description": "Item ID for which inventory is updated",
+            "type": "integer",
+            "format": "int64",
+            "example": 4225678911
+          },
+          "locationNum": {
+            "description": "Location number is used to identify the warehouse or location where the inventory is kept",
+            "type": "integer",
+            "format": "int32",
+            "example": 473746
+          },
+          "channelId": {
+            "description": "Sales channel ID. This field is used to identify where the business operations are being held.",
+            "type": "string",
+            "example": 12
+          },
+          "vendorId": {
+            "description": "Vendor ID",
+            "type": "string",
+            "example": "vendor123"
+          },
+          "leadTime": {
+            "description": "The amount of time between when a purchase order is placed to replenish products and when the order is received in the warehouse",
+            "type": "string",
+            "example": 1234
+          },
+          "inventoryType": {
+            "description": "Type of inventory",
+            "type": "string",
+            "example": "Safety stock"
+          },
+          "infiniteInventory": {
+            "description": "Infinite inventory flag.<br> `true` indicates that the inventory can be consumed any number of times as per need<br>`false` indicates that the inventory cannot be used infinitely, and has a limit to be consumed",
+            "type": "boolean",
+            "example": true
+          },
+          "counters": {
+            "description": "Inventory counter (also known as inventory position) configured by the merchant",
+            "type": "object",
+            "example": {
+              "on-hand": 10
+            }
+          },
+          "attributes": {
+            "description": "Custom inventory attributes configured by the merchant",
+            "type": "object",
+            "example": {
+              "buy online, pick up in-store (bopis)": true
+            }
+          }
+        }
+      },
+      "InventoryNetworkSearchModel": {
+        "type": "object",
+        "description": "This object contains filtering criteria that help to search inventory by network",
+        "properties": {
+          "skus": {
+            "type": "array",
+            "description": "List of SKUs for which the inventory are to be retrieved",
+            "items": {
+              "type": "string",
+              "example": [
+                "SKU00025",
+                "SKUfhera",
+                "SKUoqiwd"
+              ]
+            }
+          },
+          "networkCodes": {
+            "type": "array",
+            "description": "Codes associated with networks in which inventory of the SKUs are to be retrieved",
+            "items": {
+              "type": "string",
+              "example": [
+                "DC"
+              ]
+            }
+          },
+          "channels": {
+            "type": "array",
+            "description": "List of channels",
+            "items": {
+              "type": "string",
+              "example": [
+                12
+              ]
+            }
+          }
+        }
+      },
+      "InventoryRequest": {
+        "type": "object",
+        "properties": {
+          "sku": {
+            "description": "SKU of the item",
+            "type": "string",
+            "example": "SKU00025"
+          },
+          "itemId": {
+            "description": "Item ID",
+            "type": "integer",
+            "format": "int64",
+            "example": 4225678911
+          },
+          "locationNum": {
+            "description": "Location number is used to identify the warehouse or location where the inventory is going to be kept",
+            "type": "integer",
+            "format": "int32",
+            "example": 473746
+          },
+          "channelId": {
+            "description": "Sales channel ID. This field is used to identify where the business operations are being held.",
+            "type": "string",
+            "example": 12
+          },
+          "vendorId": {
+            "description": "Vendor ID",
+            "type": "string",
+            "example": "vendor123"
+          },
+          "leadTime": {
+            "description": "The amount of time between when a purchase order is placed to replenish products and when the order is received in the warehouse.",
+            "type": "string",
+            "example": 1234
+          },
+          "inventoryType": {
+            "description": "Inventory type. It is a classifier attribute that provides flexibility to define types.",
+            "type": "string",
+            "example": "primary"
+          },
+          "infiniteInventory": {
+            "description": "Infinite inventory flag.<br> `true` indicates that the inventory can be consumed any number of times as per need<br>`false` indicates that the inventory cannot be used infinitely, and has a limit to be consumed",
+            "type": "boolean",
+            "example": true
+          },
+          "counters": {
+            "description": "Inventory counter (also known as inventory position) configured by the merchant",
+            "type": "object",
+            "example": {
+              "on-hand": 10
+            }
+          },
+          "attributes": {
+            "description": "Custom attribute of the inventory",
+            "type": "object",
+            "example": {
+              "buy online, pick up in-store (bopis)": true
+            }
+          }
+        }
+      },
+      "AdjustInventoryRequest": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "description": "Item ID whose inventory is to be updated",
+            "type": "integer",
+            "format": "int64",
+            "example": 4225678911
+          },
+          "locationNum": {
+            "description": "Location number is used to identify the warehouse or location where the inventory is kept",
+            "type": "integer",
+            "format": "int32",
+            "example": 473746
+          },
+          "channelId": {
+            "description": "Channel ID. This field is used to identify where the business operations are being held.",
+            "type": "string",
+            "example": 12
+          },
+          "leadTime": {
+            "description": "The amount of time between when a purchase order is placed to replenish products and when the order is received in the warehouse",
+            "type": "string",
+            "example": 1234
+          },
+          "counters": {
+            "description": "Represents inventory position",
+            "type": "object",
+            "example": {
+              "on-hand": 10
+            }
+          },
+          "attributes": {
+            "description": "Custom attributes for inventory",
+            "type": "object",
+            "example": {
+              "buy online, pick up in-store (bopis)": true
+            }
+          }
+        }
+      },
+      "CounterRequest": {
+        "type": "object",
+        "description": "This object contains the payload to create counter (inventory position)",
+        "properties": {
+          "name": {
+            "description": "Name of the counter to be created",
+            "type": "string",
+            "example": "On Hand"
+          },
+          "code": {
+            "description": "Counter code that is used to identify a counter",
+            "type": "string",
+            "example": "on-hand"
+          }
+        }
+      },
+      "UpdateCounterRequest": {
+        "type": "object",
+        "description": "This object contains the payload to create counter (inventory position)",
+        "properties": {
+          "name": {
+            "description": "Name of the counter",
+            "type": "string",
+            "example": "On Hand"
+          }
+        }
+      },
+      "Counter": {
+        "type": "object",
+        "description": "This object contains inventory position (also known as counter) details that are to be created",
+        "properties": {
+          "id": {
+            "description": "Unique counter ID",
+            "type": "string",
+            "example": "622786ae0bdb19221a24fb61"
+          },
+          "name": {
+            "description": "Name of the counter to be created",
+            "type": "string",
+            "example": "On Hand"
+          },
+          "code": {
+            "description": "Counter code that is used to identify a counter",
+            "type": "string",
+            "example": "on-hand"
+          }
+        }
+      },
+      "SignedUploadUrlBody": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "description": "Name of the file to be uploaded",
+            "type": "string",
+            "example": "45162930812_inventory"
+          }
+        }
+      },
+      "UploadUrlResponse": {
+        "type": "object",
+        "properties": {
+          "keyId": {
+            "description": "Key ID, associated with the file name, that is generated automatically.",
+            "type": "string",
+            "example": "981628612_inventory"
+          },
+          "url": {
+            "description": "URL for uploading the CSV file to apply bulk chnages to inventory model",
+            "type": "string",
+            "example": "https://url.com/qwertyuioplkjhgfds"
+          }
+        }
+      },
+      "AttributeRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "Attribute code. It's a unique code that is used to identify an attribute",
+            "type": "string",
+            "example": "on-hand"
+          }
+        }
+      },
+      "Attribute": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Inventory attribute ID that is generated automatically",
+            "type": "string",
+            "example": "622786ae0bdb19221a24fb61"
+          },
+          "code": {
+            "description": "Attribute name",
+            "type": "string",
+            "example": "on-hand"
+          }
+        }
+      },
+      "PaginationQueryModel": {
+        "type": "object",
+        "description": "This object represents the process of separating data into different pages",
+        "properties": {
+          "limit": {
+            "description": "Number of records returned on a single page, default is 10 if limit is not specified",
+            "type": "integer",
+            "format": "int32"
+          },
+          "offset": {
+            "description": "Number of records you wish to skip before selecting records, default is 0 if not specified",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PaginatedNetworkResponse": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "network": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Network"
+            }
+          }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "description": "This object represents the process of separating data into different pages",
+        "properties": {
+          "total": {
+            "description": "Total number of records",
+            "type": "integer",
+            "format": "int64",
+            "example": 100
+          },
+          "limit": {
+            "description": "Number of records returned on a single page",
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "offset": {
+            "description": "Number of records skipped before selecting the records",
+            "type": "integer",
+            "format": "int64",
+            "example": 0
+          }
+        }
+      },
+      "InventorySearchModel": {
+        "type": "object",
+        "description": "This object contains all the filtering criteria based on which inventories are searched",
+        "properties": {
+          "skus": {
+            "description": "List of SKUs for which the inventory are to be retrieved",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": [
+                "SKU00025",
+                "SKUfhera",
+                "SKUoqiwd"
+              ]
+            }
+          },
+          "itemIds": {
+            "description": "List of item IDs for which the inventory are to be retrieved",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64",
+              "example": [
+                4225678911,
+                4225678922,
+                4225678933
+              ]
+            }
+          },
+          "channels": {
+            "description": "List of channels",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": [
+                12
+              ]
+            }
+          },
+          "locationNum": {
+            "description": "List of inventory location numbers. Location number is used to identify the warehouse or location where the inventory is kept",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "example": [
+                473746,
+                473747
+              ]
+            }
+          }
+        }
+      },
+      "PaginatedInventoryResponse": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "inventory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inventory"
+            }
+          }
+        }
+      },
+      "InventoryGeoSearchModel": {
+        "type": "object",
+        "properties": {
+          "skus": {
+            "description": "List of SKUs",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "Middle East"
+            }
+          },
+          "postalCode": {
+            "description": "Postal code of the location to start the radius from",
+            "type": "string",
+            "example": 600021
+          },
+          "lat": {
+            "description": "Latitude of the location in degree",
+            "type": "number",
+            "format": "double",
+            "example": -22.952392357521894
+          },
+          "lng": {
+            "description": "Longitude of the locationin degree",
+            "type": "number",
+            "format": "double",
+            "example": -43.21032022614249
+          },
+          "radius": {
+            "description": "Radius within which the inventories are to be retrieved",
+            "type": "number",
+            "format": "double",
+            "example": 100
+          },
+          "limit": {
+            "description": "Number of records to be returned",
+            "format": "int32",
+            "example": 10
+          }
+        }
+      },
+      "InventoryGeographyResponse": {
+        "type": "object",
+        "properties": {
+          "inventory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Inventory"
+            }
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationResponse"
+            }
+          }
+        }
+      },
+      "LocationResponse": {
+        "type": "object",
+        "properties": {
+          "locationNum": {
+            "description": "Location number is used to identify the warehouse or location where the inventory is kept",
+            "type": "integer",
+            "format": "int32",
+            "example": 473746
+          },
+          "distance": {
+            "description": "Distance of the location in miles from the specified lattitude and longitude",
+            "type": "number",
+            "format": "double",
+            "example": 4.5
+          }
+        }
+      },
+      "NetworkSearchModel": {
+        "type": "object",
+        "properties": {
+          "networkId": {
+            "description": "Network ID",
+            "type": "string",
+            "example": "62278e49167b6079755aa5e7"
+          },
+          "sku": {
+            "description": "Network SKU",
+            "type": "string",
+            "example": "SKU00025"
+          }
+        }
+      },
+      "PaginatedNetworkAggregationResponse": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "networkAggregation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NetworkAggregation"
+            }
+          }
+        }
+      },
+      "NetworkAggregation": {
+        "type": "object",
+        "properties": {
+          "networkCode": {
+            "description": "Network code. A unique code name associated with the network for identification.",
+            "type": "string",
+            "example": "Ship-to-home"
+          },
+          "sku": {
+            "description": "Network SKU",
+            "type": "string",
+            "example": "SKU00025"
+          },
+          "virtualCounters": {
+            "description": "Inventory quantity that is available to purchase.",
+            "type": "object",
+            "example": {
+              "availableToPurchase": 50
+            }
+          }
+        }
+      },
+      "PaginatedLogResponse": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "networkAggregation": {
+            "type": "array",
+            "description": "List of network aggregations",
+            "items": {
+              "$ref": "#/components/schemas/LogResponse"
+            }
+          }
+        }
+      },
+      "LogResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique log ID",
+            "type": "string",
+            "example": "626faf4f352b50680cf2284e"
+          },
+          "keyId": {
+            "description": "Key ID of the uploaded file",
+            "type": "string",
+            "example": "1651486519061_Inventory"
+          },
+          "status": {
+            "description": "Upload status of the file",
+            "type": "string",
+            "example": "FINISHED"
+          },
+          "totalRows": {
+            "description": "Total numebr of rows specified in the uploaded file",
+            "type": "integer",
+            "example": 21
+          },
+          "totalRowsUploaded": {
+            "description": "Number of rows uploaded to database",
+            "type": "integer",
+            "example": 21
+          },
+          "totalRowsErrors": {
+            "description": "Numebr of rows that displayed error while uploading the file",
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "ClientError": {
+        "description": "Client error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "Invalid request payload or parameter"
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Server error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "An internal error occurred. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not-found error details",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "Resource not found. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "ConflictError": {
+        "description": "Resource conflict",
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Human-readable error description",
+            "type": "string",
+            "example": "Resource conflict. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      },
+      "SiteContext": {
+        "description": "JSON object containing `channel`, `account`, `stage`, `date`, and `site`.",
+        "type": "object",
+        "required": [
+          "channel",
+          "account",
+          "stage"
+        ],
+        "properties": {
+          "channel": {
+            "description": "Sales channel",
+            "type": "number",
+            "example": 12
+          },
+          "account": {
+            "description": "Merchant account ID. It is a 24 character alphanumeric account value of merchant's copilot account, provided by fabric",
+            "type": "string",
+            "example": "5z689abc4216v8000930d1ef"
+          },
+          "stage": {
+            "description": "Stage name",
+            "type": "string",
+            "example": "sandbox"
+          },
+          "date": {
+            "description": "UTC date and time",
+            "type": "string",
+            "example": "2021-04-20T10:24:36.162Z"
+          },
+          "site": {
+            "description": "Source origin (or storefront) of the request",
+            "type": "string",
+            "example": "libertytreemedia.com"
+          }
+        }
+      }
+    }
+  }
+}

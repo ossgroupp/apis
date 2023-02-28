@@ -1,0 +1,1414 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "iq1nvyvlozw3x"
+  },
+  "info": {
+    "title": "Dynamic Pricing Engine",
+    "description": "fabric's Dynamic Pricing Engine provides APIs that help to evaluate promotions and calculate prices instantly for the cart items using real-time price calculation method, that incorporates the latest information, to provide personalized and competitive prices for specific customers. It supports formula based custom SKU dynamic pricing, and shows discount breakdown details for separate items having separate promotions.<br><br>It uses the cache information, instead of fetching offer details of items from database, to evaluate promotions and calculate prices instantly. It is fast, scalable to millions of pricing requests per day, and supports complex promotional strategies.",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "INC",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://dev02-apigw.pricesandbox.libertytreemedia.com",
+      "description": "Development"
+    },
+    {
+      "url": "https://stg02-apigw.pricesandbox.libertytreemedia.com",
+      "description": "Staging"
+    },
+    {
+      "url": "https://uat01-apigw.uat.price.libertytreemedia.com",
+      "description": "Sandbox"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Promotions",
+      "description": "Promotion endpoint evaluates promotions and discount coupons instantly. The *evaluate promotions* endpoint allows you to submit a range of data that will be referenced against the conditions that are set earlier using Management APIs. The response will include the details of the promotions and discounts applied. This can be displayed on your Storefront to help shoppers know that they are getting the expected discounts."
+    },
+    {
+      "name": "Price",
+      "description": "Price endpoint calculates price details for one or more itemsin real-time, and displays the calculated price on the website."
+    }
+  ],
+  "paths": {
+    "/v1/promo/evaluate-promotions": {
+      "post": {
+        "tags": [
+          "Promotions"
+        ],
+        "summary": "Evaluate promotions",
+        "description": "Evaluates a cart's promotions, discount coupons and implicit promotions,either by specified itemId or by SKU (based on the customer specific configuration set in the backend)",
+        "operationId": "evaluatePromotions",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.<br>**Note:** To know about how to generate authorization token, see [Generate Authorization Token](https://knowledgebase.libertytreemedia.com/docs/developer-portal/offers-developer-guide/getting-started/#generate-authorization-token)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/promotionEvaluationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully evaluated the promotions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/promotionEvaluationResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/price/get-by-sku": {
+      "post": {
+        "tags": [
+          "Price"
+        ],
+        "summary": "Get calculated prices",
+        "description": "Retrieves prices for items either by SKUs or by item IDs based on the customer specific configuration set in the backend.",
+        "operationId": "getBySKU",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "JSON object containing `channel`, `account`, `stage`, and `date`.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/xSiteContext"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token or access token for the user, provided by fabric.<br>**Note:** To know about how to generate authorization token, see [Generate Authorization Token](https://knowledgebase.libertytreemedia.com/docs/developer-portal/offers-developer-guide/getting-started/#generate-authorization-token)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjIyMTU4..."
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/getPricesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the prices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/calculatedPrice"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/apiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "itemPriceOverride": {
+        "type": "object",
+        "description": "Price object. This will override the promotion evaluation response prices.",
+        "properties": {
+          "sale": {
+            "type": "number",
+            "description": "Price at which the product is offered for sale",
+            "format": "double",
+            "example": 10
+          },
+          "base": {
+            "type": "number",
+            "description": "Minimum fixed price of a single unit of the item",
+            "format": "double"
+          }
+        }
+      },
+      "pricePromoParam": {
+        "type": "object",
+        "description": "Price parameters for calculating price",
+        "properties": {
+          "options": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Pricing options for calculation. If an add-on (`blindmotor` in this example) is set to true, price of the additional item will be calculated based on the price that was set earlier.",
+              "example": {
+                "length": "2",
+                "width": "15",
+                "blindMotor": true
+              }
+            },
+            "description": "Pricing options for calculation",
+            "example": {
+              "length": "2",
+              "width": "15",
+              "blindMotor": true
+            }
+          }
+        }
+      },
+      "promotionEvaluationRequest": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "description": "Prices conditions",
+        "properties": {
+          "traceId": {
+            "type": "string",
+            "description": "Trace ID, used to trace logs",
+            "example": "394823457"
+          },
+          "isLoggedIn": {
+            "type": "boolean",
+            "description": "true: user logged in<br> false: user is not logged in",
+            "example": true
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID",
+            "example": "5e2cfb9b45570b000864c4b5"
+          },
+          "promoCodes": {
+            "type": "array",
+            "description": "List of all the promotion codes (coupon codes) to apply",
+            "example": [
+              "SUPERCOUPON1",
+              "FIRSTPURCHASE10"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "shipping": {
+            "type": "array",
+            "description": "Shipping cost for the entire cart. You can use this `shipping` array if you want to add shipping cost for the entire cart.<br> If you want to add shipping cost for individual items, you can provide details for each item using `items.shippingMethodId` and `items.shippingPrice` fields.",
+            "items": {
+              "$ref": "#/components/schemas/promotionRequestShipping"
+            }
+          },
+          "items": {
+            "type": "array",
+            "description": "List of item information objects",
+            "items": {
+              "$ref": "#/components/schemas/promotionRequestItem"
+            }
+          },
+          "date": {
+            "pattern": "yyyy-MM-ddThh:mm:ssZ",
+            "type": "string",
+            "description": "Date for which the promotions to be evaluated",
+            "format": "date-time",
+            "example": "2019-08-24T14:15:22Z"
+          },
+          "userProfile": {
+            "type": "array",
+            "description": "Segment the user belongs to",
+            "example": {
+              "Customer Type": [
+                "Wholesale"
+              ]
+            },
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "promotionRequestItem": {
+        "required": [
+          "priceList",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "integer",
+            "description": "Item sequence number",
+            "format": "int32",
+            "example": 1
+          },
+          "priceList": {
+            "type": "string",
+            "description": "Price list ID or name",
+            "example": 100275
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU of the item. Either SKU or ItemId is mandatory. If both provided, SKU overrides itemId.",
+            "example": 1111111
+          },
+          "itemId": {
+            "type": "integer",
+            "description": "ID of the item. Either SKU or ItemId is mandatory. If both provided, SKU overrides itemId.",
+            "format": "int32",
+            "example": 1111111
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity of the item ordered",
+            "format": "double",
+            "example": 5
+          },
+          "group": {
+            "type": "array",
+            "description": "List of Group IDs. Groups the promotions belongs to. When a group of promotions is subject to non-stackable, it will be compared to other promotion groups and the highest discount providing group will be applied as promotion.",
+            "example": [
+              "5e2cfb9b45570b000863c4b5"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "hierarchy": {
+            "type": "array",
+            "description": "Item hierarchy to evaluate promotions",
+            "example": [
+              [
+                "clothingId1",
+                "footwear",
+                "sandalsId1"
+              ],
+              [
+                "nike",
+                "sandalsId2"
+              ],
+              [
+                "clothingId2",
+                "beach"
+              ]
+            ],
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "productAttributes": {
+            "type": "object",
+            "additionalProperties": {
+              "description": "Product attributes",
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": [
+                      "red",
+                      "green"
+                    ]
+                  }
+                },
+                {
+                  "type": "string",
+                  "example": "red"
+                }
+              ]
+            },
+            "example": {
+              "color": [
+                "red",
+                "green"
+              ],
+              "brand": "Nike",
+              "size": "10"
+            }
+          },
+          "priceParams": {
+            "$ref": "#/components/schemas/pricePromoParam"
+          },
+          "price": {
+            "$ref": "#/components/schemas/itemPriceOverride"
+          },
+          "channel": {
+            "type": "array",
+            "description": "List of channel IDs from where the request is coming",
+            "example": [
+              12,
+              15
+            ],
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "shippingMethodId": {
+            "type": "string",
+            "description": "Shipping Method ID to check if promotion is applicable to the shipping of the item. You can use this field if you want to add shipping cost for individual items. If you want to add shipping cost for the entire cart, use `shipping` array field.",
+            "example": 123
+          },
+          "shippingPrice": {
+            "type": "number",
+            "description": "Shipping cost for the individual item. You can use this field if you want to add shipping cost for individual items. If you want to add shipping cost for the entire cart, use `shipping` array field.",
+            "format": "double",
+            "example": 20
+          }
+        }
+      },
+      "promotionRequestShipping": {
+        "type": "object",
+        "properties": {
+          "shippingMethodId": {
+            "type": "string",
+            "description": "Shipping method ID to check if promotion is applied to it",
+            "example": 123
+          },
+          "shippingPrice": {
+            "type": "number",
+            "description": "Shipping price for the entire cart",
+            "format": "double",
+            "example": 20
+          }
+        }
+      },
+      "apiError": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Http Status",
+            "example": "NOT_FOUND",
+            "enum": [
+              "100 CONTINUE",
+              "101 SWITCHING_PROTOCOLS",
+              "102 PROCESSING",
+              "103 CHECKPOINT",
+              "200 OK",
+              "201 CREATED",
+              "202 ACCEPTED",
+              "203 NON_AUTHORITATIVE_INFORMATION",
+              "204 NO_CONTENT",
+              "205 RESET_CONTENT",
+              "206 PARTIAL_CONTENT",
+              "207 MULTI_STATUS",
+              "208 ALREADY_REPORTED",
+              "226 IM_USED",
+              "300 MULTIPLE_CHOICES",
+              "301 MOVED_PERMANENTLY",
+              "302 FOUND",
+              "302 MOVED_TEMPORARILY",
+              "303 SEE_OTHER",
+              "304 NOT_MODIFIED",
+              "305 USE_PROXY",
+              "307 TEMPORARY_REDIRECT",
+              "308 PERMANENT_REDIRECT",
+              "400 BAD_REQUEST",
+              "401 UNAUTHORIZED",
+              "402 PAYMENT_REQUIRED",
+              "403 FORBIDDEN",
+              "404 NOT_FOUND",
+              "405 METHOD_NOT_ALLOWED",
+              "406 NOT_ACCEPTABLE",
+              "407 PROXY_AUTHENTICATION_REQUIRED",
+              "408 REQUEST_TIMEOUT",
+              "409 CONFLICT",
+              "410 GONE",
+              "411 LENGTH_REQUIRED",
+              "412 PRECONDITION_FAILED",
+              "413 PAYLOAD_TOO_LARGE",
+              "413 REQUEST_ENTITY_TOO_LARGE",
+              "414 URI_TOO_LONG",
+              "414 REQUEST_URI_TOO_LONG",
+              "415 UNSUPPORTED_MEDIA_TYPE",
+              "416 REQUESTED_RANGE_NOT_SATISFIABLE",
+              "417 EXPECTATION_FAILED",
+              "418 I_AM_A_TEAPOT",
+              "419 INSUFFICIENT_SPACE_ON_RESOURCE",
+              "420 METHOD_FAILURE",
+              "421 DESTINATION_LOCKED",
+              "422 UNPROCESSABLE_ENTITY",
+              "423 LOCKED",
+              "424 FAILED_DEPENDENCY",
+              "425 TOO_EARLY",
+              "426 UPGRADE_REQUIRED",
+              "428 PRECONDITION_REQUIRED",
+              "429 TOO_MANY_REQUESTS",
+              "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
+              "451 UNAVAILABLE_FOR_LEGAL_REASONS",
+              "500 INTERNAL_SERVER_ERROR",
+              "501 NOT_IMPLEMENTED",
+              "502 BAD_GATEWAY",
+              "503 SERVICE_UNAVAILABLE",
+              "504 GATEWAY_TIMEOUT",
+              "505 HTTP_VERSION_NOT_SUPPORTED",
+              "506 VARIANT_ALSO_NEGOTIATES",
+              "507 INSUFFICIENT_STORAGE",
+              "508 LOOP_DETECTED",
+              "509 BANDWIDTH_LIMIT_EXCEEDED",
+              "510 NOT_EXTENDED",
+              "511 NETWORK_AUTHENTICATION_REQUIRED"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Validation error"
+          },
+          "debugMessage": {
+            "type": "string",
+            "description": "More detailed message for debugging",
+            "example": "Either item or sku is mandatory"
+          },
+          "subErrors": {
+            "type": "array",
+            "description": "Sub errors related to validations",
+            "items": {
+              "$ref": "#/components/schemas/apiSubError"
+            }
+          }
+        }
+      },
+      "apiSubError": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "Erroneous object",
+            "example": "promotionsEvaluationRequest"
+          },
+          "field": {
+            "type": "string",
+            "description": "Request body field",
+            "example": "items[0].quantity"
+          },
+          "rejectedValue": {
+            "type": "object",
+            "description": "Request body field value",
+            "example": -2
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Must be greater than 0"
+          }
+        },
+        "description": "Sub errors related to validations"
+      },
+      "appliedDiscount": {
+        "type": "object",
+        "description": "Details of discounts that are applied",
+        "properties": {
+          "promoId": {
+            "type": "string",
+            "description": "Promotion ID",
+            "example": "6197ec46e836ff000952c668"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "Coupon code",
+            "example": "SUPERCOUPON20"
+          },
+          "promoTitle": {
+            "type": "string",
+            "description": "Promotion title",
+            "example": "20% off"
+          },
+          "type": {
+            "type": "string",
+            "description": "Promotion type",
+            "example": "COUPON"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Discount amount",
+            "format": "double",
+            "example": 10
+          }
+        }
+      },
+      "couponError": {
+        "type": "object",
+        "description": "Details of error incase coupon is not applied",
+        "properties": {
+          "promoCode": {
+            "type": "string",
+            "description": "Coupon code",
+            "example": "SUPERCOUPON"
+          },
+          "promoId": {
+            "type": "string",
+            "description": "Promotion ID",
+            "example": "624b5aa2a8fd12000965dfdc"
+          },
+          "message": {
+            "type": "string",
+            "description": "Reason why coupon not applied",
+            "example": "Invalid coupon"
+          }
+        }
+      },
+      "discount": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "description": "Number of items",
+            "format": "int32",
+            "example": 5
+          },
+          "amount": {
+            "type": "number",
+            "description": "Discount amount",
+            "format": "double",
+            "example": 10
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of discount measurement",
+            "example": "%OFF"
+          },
+          "value": {
+            "type": "number",
+            "description": "Discount value",
+            "format": "double",
+            "example": 10
+          },
+          "promoId": {
+            "type": "string",
+            "description": "Promotion ID",
+            "example": "6197ec46e836ff000952c668"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "Coupon code",
+            "example": "SUPERCOUPON20"
+          },
+          "promoTitle": {
+            "type": "string",
+            "description": "Promotion title",
+            "example": "20% off"
+          },
+          "type": {
+            "type": "string",
+            "description": "Promotion type",
+            "example": "COUPON"
+          },
+          "application": {
+            "type": "integer",
+            "description": "It is used specifically for BuyGet type that applies when you Buy something and Get discount of some amount or percentageor free items. This field indicates how many times this BuyGet promotion is applied.",
+            "format": "int32",
+            "example": 1
+          }
+        }
+      },
+      "itemPrice": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency code",
+            "example": "USD"
+          },
+          "base": {
+            "type": "number",
+            "description": "Base price. It is the minimum fixed price of the item",
+            "format": "double",
+            "example": 10
+          },
+          "kind": {
+            "type": "string",
+            "description": "Price kind name",
+            "example": "BASE"
+          },
+          "totalPrice": {
+            "type": "number",
+            "description": "Total price after all the discounts",
+            "format": "double",
+            "example": 50
+          },
+          "finalPrice": {
+            "type": "number",
+            "description": "Final Price of the item, does not include discounts",
+            "format": "double",
+            "example": 50
+          },
+          "sale": {
+            "type": "number",
+            "description": "Price at which the item is offered for sale",
+            "format": "double",
+            "example": 50
+          }
+        }
+      },
+      "itemPriceAttributes": {
+        "type": "object",
+        "description": "Retruned if configured earlier",
+        "properties": {
+          "cost": {
+            "type": "number",
+            "description": "Cost price",
+            "format": "double",
+            "example": 9
+          },
+          "floor": {
+            "type": "number",
+            "description": "It is the lowest price at which a product can be sold",
+            "format": "double",
+            "example": 10
+          },
+          "clearance": {
+            "type": "number",
+            "description": "Selling price",
+            "format": "double",
+            "example": 10
+          }
+        }
+      },
+      "promotionEvaluationResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/promotionResponseItem"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "example": [
+              "Parameter does not exist"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "shipping": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/promotionResponseShipping"
+            }
+          },
+          "appliedDiscounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/appliedDiscount"
+            }
+          },
+          "suggestedProducts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/suggestedProducts"
+            }
+          },
+          "notAppliedCoupons": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/couponError"
+            }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Indicates if promotion is successfully evaluated"
+          }
+        }
+      },
+      "promotionResponseItem": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "integer",
+            "description": "Sequence number of the item",
+            "format": "int32",
+            "example": 1
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": 1111111
+          },
+          "itemId": {
+            "type": "integer",
+            "description": "Item ID",
+            "format": "int32",
+            "example": 1111111
+          },
+          "priceList": {
+            "type": "string",
+            "description": "Price list ID or name, depending on configuration",
+            "example": 100275
+          },
+          "group": {
+            "type": "array",
+            "description": "Group or category the promotion belongs to. When a group of promotions is subject to non-stackable, it will be compared to other promotion groups and the highest discount providing group will be applied as promotion.",
+            "example": [
+              "5e2cfb9b45570b000863c4b5",
+              "clothingId1",
+              "footwear"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Number of items",
+            "format": "double",
+            "example": 5
+          },
+          "price": {
+            "$ref": "#/components/schemas/itemPrice"
+          },
+          "priceAttributes": {
+            "$ref": "#/components/schemas/itemPriceAttributes"
+          },
+          "discount": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/discount"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Product attributes",
+              "example": {
+                "color": "red",
+                "brand": "Nike",
+                "size": "10"
+              }
+            },
+            "description": "Product attributes",
+            "example": {
+              "color": "red",
+              "brand": "Nike",
+              "size": "10"
+            }
+          },
+          "shippingPrice": {
+            "type": "number",
+            "description": "Shipping price",
+            "format": "double",
+            "example": 20
+          },
+          "shippingMethodId": {
+            "type": "string",
+            "description": "Shipping method ID used to check if promotion is applicable to the shipping method",
+            "example": 123
+          },
+          "shippingDiscount": {
+            "type": "number",
+            "description": "Shipping discount if any",
+            "format": "double",
+            "example": 5
+          }
+        }
+      },
+      "promotionResponseShipping": {
+        "type": "object",
+        "properties": {
+          "shippingMethodId": {
+            "type": "string",
+            "description": "Shipping Method ID",
+            "example": 456
+          },
+          "shippingPrice": {
+            "type": "number",
+            "description": "Shipping price",
+            "format": "double",
+            "example": 5
+          },
+          "shippingDiscount": {
+            "type": "number",
+            "description": "Shipping discount",
+            "format": "double",
+            "example": 5
+          }
+        }
+      },
+      "suggestedProducts": {
+        "type": "object",
+        "properties": {
+          "promotionId": {
+            "type": "string",
+            "description": "Promotion ID",
+            "example": "6197ec46e836ff000952c668"
+          },
+          "promotionTitle": {
+            "type": "string",
+            "description": "Promotion title",
+            "example": "Buy Shoes, get socks for free"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Free Item's'ID",
+            "example": 234343
+          },
+          "sku": {
+            "type": "string",
+            "description": "Free SKU",
+            "example": "SHOE1234"
+          },
+          "eligiblePriceLists": {
+            "type": "array",
+            "description": "Price list IDs promotion applies to. If empty, promotion applies to all price lists.",
+            "items": {
+              "type": "string",
+              "example": 1000
+            }
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Number of free items promotion gives",
+            "format": "int32",
+            "example": 2
+          },
+          "free": {
+            "type": "boolean",
+            "description": "true when a free item is provided as a promotion",
+            "example": true
+          },
+          "discountType": {
+            "type": "string",
+            "description": "Type of discount",
+            "enum": [
+              "%OFF",
+              "AMOUNT_OFF",
+              "FIXED_PRICE"
+            ],
+            "example": "%OFF"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount for discount",
+            "format": "double",
+            "example": 100
+          }
+        }
+      },
+      "getPricesRequest": {
+        "type": "object",
+        "description": "Prices conditions",
+        "properties": {
+          "traceId": {
+            "type": "string",
+            "description": "Trace ID, used to trace logs",
+            "example": 394823457
+          },
+          "priceList": {
+            "type": "array",
+            "description": "List of price list IDs which items or skus belong to",
+            "example": [
+              100275,
+              100276
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "sku": {
+            "type": "array",
+            "description": "List of item SKUs for which prices to retrieve.Either SKUs or ItemIds required. If both provided, SKU overrides itemId.",
+            "example": [
+              1000019501,
+              1000019502
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "itemId": {
+            "type": "array",
+            "description": "List of item SKUs for which prices to retrieve.Either SKUs or ItemIds required. If both provided, SKU overrides itemId.",
+            "example": [
+              111111,
+              222222
+            ],
+            "items": {
+              "type": "integer",
+              "description": "List of item IDs for which prices to retrieve.Either SKUs or ItemIds required. If both provided, SKU overrides itemId.",
+              "format": "int32"
+            }
+          },
+          "userId": {
+            "type": "string",
+            "description": "User ID",
+            "example": "5e2cfb9b45570b000864c4b5"
+          },
+          "userProfile": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "description": "Segment the user belongs to",
+              "example": {
+                "Customer Type": [
+                  "Wholesale"
+                ]
+              },
+              "items": {
+                "type": "string",
+                "description": "Segment the user belongs to",
+                "example": "{\"Customer Type\":[\"Wholesale\"]}"
+              }
+            },
+            "description": "Segment the user belongs to",
+            "example": {
+              "Customer Type": [
+                "Wholesale"
+              ]
+            }
+          },
+          "isLoggedIn": {
+            "type": "boolean",
+            "description": "true if the user logged in<br> false if the user is not logged in",
+            "example": true
+          },
+          "channel": {
+            "type": "array",
+            "description": "List of channel ID from where the request is coming",
+            "example": [
+              12,
+              15
+            ],
+            "items": {
+              "type": "integer",
+              "description": "List of channel ID from where the request is coming",
+              "format": "int32"
+            }
+          },
+          "date": {
+            "pattern": "yyyy-MM-ddThh:mm:ssZ",
+            "type": "string",
+            "description": "Date for which the prices are to be retrieved",
+            "format": "date-time",
+            "example": "2019-08-24T14:15:22Z"
+          },
+          "priceParams": {
+            "type": "array",
+            "description": "Various price parameters to calculate final price",
+            "items": {
+              "$ref": "#/components/schemas/priceRequestParam"
+            }
+          },
+          "audit": {
+            "type": "boolean",
+            "description": "true if audit is required. Response body will have an audit object with details about how the dynamic pricing engine obtained the result.<br> false if audit is not required.",
+            "example": true
+          }
+        }
+      },
+      "priceRequestParam": {
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Pricing pptions for calculation",
+              "example": {
+                "length": "2",
+                "width": "15",
+                "blindMotor": true
+              }
+            },
+            "description": "Pricing options for calculation",
+            "example": {
+              "length": "2",
+              "width": "15",
+              "blindMotor": true
+            }
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU. Either SKU or ItemId is mandatory",
+            "example": "11111"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Number of items ordered. Mandatory for Range-Base pricing method",
+            "format": "double",
+            "example": 5
+          },
+          "itemId": {
+            "type": "integer",
+            "description": "Item ID. Either SKU or ItemId is mandatory",
+            "format": "int32",
+            "example": 12345
+          }
+        }
+      },
+      "calculatedPrice": {
+        "type": "object",
+        "properties": {
+          "priceList": {
+            "type": "string",
+            "description": "Price List ID",
+            "example": "100275"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": "11111111"
+          },
+          "itemId": {
+            "type": "integer",
+            "description": "Item SKU",
+            "format": "int32",
+            "example": 11111111
+          },
+          "offers": {
+            "$ref": "#/components/schemas/calculatedPriceOffers"
+          },
+          "audit": {
+            "$ref": "#/components/schemas/calculatedPriceAudit"
+          }
+        }
+      },
+      "calculatedPriceAudit": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "ID of the user who created the price",
+            "example": "62f5e25ca090100009c6e0f0"
+          },
+          "priceMethodType": {
+            "type": "string",
+            "example": "SurfaceArea_Square_Increment"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double",
+            "example": 5
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "length": {
+                "type": "number",
+                "example": 12
+              },
+              "width": {
+                "type": "number",
+                "example": 10
+              }
+            }
+          },
+          "appliedAddons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "blind-motor"
+            }
+          }
+        }
+      },
+      "calculatedPriceObject": {
+        "type": "object",
+        "properties": {
+          "sale": {
+            "type": "number",
+            "description": "Price at which the product is offered for sale",
+            "format": "double",
+            "example": 10
+          },
+          "cost": {
+            "type": "number",
+            "description": "Cost price. Displyed if configured earlier",
+            "format": "double",
+            "example": 9
+          },
+          "base": {
+            "type": "number",
+            "description": "Minimum fixed price of a single unit of the item",
+            "format": "double",
+            "example": 10
+          },
+          "finalPrice": {
+            "type": "number",
+            "description": "Final calculated price of the item. Does not include discounts.",
+            "format": "double",
+            "example": 20
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency",
+            "example": "USD"
+          },
+          "totalPrice": {
+            "type": "number",
+            "description": "Final calculated price of the item, include discounts.",
+            "format": "double",
+            "example": 15
+          }
+        }
+      },
+      "calculatedPriceOffers": {
+        "type": "object",
+        "description": "Offers on the price",
+        "properties": {
+          "price": {
+            "$ref": "#/components/schemas/calculatedPriceObject"
+          },
+          "kind": {
+            "type": "string",
+            "description": "Price kind name",
+            "example": "BASE"
+          },
+          "channel": {
+            "type": "integer",
+            "description": "Channel for which the price is retrieved",
+            "format": "int32",
+            "example": 12
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Discount object",
+            "items": {
+              "$ref": "#/components/schemas/promotionDiscount"
+            }
+          },
+          "additionalAttributes": {
+            "type": "array",
+            "description": "Additional attributes associated with the prices",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "promotionDiscount": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Actual discount amount",
+            "format": "double",
+            "example": 10
+          },
+          "value": {
+            "type": "number",
+            "description": "Discount in percent or amount",
+            "format": "double",
+            "example": 20
+          },
+          "groupId": {
+            "type": "string",
+            "description": "ID of the group or category this item belongs to",
+            "example": "61a6354d0d70e30009415f16"
+          },
+          "promotionId": {
+            "type": "string",
+            "description": "Promotion ID",
+            "example": "6197ec46e836ff000952c668"
+          },
+          "priority": {
+            "type": "integer",
+            "description": "The order in which promotion should be applied. Promotion types are assigned a default priority. First, priority 1 promotions will be evaluated. The result of priority 1 will be used as a base price for priority 2. Similarly, the result of priority 2 will be used as a base price for priority 3 and so on.",
+            "format": "int32",
+            "example": 1
+          },
+          "stackable": {
+            "type": "boolean",
+            "description": "true indicates promotions are stackable, meaning their discounts will be summed together. Stackable promotions will be applied regardless of other promotions being applied.<br> false indicates promotions are non-stackable, meaning discounts will be compared, within the same priority, and the maximum discount will be applied for promotion.",
+            "example": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Promotion title",
+            "example": "20% off"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Item quantity",
+            "format": "int32",
+            "example": 5
+          },
+          "promotionType": {
+            "type": "string",
+            "description": "Promotion type",
+            "example": "COUPON"
+          },
+          "discountType": {
+            "type": "string",
+            "description": "Discount Type",
+            "enum": [
+              "PERCENTAGE_OFF",
+              "AMOUNT_OFF",
+              "FIXED_PRICE"
+            ]
+          },
+          "application": {
+            "type": "integer",
+            "description": "It is used specifically for BuyGet type that applies when you Buy something and Get discount of some amount or percentage or free items. This field indicates how many times this BuyGet promotion is applied.",
+            "format": "int32",
+            "example": 1
+          }
+        }
+      },
+      "xSiteContext": {
+        "type": "object",
+        "required": [
+          "stage",
+          "account",
+          "channel",
+          "date"
+        ],
+        "properties": {
+          "stage": {
+            "description": "Environment stage shared with the client during onboarding. Mandatory only for multi-tenant clients (not for single tenant clients).",
+            "type": "string",
+            "example": "prod"
+          },
+          "account": {
+            "description": "24 character client's co-pilot account ID provided by fabric. Mandatory only for multi-tenant clients (not for single tenant clients).",
+            "type": "string",
+            "example": "5f328bf0b5f328bf0b5f328b"
+          },
+          "channel": {
+            "description": "Sales channel. Mandatary for single and multi-tenant clients",
+            "type": "number",
+            "example": 12
+          },
+          "date": {
+            "description": "UTC date and time. Mandatary for single and multi-tenant clients",
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-03-24T23:16:00.000Z"
+          }
+        }
+      }
+    }
+  }
+}

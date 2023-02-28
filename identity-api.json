@@ -1,0 +1,874 @@
+{
+  "openapi": "3.0.0",
+  "x-stoplight": {
+    "id": "cxc57wr0b8ffn"
+  },
+  "info": {
+    "description": "Identity APIs to be used by all 3rd party developers to authenticate and obtain access tokens for building commerce applications that integrate with our other APIs (like OMS, Offers etc.). Additionally user self service APIs are provided for `userapp`(s) developers to quickly build support for typical identity account operations like get/update login information, change password and forgot password flows.",
+    "version": "2.0.0",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "title": "Identity APIs",
+    "contact": {
+      "url": "https://ltm.com",
+      "name": "support",
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Identity",
+    "url": "https://knowledgebase.libertytreemedia.com/docs/openapi/identity/reference"
+  },
+  "servers": [
+    {
+      "url": "https://api.identity-sbx.ltm.zone/ums/v2",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://api.identity.ltm.zone/ums/v2",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication APIs",
+      "description": "These APIs allow `sysapp` and `userapp` to authenticate themselves or their end users with Identity. The objective of these APIs is to return an access token to apps, which can then be used to invoke other APIs (like OMS, PIM etc)."
+    },
+    {
+      "name": "User Self Service APIs",
+      "description": "These APIs allow `userapp`(s) to provide user self service for their identity accounts. These include basic user services like get/update login information, change password and forgot password flows."
+    }
+  ],
+  "paths": {
+    "/auth/users/self": {
+      "get": {
+        "tags": [
+          "User Self Service APIs"
+        ],
+        "summary": "Get user details",
+        "description": "This API allows a logged in user to get his own details from the  Identity. The API is designed to return the details of the user whose bearer token is sent in the header.",
+        "operationId": "getUserDetailsBySelf",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token of the login in user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer <access token of the user>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Identity Object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSelf"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User Self Service APIs"
+        ],
+        "summary": "Update user details",
+        "description": "This API allows a logged in user to update his own details in the  Identity.  Identity stores only the infromation that is necessary for user authentication functionality. The other customer details of the user like shipping and communication preferences are to be stored in the customer service APIs of .",
+        "operationId": "updateUserDetailsBySelf",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token of the login in user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer <access token of the user>"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequestSelf"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User Identity Object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "id": "1231012312-312-31231asda",
+                  "status": "active",
+                  "orgId": "4ed1acc6-7799-4bee-856e-91f18ca77d7a",
+                  "loginId": "testuser@gmail.com",
+                  "isStaffUserFederated": true,
+                  "email": "foo@bar.com",
+                  "primaryContact": "+1 234 8992341234",
+                  "firstName": "James",
+                  "lastName": "Bond",
+                  "meta": {
+                    "BirthDate": "28-20-2000"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/auth/self/password": {
+      "post": {
+        "tags": [
+          "User Self Service APIs"
+        ],
+        "summary": "Change password",
+        "description": "This API allows a logged in user to change his password (post login). This API is not applicable when the user has logged in or registered using a social login.",
+        "operationId": "changePasswordBySelf",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token of the login in user",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer <access token of the user>"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              },
+              "example": {
+                "oldPassword": "myoldPassword",
+                "newPassword": "mynewPassword"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response when the password gets successfully changed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "code": "PASSWORD_CHANGED",
+                  "message": "Password changed successfully."
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "User Self Service APIs"
+        ],
+        "summary": "Forgot password",
+        "description": "This API allows the users to reset their password when they are unable to login. This API is not applicable when the user has logged in or registered using a social login.",
+        "operationId": "forgotPasswordBySelf",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "loginId": {
+                    "type": "string",
+                    "description": "Login id of the user whose ID should be reset"
+                  }
+                },
+                "type": "object"
+              },
+              "example": {
+                "loginId": "johndoe@libertytreemedia.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response when the user reset link is sent to the registered email address.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "code": "FORGOT_PASSWORD_INITIATED",
+                  "message": "If user was found a reset link will be sent to the provided email"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/oauth2/default/v1/authorize": {
+      "servers": [
+        {
+          "url": "https://{customerName}.libertytreemedia.com",
+          "variables": {
+            "customerName": {
+              "enum": [
+                "customer-name.login-sbx",
+                "customer-name.login"
+              ],
+              "default": "customer-name.login-sbx"
+            }
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Authentication APIs"
+        ],
+        "summary": "Authorize `userapp` with and without PKCE",
+        "description": "Use this API to authenticate `userapp`(s) with  Identity. This API is not needed for `sysapp` authentication (see the `/token` API instead). The immediate response of this operation would be a browser re-direct to the hosted login page configured in  Identity. Once the end user is authenticated on the hosted login page,  Identity will perform a redirect back to the `userapp` on the provided `redirect_uri`. This API can be used for both authroization code flow with and without PKCE.",
+        "operationId": "authorizeUserApp",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "client_id",
+            "description": "Client ID of the `userapp`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "response_type",
+            "description": "The type of the response expected. This should always be set to `code` (as per OAuth 2.0 grant type , refer https://datatracker.ietf.org/doc/html/rfc6749#page-19)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "scope",
+            "description": "The scope of the API call. This should always be set to `openid` (as per OpenID Connect standard - https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "redirect_uri",
+            "description": "The redirect uri of the `userapp` that  Identity would redirect the user once the login is successful. This uri should be hosted by `userapp` and as part of the redirect would receive the auth code (as `code` query paramter) which can then be exchanged for the access token (see `/token`).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "description": "A random string created by `userapp` used to maintain state between the request and the callback. This helps mitigate CSRF when it is cryptographically derived from a browser cookie denoting the user/session.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "code_challenge_method",
+            "description": "<b>Required only when using authorization code flow with PKCE.</b> A code challenge method supported by PKCE specification.  Identity only supports the value of `S256` (for more information - https://datatracker.ietf.org/doc/html/rfc7636#section-4.2). This parameter is mandatory for authorization code flow with PKCE and is not required for the regular authorization code flow.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "code_challenge",
+            "description": "<b>Required only when using authorization code flow with PKCE.</b> The code challenge created by the `userapp` as per the specification on PKCE - https://datatracker.ietf.org/doc/html/rfc7636#section-4.2.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Found. A successful response to this API would re-direct the user to the hosted login page provided by the  Identity. Once the user successfully logs in,  Identity would re-direct the client back to the `redirect_uri` hosted on the `userapp` with the authorization code (as query parameter `code`) and the state (as query parameter `state`). The `state`` parameter in the callback would be the same value as sent in the request."
+          }
+        }
+      }
+    },
+    "/oauth2/{authServerId}/v1/token": {
+      "servers": [
+        {
+          "url": "https://{customerName}.libertytreemedia.com",
+          "variables": {
+            "customerName": {
+              "enum": [
+                "customer-name.login-sbx",
+                "customer-name.login"
+              ],
+              "default": "customer-name.login-sbx"
+            }
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Authentication APIs"
+        ],
+        "summary": "Fetch access token",
+        "description": "This API allows `userapp` and `sysapp` to fetch the access tokens. For `userapp` use this API after the `/authorize` API and the subsequent callback. For `userapp` this endpoint supports generation of access token from authorization code or from refresh token, sent in the previous `authorize` endpoint's callback. For `sysapp` this API can directly be used to get an access token, no prior `/authorize` end point call is needed.",
+        "operationId": "getAccessToken",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authServerId",
+            "description": "Use `default` for `userapp` flows. For `sysapp`, use the tenant specific server id provided by  Identity (see Getting Started).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "<b>Required for `userapp` with authorization code flow without PKCE and for `sysapp`.</b> Basic authorization header to be created using the client id and client secret of the `userapp` or `sysapp`. The value should be derived as `Basic base64encode(client_id:client_secret)`. Refer https://datatracker.ietf.org/doc/html/rfc2617#section-2 for more details.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "grant_type"
+                ],
+                "properties": {
+                  "client_id": {
+                    "type": "string",
+                    "description": "<b>Required only for `userapp` and authorization code flow with PKCE.</b> Client ID of the `userapp`."
+                  },
+                  "redirect_uri": {
+                    "type": "string",
+                    "description": "<b>Required for `userapp` with both authorization code flow with and without PKCE.</b> URL encoded `redirect_uri` sent by the `userapp` in the previous `/authorize` call."
+                  },
+                  "grant_type": {
+                    "type": "string",
+                    "enum": [
+                      "authorization_code",
+                      "client_credentials"
+                    ],
+                    "description": "<b>Required for all authentication flows and app types.</b> Set to `authorization_code` for `userapp` (for both authorization code flow with and without PKCE). Set to `client_credentials` when using for `sysapp`."
+                  },
+                  "code_verifier": {
+                    "type": "string",
+                    "description": "<b>Required only for `userapp` and authorization code flow with PKCE.</b> Code verifier using for deriving the `code_challenge` sent in the `/authorize` call. Refer to https://datatracker.ietf.org/doc/html/rfc7636#section-4.2 for more details"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "<b>Required for `userapp` with both authorization code flow with and without PKCE.</b> Authorization code received as part of the callback response to the `/authorize` call."
+                  },
+                  "scope": {
+                    "type": "string",
+                    "description": "<b>Required only for `sysapp`.</b> Value should always be set to `s2s`."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Access token response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "SiteContextHeader": {
+        "name": "x-site-context",
+        "in": "header",
+        "description": "Account id of requesting user",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "{\"account\": \"5f8eaeb7e639f70008b9f16b\"}"
+        }
+      }
+    },
+    "schemas": {
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "token_type": {
+            "type": "string",
+            "description": "Will always be set to `Bearer`"
+          },
+          "expires_in": {
+            "type": "number",
+            "description": "Describes the time in seconds in which the issued access token expires"
+          },
+          "access_token": {
+            "type": "string",
+            "description": "The access token issued for the logged in user or the app itself. This access token should be used as a bearer token in the `Authorization` header of subsequent  API calls."
+          },
+          "id_token": {
+            "type": "string",
+            "description": "This token certifies that the user or app was indeed authenticated successfully. However, this token is not to be used when invoking  APIs, use access token instead."
+          },
+          "scope": {
+            "type": "string",
+            "description": "Always set to \"openid profile email\" as part of the OpenID Connect standard."
+          }
+        }
+      },
+      "BaseModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id",
+            "example": "8fed3942-b742-4559-bc99-e4129e888eb1"
+          },
+          "status": {
+            "type": "string",
+            "description": "Role Status",
+            "enum": [
+              "active",
+              "inactive"
+            ],
+            "default": "active",
+            "example": "active"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "INTERNAL_SERVER_ERROR",
+              "RECORD_NOT_FOUND",
+              "REQUEST_DENIED",
+              "INSUFFICIENT_PARAMS",
+              "INVALID_USER_ACCOUNT",
+              "USER_NOT_FOUND",
+              "ACCOUNT_EXISTS",
+              "BAD_REQUEST"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "User": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "loginId": {
+                "type": "string",
+                "description": "User Login Id",
+                "example": "test.user@foobar.com"
+              },
+              "orgId": {
+                "type": "string",
+                "description": "User Organization Id",
+                "example": "123123-23wdd-123234"
+              },
+              "isStaffUserFederated": {
+                "type": "boolean",
+                "description": "User Staff Organization",
+                "example": false
+              },
+              "meta": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "example": {
+                  "BirthDate": "28-20-2000"
+                }
+              },
+              "email": {
+                "type": "string",
+                "description": "User Email Id",
+                "format": "email",
+                "example": "test.user@foobar.com"
+              },
+              "firstName": {
+                "type": "string",
+                "description": "User First Name",
+                "example": "Test"
+              },
+              "lastName": {
+                "type": "string",
+                "description": "User Last Name",
+                "example": "User"
+              },
+              "primaryContact": {
+                "type": "string",
+                "description": "User Primary Contact",
+                "example": "+1 650 333 4444"
+              }
+            }
+          }
+        ]
+      },
+      "ChangePasswordRequest": {
+        "description": "Change Password Request",
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "description": "Old password used by the user",
+            "example": "oldpassword"
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "New password being set by the user",
+            "example": "newpassword"
+          }
+        }
+      },
+      "UpdateUserRequestSelf": {
+        "description": "Update User Self Details",
+        "type": "object",
+        "properties": {
+          "loginId": {
+            "type": "string",
+            "description": "User Login Id",
+            "example": "sdsdf232ew-123asdaa-1231231"
+          },
+          "email": {
+            "type": "string",
+            "description": "User Email Id",
+            "format": "email",
+            "example": "test.user@foobar.com"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User First Name",
+            "example": "Test"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User Last Name",
+            "example": "Jr"
+          },
+          "primaryContact": {
+            "type": "string",
+            "description": "User Primary Contact",
+            "example": "+1 650 333 4444"
+          }
+        }
+      },
+      "UserSelf": {
+        "description": "User Self Details. For shoppers, accounts property will be empty.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User Id",
+            "example": "1234-1234-1234"
+          },
+          "status": {
+            "type": "string",
+            "description": "User Status",
+            "example": "active"
+          },
+          "isStaffUserFederated": {
+            "type": "boolean",
+            "description": "User Staff Federated",
+            "example": true
+          },
+          "loginId": {
+            "type": "string",
+            "description": "User Login Id",
+            "example": "sdsdf232ew-123asdaa-1231231"
+          },
+          "orgId": {
+            "type": "string",
+            "description": "User Organization Id",
+            "example": "123123-23wdd-123234"
+          },
+          "email": {
+            "type": "string",
+            "description": "User Email Id",
+            "format": "email",
+            "example": "test.user@foobar.com"
+          },
+          "primarycontact": {
+            "type": "string",
+            "description": "User Primary Contact",
+            "example": "+1 650 333 4444"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User First Name",
+            "example": "Test"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User Last Name",
+            "example": "User"
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "BirthDate": "28-20-2000"
+            }
+          },
+          "accounts": {
+            "type": "object",
+            "description": "User Accounts",
+            "additionalProperties": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UserSelfAccounts"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "UserSelfAccounts": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Account Id",
+            "example": "87324516"
+          },
+          "name": {
+            "type": "string",
+            "description": "Account Name",
+            "example": "Customer ABC Sandbox"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Account Permissions",
+            "example": [
+              "access-control:v1:roles:get",
+              "access-control:v1:roles:list"
+            ]
+          },
+          "tenantId": {
+            "type": "string",
+            "example": "60c91750fa8d3e000854e8ea"
+          }
+        }
+      }
+    },
+    "responses": {
+      "ResourceAlreadyExists": {
+        "description": "Unable to create the resoure as it already exists",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "example": {
+              "code": "ACCOUNT_EXISTS",
+              "message": "Resource already exists"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Unable to create the resoure due to invalid input",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "example": {
+              "code": "BAD_REQUEST",
+              "message": "Invalid input provided"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "The request was received but an internal error occurred",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "example": {
+              "code": "INTERNAL_SERVER_ERROR",
+              "message": "Internal server error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The specified resource was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "example": {
+              "code": "RECORD_NOT_FOUND",
+              "message": "Data with the given identifier was not found"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "User is not allowed to perform the action",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "example": {
+              "code": "REQUEST_DENIED",
+              "message": "User does not have the required permission"
+            }
+          }
+        }
+      },
+      "InsufficientParams": {
+        "description": "Insufficient Params Provided",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "example": {
+              "code": "INSUFFICIENT_PARAMS",
+              "message": "Insufficient Params Provided."
+            }
+          }
+        }
+      },
+      "InvalidUserAccount": {
+        "description": "Invalid User Account",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "example": {
+              "code": "INVALID_USER_ACCOUNT",
+              "message": "Invalid User/Account Provided."
+            }
+          }
+        }
+      },
+      "UserNotFound": {
+        "description": "The specified user was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "example": {
+              "code": "USER_NOT_FOUND",
+              "message": "User not found."
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "API Key - 1": {
+        "name": "API Key",
+        "type": "apiKey",
+        "in": "query"
+      }
+    }
+  },
+  "x-internal": true
+}

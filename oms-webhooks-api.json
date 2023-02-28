@@ -1,0 +1,628 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "nt2zuukf5g3vr"
+  },
+  "info": {
+    "title": "Webhook service",
+    "description": "OMS webhooks APIs For multi tenant service",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/webhook",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/webhook",
+      "description": "Staging"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/webhook",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Webhook Server Controller",
+      "description": "These endpoints help in performing CRUD operations on webhook subscriptions"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Webhook Server Controller"
+        ],
+        "summary": "Get all webhook definitions",
+        "description": "Retrieves all webhook definitions for give tenant-Id, offset and limit.",
+        "operationId": "fetchAllWebhooks",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "eventType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "apiVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of webhook definitions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WebhookDefinition"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "No webhook definition present for the given webhook Id"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Webhook Server Controller"
+        ],
+        "summary": "Create webhook definition",
+        "description": "Creates webhook definition with the given target, events, request type, and other values as passed in the request body.",
+        "operationId": "createWebhook",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns Webhook Definition that is successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookDefinition"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Webhook Definition with target, tenantId, protocol, source, apiVersion already exists!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Webhook Definition with target, tenantId, protocol, source, apiVersion already exists!"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{webhookId}": {
+      "get": {
+        "tags": [
+          "Webhook Server Controller"
+        ],
+        "summary": "Get webhook definition by ID",
+        "description": "Retrieves webhook definition for a given webhook ID",
+        "operationId": "fetchWebhook",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns Webhook Definition that is successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookDefinition"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "No webhook "
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Webhook Server Controller"
+        ],
+        "summary": "Delete webhook definition by ID",
+        "description": "Deletes webhook definition of a given webhook ID",
+        "operationId": "deleteWebhook",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns webhook definition that is successfully deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookDefinition"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "No webhook definition present for the given webhook Id"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Webhook Server Controller"
+        ],
+        "summary": "Update webhook definition by ID",
+        "description": "Updates webhook definition for a given webhook ID",
+        "operationId": "updateWebhook",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWebhookDefinitionDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns Webhook Definition that is successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookDefinition"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "No webhook definition present for the given webhook Id"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Webhook Definition with target, tenantId, protocol, source, apiVersion already exists!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Webhook Definition with target, tenantId, protocol, source, apiVersion already exists!"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "WebhookDefinition": {
+        "required": [
+          "events",
+          "protocol",
+          "requestType",
+          "source",
+          "target"
+        ],
+        "type": "object",
+        "properties": {
+          "webhookId": {
+            "type": "string",
+            "example": "9t45djl"
+          },
+          "tenantId": {
+            "type": "string",
+            "example": "6e5436gh78ndk"
+          },
+          "target": {
+            "type": "string",
+            "description": "Target URL",
+            "example": "http://www.test.com"
+          },
+          "targetApiKey": {
+            "type": "string",
+            "description": "Api key of the target service , if authentication is required ",
+            "example": "adfasdWdsaQFSsdf"
+          },
+          "protocol": {
+            "type": "string",
+            "example": "HTTP"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source of event triggers",
+            "example": "OMS"
+          },
+          "apiVersion": {
+            "type": "string",
+            "deprecated": true
+          },
+          "format": {
+            "type": "string",
+            "description": "Content-Type of request body while triggering Webhook",
+            "example": "application/json"
+          },
+          "callbackUrl": {
+            "type": "string",
+            "deprecated": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "description": "List of events for which the webhook need to trigger the target",
+            "example": "[ORDER_CREATED]",
+            "items": {
+              "type": "string",
+              "description": "List of events for which the webhook need to trigger the target",
+              "example": "[ORDER_CREATED]"
+            }
+          },
+          "requestType": {
+            "type": "string",
+            "description": "List of events for which the webhook need to trigger the target",
+            "enum": [
+              "POST",
+              "PUT",
+              "PATCH",
+              "GET",
+              "DELETE"
+            ]
+          }
+        },
+        "description": "Request model for Webhook Definition"
+      },
+      "XSiteContext": {
+        "required": [
+          "account",
+          "stage"
+        ],
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "string",
+            "description": "Merchant account ID. It is a 24 character alphanumeric account value of merchant's copilot account, provided by fabric",
+            "example": "5z689abc4216v8000930d1ef"
+          },
+          "date": {
+            "type": "string",
+            "example": "2022-10-18T09:05:19.647Z"
+          },
+          "stage": {
+            "type": "string",
+            "description": "Stage name",
+            "example": "sandbox"
+          },
+          "site": {
+            "type": "string",
+            "description": "Source origin (or storefront) of the request",
+            "example": "libertytreemedia.com"
+          }
+        },
+        "description": "JSON object containing `account`, `stage`, `date`, and `site`."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "ErrorResponse Model"
+      },
+      "UpdateWebhookDefinitionDTO": {
+        "type": "object",
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "targetApiKey": {
+            "type": "string"
+          },
+          "protocol": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "apiVersion": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string"
+          },
+          "callbackUrl": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requestType": {
+            "type": "string",
+            "enum": [
+              "POST",
+              "PUT",
+              "PATCH",
+              "GET",
+              "DELETE"
+            ]
+          }
+        },
+        "description": "Request model for Updating Webhook Definition"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "description": "API Key for the user provided by fabric",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}

@@ -1,0 +1,1933 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "02bfdo8rbpj6m"
+  },
+  "info": {
+    "title": "Invoice service",
+    "description": "OMS Invoice APIs for multinenat service",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "privacy policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/invoice",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/invoice",
+      "description": "Staging"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/invoice",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Invoice Controller",
+      "description": "These endpoints help in generating the invoices"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [
+          "Invoice Controller"
+        ],
+        "summary": "Generate invoice",
+        "description": "Generates invoice for the given invoice type such as, shipment, appeasement, and so on.",
+        "operationId": "generateInvoice",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Invoice generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invoice"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Shipment with the given shipmentId is not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query": {
+      "post": {
+        "tags": [
+          "Invoice Controller"
+        ],
+        "summary": "Get invoice by query",
+        "description": "Retrieves invoice by query",
+        "operationId": "fetchInvoiceByQuery",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Invoice fetched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibQueryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Invoice not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post": {
+      "post": {
+        "tags": [
+          "Invoice Controller"
+        ],
+        "summary": "Update invoice for financial posting",
+        "description": "Updates invoice for financial posting for invoice IDs",
+        "operationId": "updateInvoiceForFinancialPosting",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinancialPostingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Invoice updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Invoice"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Invoice not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/acknowledge": {
+      "post": {
+        "tags": [
+          "Invoice Controller"
+        ],
+        "summary": "Acknowledge financial posting",
+        "description": "Acknowledges financial posting for invoice ID",
+        "operationId": "acknowledgeFinancialPosting",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinancialPostingAcknowledgeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Acknowledged financial posting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinancialPostingAcknowledgeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Invoice not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acknowledgement": {
+      "post": {
+        "tags": [
+          "Invoice Controller"
+        ],
+        "summary": "Acknowledge invoice by ID",
+        "description": "Acknowledges invoice by invoice ID",
+        "operationId": "acknowledgeInvoice",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvoiceAcknowledgeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Invoice acknowledged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invoice"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Invoice not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{invoiceId}": {
+      "get": {
+        "tags": [
+          "Invoice Controller"
+        ],
+        "summary": "Get invoice by invoice ID",
+        "description": "Retrieves invoice by invoice ID",
+        "operationId": "fetchInvoice",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice fetched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invoice"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Invoice not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EventRequest": {
+        "required": [
+          "detailType"
+        ],
+        "type": "object",
+        "properties": {
+          "detailType": {
+            "type": "string",
+            "description": "Event type",
+            "example": "ORDER_CREATE/ORDER_RETURNS"
+          },
+          "detail": {
+            "$ref": "#/components/schemas/InvoiceEventDetail"
+          }
+        },
+        "description": "EventRequest model"
+      },
+      "InvoiceEventDetail": {
+        "required": [
+          "channel",
+          "documentType",
+          "id",
+          "invoiceType",
+          "tenant"
+        ],
+        "type": "object",
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "id of the given document",
+            "example": "ship1233234555g"
+          },
+          "channel": {
+            "type": "string",
+            "description": "channel",
+            "example": "ship1233234555g"
+          },
+          "tenant": {
+            "type": "string",
+            "description": "tenantId",
+            "example": "ship1233234555g"
+          },
+          "id": {
+            "type": "string",
+            "description": "id of the given document",
+            "example": "ship1233234555g"
+          },
+          "documentType": {
+            "type": "string",
+            "enum": [
+              "ORDER",
+              "SHIPMENT"
+            ]
+          },
+          "invoiceType": {
+            "type": "string",
+            "example": "SHIPMENT",
+            "enum": [
+              "SHIPPING,APPEASEMENT"
+            ]
+          }
+        },
+        "description": "Invoice event detail model"
+      },
+      "XSiteContext": {
+        "required": [
+          "account",
+          "stage"
+        ],
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "string",
+            "description": "Merchant account ID. It is a 24 character alphanumeric account value of merchant's copilot account, provided by fabric",
+            "example": "5z689abc4216v8000930d1ef"
+          },
+          "date": {
+            "type": "string",
+            "example": "2022-10-18T09:05:19.647Z"
+          },
+          "stage": {
+            "type": "string",
+            "description": "Stage name",
+            "example": "sandbox"
+          },
+          "site": {
+            "type": "string",
+            "description": "Source origin (or storefront) of the request",
+            "example": "libertytreemedia.com"
+          }
+        },
+        "description": "JSON object containing `account`, `stage`, `date`, and `site`."
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "ErrorResponse Model"
+      },
+      "Discount": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "value": {
+            "type": "number",
+            "example": 2
+          },
+          "promoId": {
+            "type": "string",
+            "example": "HNY2022"
+          },
+          "promoCode": {
+            "type": "string",
+            "example": "HNY2022"
+          },
+          "promoTitle": {
+            "type": "string",
+            "example": "Happy New Year"
+          },
+          "type": {
+            "type": "string",
+            "example": "promotion"
+          }
+        },
+        "description": "Invoice discount model"
+      },
+      "Invoice": {
+        "required": [
+          "channelId",
+          "currency",
+          "invoiceId",
+          "invoiceTotal",
+          "shipmentId",
+          "statusCode",
+          "totalTaxAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string",
+            "description": "Unique Id of the invoice",
+            "example": "62ff5c0bec0aed3c86202c32"
+          },
+          "invoiceNumber": {
+            "type": "string",
+            "description": "Unique number of the invoice",
+            "example": "23940791"
+          },
+          "invoiceStatus": {
+            "type": "string",
+            "description": "InvoiceStatus Model",
+            "example": "CAPTURED/SETTLED",
+            "enum": [
+              "CAPTURED",
+              "SETTLED",
+              "SETTLE_FAILED",
+              "PARTIAL_SETTLED",
+              "DRAFT",
+              "ISSUED",
+              "CREDITED",
+              "DELETED"
+            ]
+          },
+          "invoiceType": {
+            "type": "string",
+            "description": "InvoiceType Model",
+            "example": "SHIPPING/APPEASEMENT",
+            "enum": [
+              "RETURN",
+              "SHIPPING",
+              "APPEASEMENT"
+            ]
+          },
+          "invoiceDate": {
+            "type": "string",
+            "description": "Date when order invoiced",
+            "format": "date-time",
+            "example": "2022-08-01T20:03:28.483971941Z"
+          },
+          "shipmentId": {
+            "type": "string",
+            "description": "Shipment Id in case of invoice type as Shipment",
+            "example": "62ff5c0bec0aed3c86202c32"
+          },
+          "shipmentNumber": {
+            "type": "string",
+            "description": "Shipment Number in case of invoice type as Shipment",
+            "example": "217088603"
+          },
+          "shippedOn": {
+            "type": "string",
+            "description": "Date when order shipped ",
+            "format": "date-time",
+            "example": "2022-08-01T20:03:28.483971941Z"
+          },
+          "orders": {
+            "type": "array",
+            "description": "order details for the invoice ",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceOrder"
+            }
+          },
+          "locationNum": {
+            "type": "number",
+            "description": "locationNum in case of invoice type as Shipment",
+            "example": 3235
+          },
+          "location": {
+            "$ref": "#/components/schemas/InvoiceLocation"
+          },
+          "retail": {
+            "$ref": "#/components/schemas/InvoiceRetail"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date when invoice created",
+            "format": "date-time",
+            "example": "2022-08-01T20:03:28.483971941Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date when invoice updated",
+            "format": "date-time",
+            "example": "2022-08-01T20:03:28.483971941Z"
+          },
+          "postedAt": {
+            "type": "string",
+            "description": "Date when invoice posted for financial process",
+            "format": "date-time",
+            "example": "2022-08-01T20:03:28.483971941Z"
+          },
+          "acknowledgedAt": {
+            "type": "string",
+            "description": "Date when invoice acknowledged",
+            "format": "date-time",
+            "example": "2022-08-01T20:03:28.483971941Z"
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Current status of the invoice",
+            "example": "CREATED/POSTED/ACKNOWLEDGED"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Required field channel Id",
+            "example": "strate"
+          },
+          "invoiceTotal": {
+            "type": "number",
+            "description": "Total amount invoiced",
+            "example": 245.7
+          },
+          "totalTaxAmount": {
+            "type": "number",
+            "description": "Total tax amount invoiced",
+            "example": 245.7
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency type in which amount invoiced",
+            "example": "dollar"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/InvoiceCustomer"
+          },
+          "auditLogs": {
+            "type": "array",
+            "description": "Audit log list",
+            "items": {
+              "$ref": "#/components/schemas/OrderAuditLog"
+            }
+          },
+          "shipInfo": {
+            "$ref": "#/components/schemas/OrderShipInfo"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "Invoice Model"
+      },
+      "InvoiceAddress": {
+        "type": "object",
+        "properties": {
+          "addressLine1": {
+            "type": "string"
+          },
+          "addressLine2": {
+            "type": "string"
+          },
+          "addressLine3": {
+            "type": "string"
+          },
+          "addressLine4": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "contact": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceContact"
+            }
+          }
+        },
+        "description": "Invoice address Model"
+      },
+      "InvoiceContact": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceContactPhone"
+            }
+          },
+          "name": {
+            "$ref": "#/components/schemas/InvoiceContactName"
+          }
+        },
+        "description": "Invoice contact Model"
+      },
+      "InvoiceContactName": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string"
+          },
+          "middle": {
+            "type": "string"
+          },
+          "last": {
+            "type": "string"
+          }
+        },
+        "description": "Invoice contact name Model"
+      },
+      "InvoiceContactPhone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "description": "Invoice contact phone Model"
+      },
+      "InvoiceCustomer": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrderContactName"
+          },
+          "email": {
+            "type": "string",
+            "example": "test@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/OrderContactPhone"
+          },
+          "userId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account Id such as Loyalty accountId",
+            "example": "62272e917b12209e68751d94"
+          },
+          "employeeId": {
+            "type": "string",
+            "description": "Employee Id used when the customer is the employee himself",
+            "example": "62272e917b12209e68751d94"
+          },
+          "company": {
+            "type": "string",
+            "example": "Fabric"
+          },
+          "address": {
+            "$ref": "#/components/schemas/InvoiceAddress"
+          }
+        },
+        "description": "InvoiceCustomer Model"
+      },
+      "InvoiceFee": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          }
+        },
+        "description": "InvoiceFee Model"
+      },
+      "InvoiceItem": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "example": "1adfrghhh2346aaaf"
+          },
+          "lineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "shipmentLineItemId": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string",
+            "example": "1234"
+          },
+          "orderId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "example": "WEB_PICKUP"
+          },
+          "sku": {
+            "type": "string",
+            "example": "P1234"
+          },
+          "invoiceQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "itemUnitPrice": {
+            "type": "number"
+          },
+          "invoiceLineTotal": {
+            "type": "number",
+            "example": 600
+          },
+          "itemDiscountsTotal": {
+            "type": "number"
+          },
+          "itemTaxTotal": {
+            "type": "number"
+          },
+          "itemFeeTotal": {
+            "type": "number"
+          },
+          "itemAppeasementTotal": {
+            "type": "number"
+          },
+          "lineItemCreatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locationStoreId": {
+            "type": "string"
+          },
+          "returnExpiryDays": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceFee"
+            }
+          },
+          "taxDetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceFee"
+            }
+          },
+          "appeasements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementDetail"
+            }
+          },
+          "discount": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discount"
+            }
+          },
+          "shipToId": {
+            "type": "string",
+            "example": "5349b4ddd2781d08c09890f4"
+          },
+          "returns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceReturn"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "uom": {
+            "type": "string"
+          }
+        },
+        "description": "InvoiceItem Model"
+      },
+      "InvoiceLocation": {
+        "type": "object",
+        "properties": {
+          "locationNum": {
+            "type": "number",
+            "description": "locationNum in case of invoice type as Shipment",
+            "example": 3235
+          },
+          "address": {
+            "$ref": "#/components/schemas/InvoiceAddress"
+          }
+        },
+        "description": "Invoice Location",
+        "example": "object"
+      },
+      "InvoiceOrder": {
+        "required": [
+          "invoiceOrderTotal",
+          "orderId"
+        ],
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "Order Id for which invoice needs to be created",
+            "example": "62ff5c0bec0aed3c86202c32"
+          },
+          "orderNumber": {
+            "type": "string",
+            "description": "Order Number for which invoice needs to be created",
+            "example": "217088603"
+          },
+          "orderDate": {
+            "type": "string",
+            "description": "Actual order creation date",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "orderType": {
+            "type": "string",
+            "example": "WEB",
+            "enum": [
+              "WEB",
+              "CSC",
+              "MOBILE_APP",
+              "POS"
+            ]
+          },
+          "orderSubType": {
+            "type": "string",
+            "example": "International",
+            "enum": [
+              "IOS",
+              "Android",
+              "International"
+            ]
+          },
+          "invoiceOrderTotal": {
+            "type": "number",
+            "description": "Total amount invoiced as per order",
+            "example": 245.7
+          },
+          "items": {
+            "type": "array",
+            "description": "Item list for the invoicing",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceItem"
+            }
+          },
+          "payments": {
+            "type": "array",
+            "description": "Payment list for the invoicing",
+            "items": {
+              "$ref": "#/components/schemas/InvoicePayment"
+            }
+          },
+          "fees": {
+            "type": "array",
+            "description": "Invoice fee details",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceFee"
+            }
+          },
+          "appeasements": {
+            "type": "array",
+            "description": "Invoice appeasement details",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementDetail"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Discount list for the invoicing",
+            "items": {
+              "$ref": "#/components/schemas/Discount"
+            }
+          },
+          "taxDetail": {
+            "type": "array",
+            "description": "Customer details for the invoicing",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceFee"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Dynamic parameters specific to tenant"
+            },
+            "description": "Dynamic parameters specific to tenant"
+          }
+        },
+        "description": "InvoiceOrder Model"
+      },
+      "InvoicePayment": {
+        "type": "object",
+        "properties": {
+          "paymentCounter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paymentDate": {
+            "type": "string",
+            "example": "2022-01-27T16:15:58.000-05:00"
+          },
+          "billToId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "paymentIdentifier": {
+            "$ref": "#/components/schemas/InvoicePaymentIdentifier"
+          },
+          "paymentProvider": {
+            "type": "string",
+            "example": "stripe"
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/InvoicePaymentToken"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "example": "CREDIT_CARD"
+          },
+          "paymentType": {
+            "type": "string",
+            "example": "VISA"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "conversion": {
+            "type": "number",
+            "example": 1
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "OK"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "billToAddress": {
+            "$ref": "#/components/schemas/InvoiceAddress"
+          },
+          "settlement": {
+            "$ref": "#/components/schemas/InvoiceSettlement"
+          },
+          "authAmount": {
+            "type": "number"
+          }
+        },
+        "description": "InvoicePayment Model"
+      },
+      "InvoicePaymentIdentifier": {
+        "type": "object",
+        "properties": {
+          "cardIdentifier": {
+            "type": "string",
+            "example": "***********3456"
+          }
+        },
+        "description": "Invoice payment identifier Model"
+      },
+      "InvoicePaymentToken": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "pi_34tr6787rt"
+          }
+        },
+        "description": "Invoice payment token Model"
+      },
+      "InvoiceRetail": {
+        "type": "object",
+        "properties": {
+          "locationNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cashierId": {
+            "type": "string"
+          }
+        },
+        "description": "InvoiceRetail Model"
+      },
+      "InvoiceReturn": {
+        "type": "object",
+        "properties": {
+          "shipmentLineItemId": {
+            "type": "string"
+          },
+          "shipmentQuantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "refundAmount": {
+            "type": "number"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "invoiceDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "InvoiceReturn Model"
+      },
+      "InvoiceSettlement": {
+        "type": "object",
+        "properties": {
+          "settlementDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-27T16:15:58-05:00"
+          },
+          "settlementStatusCode": {
+            "type": "string",
+            "description": "InvoiceSettlementStatusCode Model",
+            "enum": [
+              "SETTLED",
+              "PARTIAL_SETTLED",
+              "SETTLEMENT_FAILED"
+            ]
+          },
+          "settlementAmount": {
+            "type": "number"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "Invoice settlement Model"
+      },
+      "OrderAddress": {
+        "required": [
+          "address1"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrderContactName"
+          },
+          "email": {
+            "type": "string",
+            "example": "test@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/OrderContactPhone"
+          },
+          "address1": {
+            "type": "string",
+            "example": "Test Street"
+          },
+          "address2": {
+            "type": "string",
+            "example": "123 Parking Lot"
+          },
+          "address3": {
+            "type": "string"
+          },
+          "address4": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string",
+            "example": "Beaumont"
+          },
+          "state": {
+            "type": "string",
+            "example": "TX"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "77705"
+          },
+          "type": {
+            "type": "string",
+            "example": "residence"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 35.294952
+          },
+          "longitude": {
+            "type": "number",
+            "example": 32.294952
+          }
+        },
+        "description": "OrderAddress Model"
+      },
+      "OrderAppeasementDetail": {
+        "type": "object",
+        "properties": {
+          "appeasementCounter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "reasonCode": {
+            "type": "string",
+            "example": "Incorrect Item"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "example": "Late shipping"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          },
+          "invoiceValue": {
+            "type": "number",
+            "example": 34.56
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementPaymentInfo"
+            }
+          }
+        },
+        "description": "OrderAppeasementDetail Model"
+      },
+      "OrderAppeasementPaymentInfo": {
+        "type": "object",
+        "properties": {
+          "paymentCounter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 40
+          }
+        },
+        "description": "OrderAppeasementPaymentInfo Model"
+      },
+      "OrderAuditLog": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "auditId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "auditType": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "auditTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:24:54.804Z"
+          },
+          "source": {
+            "type": "string",
+            "example": "POS"
+          },
+          "reasonCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "policyCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "note": {
+            "type": "string",
+            "example": "Note"
+          },
+          "lineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "sku": {
+            "type": "string",
+            "example": "F5F"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "amount": {
+            "type": "number",
+            "example": 2.4
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/OrderPaymentToken"
+          },
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "paymentResponse": {
+            "type": "object"
+          },
+          "updatedFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderAuditLogUpdatedField"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "OrderAuditLog Model"
+      },
+      "OrderAuditLogUpdatedField": {
+        "type": "object",
+        "properties": {
+          "fieldName": {
+            "type": "string",
+            "example": "UOM"
+          },
+          "fieldOriginalValue": {
+            "type": "string",
+            "example": "PK"
+          }
+        },
+        "description": "OrderAuditLogUpdatedField Model"
+      },
+      "OrderContactName": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "example": "Middle"
+          },
+          "last": {
+            "type": "string",
+            "example": "Doe"
+          }
+        },
+        "description": "OrderContactName Model"
+      },
+      "OrderContactPhone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "example": "55555555555"
+          },
+          "type": {
+            "type": "string",
+            "example": "MOBILE",
+            "enum": [
+              "MOBILE",
+              "HOME",
+              "BUSINESS"
+            ]
+          }
+        },
+        "description": "OrderContactPhone Model"
+      },
+      "OrderDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          }
+        },
+        "description": "OrderDetail Model"
+      },
+      "OrderPaymentToken": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "pi_34tr6787rt"
+          },
+          "paymentType": {
+            "type": "string",
+            "description": "Used to identify payment type in case of credit cards",
+            "example": "VISA"
+          }
+        },
+        "description": "OrderPaymentToken Model"
+      },
+      "OrderPickup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrderContactName"
+          },
+          "email": {
+            "type": "string",
+            "example": "test@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/OrderContactPhone"
+          },
+          "pickupType": {
+            "type": "string",
+            "example": "Primary",
+            "enum": [
+              "Primary",
+              "Alternate"
+            ]
+          }
+        },
+        "description": "OrderPickup Model"
+      },
+      "OrderShipInfo": {
+        "required": [
+          "shipToId"
+        ],
+        "type": "object",
+        "properties": {
+          "shipToId": {
+            "type": "string",
+            "example": "5349b4ddd2781d08c09890f4"
+          },
+          "taxCode": {
+            "type": "string",
+            "example": "FR01"
+          },
+          "locationNum": {
+            "type": "string",
+            "description": "Location Num to be used for BOPIS to identify the pickup store",
+            "example": "123"
+          },
+          "pickup": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderPickup"
+            }
+          },
+          "shipToAddress": {
+            "$ref": "#/components/schemas/OrderAddress"
+          },
+          "taxDetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDetail"
+            }
+          },
+          "shipMethod": {
+            "type": "string",
+            "example": "Express Delivery"
+          },
+          "shipToType": {
+            "type": "string",
+            "example": "SHIP_TO_ADDRESS"
+          },
+          "estimatedShipDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "estimatedDeliveryDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "shipToPrice": {
+            "type": "number",
+            "example": 20
+          },
+          "shipToDiscount": {
+            "type": "number",
+            "example": 12.6
+          },
+          "shipToTaxTotal": {
+            "type": "number",
+            "example": 12.6
+          },
+          "shipmentInstructions": {
+            "type": "string",
+            "example": "User Instructions"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "OrderShipInfo Model"
+      },
+      "LibQuery": {
+        "required": [
+          "filters"
+        ],
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Numbers of records to be returned.",
+            "format": "int32",
+            "example": 10,
+            "default": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of records to skipped.",
+            "format": "int64",
+            "example": 0,
+            "default": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Item property on which data needed to be sorted on.",
+            "example": "updatedAt",
+            "default": "updatedAt"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Direction of sorting i.e ascending or descending",
+            "example": "desc",
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+              "example": {
+                "retail": {
+                  "locationNum": 12
+                },
+                "orderSubTotal": {
+                  "gte": 1300,
+                  "lt": 1400
+                },
+                "orderNumber": "order-*Z",
+                "statusCode": [
+                  "ORDER_CREATED"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                },
+                "shipInfo": {
+                  "shipToId": [
+                    "23434",
+                    "23436"
+                  ]
+                }
+              },
+              "default": {}
+            },
+            "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+            "example": {
+              "retail": {
+                "locationNum": 12
+              },
+              "orderSubTotal": {
+                "gte": 1300,
+                "lt": 1400
+              },
+              "orderNumber": "order-*Z",
+              "statusCode": [
+                "ORDER_CREATED"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              },
+              "shipInfo": {
+                "shipToId": [
+                  "23434",
+                  "23436"
+                ]
+              }
+            },
+            "default": {}
+          }
+        },
+        "description": "LibQuery Model"
+      },
+      "LibQueryResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "example": 100
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          }
+        },
+        "description": "LibQueryResponse Model"
+      },
+      "FinancialPostingRequest": {
+        "required": [
+          "invoiceIds"
+        ],
+        "type": "object",
+        "properties": {
+          "invoiceIds": {
+            "type": "array",
+            "description": "List of invoiceIds",
+            "example": [
+              "invoiceId1",
+              "invoiceId2"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Request model for financial posting"
+      },
+      "FinancialPostingAcknowledgeRequest": {
+        "required": [
+          "acknowledgedAt",
+          "invoiceId"
+        ],
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string",
+            "description": "Invoice Id",
+            "example": "123ab"
+          },
+          "acknowledgedAt": {
+            "type": "string",
+            "description": "Date when invoice acknowledged for financial posting",
+            "format": "date-time",
+            "example": "2022-08-01T20:03:28.483971941Z"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Attributes"
+          }
+        },
+        "description": "Request model for financial posting acknowledgement"
+      },
+      "FinancialPostingAcknowledgeResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Generic response",
+            "example": "Success"
+          }
+        },
+        "description": "Financial posting acknowledgement response"
+      },
+      "InvoiceAcknowledgeRequest": {
+        "required": [
+          "invoiceId"
+        ],
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string",
+            "description": "Invoice Id",
+            "example": "123"
+          }
+        },
+        "description": "Request model for invoice acknowledgement"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "description": "API Key for the user provided by fabric",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}

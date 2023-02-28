@@ -1,0 +1,2024 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "7x4wth5gbgyqb"
+  },
+  "info": {
+    "title": "Shipment service ",
+    "description": "V2 Shipment for multi-tenant service provides real time update of shipments. This help you gain control of your customers' delivery experience; there by, improve customer loyalty and retention.",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Shipment"
+    },
+    {
+      "name": "Reshipment"
+    }
+  ],
+  "paths": {
+    "/shipment/": {
+      "post": {
+        "tags": [
+          "Shipment"
+        ],
+        "summary": "Create Shipment",
+        "description": "Creates shipment. An event is generated at this point to Invoice service for invoice creation. The response includes shipmentId, which is required for subsequent calls such as *GET /shipment/{shipmentId}* and *PUT /shipment/{shipmentId}*.",
+        "operationId": "createShipment",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipmentDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Shipment Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Shipment Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shipment/{shipmentId}": {
+      "get": {
+        "tags": [
+          "Shipment"
+        ],
+        "summary": "Get Shipment",
+        "description": "Gets shipment details by shipment ID",
+        "operationId": "getShipment",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          },
+          {
+            "name": "shipmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "24-character, fabric-generated shipment ID",
+            "example": "627963716b19511e8a3a631b"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Shipment"
+        ],
+        "summary": "Update shipment",
+        "description": "Updates shipment details by shipment ID",
+        "operationId": "updateShipment",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          },
+          {
+            "name": "shipmentId",
+            "in": "path",
+            "required": true,
+            "example": "627963716b19511e8a3a631b",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Shipment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shipment/tracking": {
+      "post": {
+        "tags": [
+          "Shipment"
+        ],
+        "summary": "Update package tracking",
+        "description": "Updates details of package tracking.",
+        "operationId": "updateShipmentTracking",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipmentTrackingDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Shipment"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shipment/reship": {
+      "post": {
+        "tags": [
+          "Reshipment"
+        ],
+        "summary": "Create reshipment",
+        "description": "Creates reshipment when package goes missing before it is shipped",
+        "operationId": "createReshipment",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipmentDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shipment/query": {
+      "post": {
+        "tags": [
+          "Shipment"
+        ],
+        "summary": "Filter shipments",
+        "description": "Gets shipment details based on filter criteria",
+        "operationId": "getShipmentByQuery",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibQueryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shipment/gift-card/activation": {
+      "post": {
+        "tags": [
+          "Shipment"
+        ],
+        "summary": "Activate gift card",
+        "description": "Activates gift cards (or coupons) added by shoppers during shipment creation.",
+        "operationId": "giftCardActivation",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipmentGiftCard"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shipment/gift-card/activation-acknowledge": {
+      "post": {
+        "tags": [
+          "Shipment"
+        ],
+        "summary": "Acknowledge gift card activation",
+        "description": "Acknowledges gift card activation is successful",
+        "operationId": "giftCardActivationAcknowledge",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "Represents single or multi-tenancy",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipmentGiftCard"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acknowledge": {
+      "post": {
+        "tags": [
+          "Shipment"
+        ],
+        "summary": "Acknowledge Shipment",
+        "description": "Acknowledges the tracking is created.",
+        "operationId": "acknowledge",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipmentAcknowledge"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Shipment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Object Not Found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "XSiteContext": {
+        "required": [
+          "account",
+          "stage"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "Time of endpoint execution.",
+            "type": "string",
+            "example": "2022-11-28T10:31:31.454Z"
+          },
+          "channel": {
+            "description": "Sales channel ID",
+            "type": "number",
+            "example": 12
+          },
+          "account": {
+            "description": "24 character client's co-pilot account ID",
+            "type": "string",
+            "example": "61ef7087d2f68100124b706d"
+          },
+          "stage": {
+            "description": "Environment shared with the client during onboarding",
+            "type": "string",
+            "example": "Sandbox"
+          }
+        },
+        "description": "JSON object containing `account`, `stage`, `date`, and `site`"
+      },
+      "Shipment": {
+        "type": "object",
+        "properties": {
+          "shipmentId": {
+            "type": "string",
+            "description": "24-character fabric-generated unique ID of shipment",
+            "example": "627963716b19511e8a3a631b"
+          },
+          "shipmentNum": {
+            "type": "string",
+            "description": "Shipment number (external)",
+            "example": "78974156816152"
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "fabric-generated Invoice ID",
+            "example": "5674156816152"
+          },
+          "allocationId": {
+            "type": "string",
+            "description": "Allocation ID for an order, generated from allocation service",
+            "example": "112345678912340"
+          },
+          "orderNumber": {
+            "description": "Order number. It's usually generated by another system, such as an external checkout system.",
+            "example": [
+              "112345678912340",
+              "112345678912340"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "poNumber": {
+            "type": "string",
+            "description": "Purchase order number (generally, vendor-generated)",
+            "example": "1125"
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Vendor ID",
+            "example": "56"
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Shipment status code",
+            "example": "SHIPPED",
+            "enum": [
+              "SHIPMENT_CREATED",
+              "SHIPMENT_CANCELLED",
+              "PICKUP_CREATED",
+              "PICKUP_COMPLETED",
+              "SHIPMENT_RETURN_PENDING",
+              "SHIPMENT_RETURN_RECEIVED",
+              "SHIPMENT_PARTIALLY_DELIVERED",
+              "SHIPMENT_DELIVERED"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "shipment type",
+            "example": "STANDARD",
+            "enum": [
+              "STANDARD",
+              "RESHIP",
+              "RETURN",
+              "SCRATCH",
+              "PICKUP"
+            ]
+          },
+          "reshipmentReasonCode": {
+            "type": "string",
+            "description": "Reason code for reshipment",
+            "example": "Order went missing"
+          },
+          "shipDate": {
+            "type": "string",
+            "description": "Time of shipping",
+            "format": "date-time",
+            "example": "2022-06-06T07:58:30.996Z"
+          },
+          "locationNum": {
+            "type": "string",
+            "description": "location number from location service to get exact address.",
+            "example": "132412"
+          },
+          "locationType": {
+            "type": "string",
+            "description": "Location type based on location service such as store, distribution center (DC)",
+            "example": "DC"
+          },
+          "totalCartons": {
+            "type": "integer",
+            "description": "Total number of cartons",
+            "format": "int32",
+            "example": 2
+          },
+          "masterTrackingNumber": {
+            "type": "string",
+            "description": "Main tracking number, to track fulfillment of all the orders",
+            "example": "TX112345678"
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Ship-to ID refers to item's delivery address",
+            "example": "1"
+          },
+          "shipToAddress": {
+            "$ref": "#/components/schemas/ShipmentShipToAddress"
+          },
+          "recipient": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentRecipient"
+            }
+          },
+          "cartons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentCarton"
+            }
+          },
+          "scratchedItems": {
+            "type": "array",
+            "description": "details of scratched items",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentScratchedItem"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Time of shipment creation",
+            "format": "date-time",
+            "example": "2022-06-06T07:58:30.996Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Time of last update",
+            "format": "date-time",
+            "example": "2022-06-06T07:58:30.996Z"
+          },
+          "auditLogs": {
+            "type": "array",
+            "description": "Details of audit logs",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentAuditLog"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Details of additional attributes, if applicable"
+            },
+            "description": "Attribute details for additional information"
+          }
+        },
+        "description": "Shipment details"
+      },
+      "ShipmentAuditLog": {
+        "type": "object",
+        "properties": {
+          "auditType": {
+            "type": "string",
+            "example": "create",
+            "description": "Audit type"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94",
+            "description": "Employee ID (store context)"
+          },
+          "auditTimestamp": {
+            "type": "string",
+            "example": "2022-05-12T09:24:54.804Z",
+            "description": "Time of audit"
+          },
+          "source": {
+            "type": "string",
+            "example": "POS",
+            "description": "Source of audit"
+          },
+          "note": {
+            "type": "string",
+            "example": "Note",
+            "description": "Notes related audit, for future reference"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "updatedFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentAuditLogUpdatedAttribute"
+            }
+          }
+        },
+        "description": "Audit details"
+      },
+      "ShipmentAuditLogUpdatedAttribute": {
+        "type": "object",
+        "properties": {
+          "attributeName": {
+            "type": "string",
+            "example": "UOM",
+            "description": "Attribute name"
+          },
+          "attributeOriginalValue": {
+            "type": "string",
+            "example": "PK",
+            "description": "Original value of attribute, to track change in values for the given **attributeName**"
+          }
+        },
+        "description": "Details of updated attributes"
+      },
+      "ShipmentCarton": {
+        "type": "object",
+        "properties": {
+          "cartonNum": {
+            "type": "string",
+            "description": "Carton number to identify packages",
+            "example": "1"
+          },
+          "cartonType": {
+            "type": "string",
+            "description": "Cartoon type",
+            "example": "Package"
+          },
+          "promisedDeliveryDate": {
+            "type": "string",
+            "description": "Promised delivery date",
+            "format": "date-time",
+            "example": "2022-05-26T07:58:30.996Z"
+          },
+          "estimatedShipDate": {
+            "type": "string",
+            "description": "Estimated shipping date",
+            "format": "date-time",
+            "example": "2022-05-25T07:58:30.996Z"
+          },
+          "estimatedDeliveryDate": {
+            "type": "string",
+            "description": "Estimated delivery date",
+            "format": "date-time",
+            "example": "2022-05-26T07:58:30.996Z"
+          },
+          "shipmentMethod": {
+            "type": "string",
+            "description": "Shipment method",
+            "example": "ground"
+          },
+          "shipmentCarrier": {
+            "type": "string",
+            "description": "Shipment carrier",
+            "example": "FEDEX"
+          },
+          "weight": {
+            "type": "string",
+            "description": "Shipment weight",
+            "example": "500 gram"
+          },
+          "trackingNumber": {
+            "type": "string",
+            "description": "Courier tracking number for the carton",
+            "example": "1Z999AA10123456784"
+          },
+          "trackingURL": {
+            "type": "string",
+            "description": "Shipment tracking URL",
+            "example": "https://fedex.com/tracking"
+          },
+          "trackingDetails": {
+            "type": "array",
+            "description": "Shipment tracking details",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentTrackingDetail"
+            }
+          },
+          "items": {
+            "type": "array",
+            "description": "Item details",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentItem"
+            }
+          }
+        },
+        "description": "Carton details"
+      },
+      "ShipmentFeeDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax",
+            "description": "Component of shipment fee"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56,
+            "description": "Value corresponding to **type**"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Shipment quantity",
+            "format": "int32",
+            "example": 12
+          },
+          "refundAmount": {
+            "type": "number",
+            "description": "Refund amount",
+            "example": 10.4
+          }
+        },
+        "description": "Fee details for returned shipments"
+      },
+      "ShipmentGiftCardDetail": {
+        "type": "object",
+        "properties": {
+          "giftCardNum": {
+            "type": "string",
+            "description": "Gift card number",
+            "example": "453456765"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Gift card amount",
+            "example": 50
+          },
+          "giftCardStatus": {
+            "type": "string",
+            "description": "Gift card status",
+            "example": "ACTIVE"
+          },
+          "giftCardActiveRequestDate": {
+            "type": "string",
+            "description": "Time of placing gift card activation request",
+            "example": "2022-05-26T07:58:30.996Z"
+          },
+          "giftCardActiveDate": {
+            "type": "string",
+            "description": "Time of gift card activation",
+            "example": "2022-06-26T07:58:30.996Z"
+          }
+        },
+        "description": "Gift card details"
+      },
+      "ShipmentItem": {
+        "type": "object",
+        "properties": {
+          "shipmentLineItemId": {
+            "type": "string",
+            "description": "Line item ID of shipment",
+            "example": "607f1f77bcf86cd799439011"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Order ID (fabric-generated)",
+            "example": "317736896"
+          },
+          "orderNumber": {
+            "type": "string",
+            "description": "Order number. It's usually generated by another system, such as an external checkout system.",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "lineItemId": {
+            "type": "string",
+            "description": "Line item ID to identify item in the order",
+            "example": "1"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "100023"
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU of item",
+            "example": "SKU0023"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Sales channel ID",
+            "example": "12"
+          },
+          "segment": {
+            "type": "string",
+            "description": "Segment associated with item",
+            "example": null
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Vendor ID",
+            "example": "56"
+          },
+          "orderedQuantity": {
+            "type": "integer",
+            "description": "Items ordered. Currently, there is no validation in place",
+            "format": "int32",
+            "example": 2
+          },
+          "shippedQuantity": {
+            "type": "integer",
+            "description": "Items shipped",
+            "format": "int32",
+            "example": 2
+          },
+          "returnQuantity": {
+            "type": "integer",
+            "description": "Items returned",
+            "format": "int32",
+            "example": 1
+          },
+          "returnAmount": {
+            "type": "number",
+            "description": "Return amount",
+            "example": 10
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentFeeDetail"
+            }
+          },
+          "giftCard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentGiftCardDetail"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "uom": {
+            "type": "string",
+            "description": "Unit of measure",
+            "example": null
+          }
+        },
+        "description": "Item details of a shipment"
+      },
+      "ShipmentName": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "description": "First name of primary contact",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "description": "Middle name of primary contact"
+          },
+          "last": {
+            "type": "string",
+            "description": "Last name of primary contact",
+            "example": "Doe"
+          }
+        },
+        "description": "Primary contact details"
+      },
+      "ShipmentPhone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "description": "Phone number of primary contact",
+            "example": 10612345678
+          },
+          "type": {
+            "type": "string",
+            "description": "Phone type of primary contact",
+            "example": "MOBILE"
+          }
+        },
+        "description": "Phone number of primary contact"
+      },
+      "ShipmentRecipient": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ShipmentName"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of primary contact for delivery",
+            "example": "support@abc.inc"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/ShipmentPhone"
+          }
+        },
+        "description": "Recipient details for shipment"
+      },
+      "ShipmentScratchedItem": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "Order ID (fabric-generated)",
+            "example": "507f1f77bcf86cd799439012"
+          },
+          "lineItemId": {
+            "type": "string",
+            "description": "Line item ID to identify item in the order",
+            "example": "2"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "100043"
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU number",
+            "example": "SKU00043"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Item quantity",
+            "format": "int32",
+            "example": 1
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "Reason code for return"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "sub-reason code for return"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {}
+            },
+            "description": "Additional details of scratched item"
+          },
+          "uom": {
+            "type": "string",
+            "description": "Unit of measure",
+            "example": null
+          }
+        },
+        "description": "Shipment details of return items"
+      },
+      "ShipmentShipToAddress": {
+        "type": "object",
+        "properties": {
+          "addressLine1": {
+            "type": "string",
+            "description": "Line 1 of address",
+            "example": "888 Broadway"
+          },
+          "addressLine2": {
+            "type": "string",
+            "description": "Line 2 of address",
+            "example": "505 suite"
+          },
+          "addressLine3": {
+            "type": "string",
+            "description": "Line 3 of address"
+          },
+          "addressLine4": {
+            "type": "string",
+            "description": "Line 3 of address"
+          },
+          "city": {
+            "type": "string",
+            "description": "City of delivery",
+            "example": "New York"
+          },
+          "state": {
+            "type": "string",
+            "description": "State of delivery",
+            "example": "NY"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country name",
+            "example": "USA"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code",
+            "example": "1003"
+          },
+          "type": {
+            "type": "string",
+            "description": "Address type",
+            "example": "home"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Geo-latitude of delivery address",
+            "format": "double",
+            "example": 134.13413
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Geo-longitude of delivery address",
+            "format": "double",
+            "example": 757.0435
+          }
+        },
+        "description": "Details of delivery address"
+      },
+      "ShipmentTrackingDetail": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "description": "Event status",
+            "example": "picked up"
+          },
+          "eventId": {
+            "type": "string",
+            "description": "24-character system-generated unique event ID",
+            "example": "627963716b19511e8a3a631b"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Time of event creation",
+            "example": "2019-09-30T07:58:30.996Z"
+          },
+          "shipmentCarrier": {
+            "type": "string",
+            "description": "Shipment carrier name. Applicable in case of a different carrier",
+            "example": "FEDEX"
+          },
+          "location": {
+            "type": "string",
+            "description": "Current location",
+            "example": "Reno, NV"
+          },
+          "notes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "description": "Shipment notes, for reference"
+            },
+            "description": "shipment notes"
+          }
+        },
+        "description": "Details of shipment tracking generated once shipment is picked up from store"
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "Error details"
+      },
+      "CartonDto": {
+        "type": "object",
+        "properties": {
+          "cartonNum": {
+            "type": "string",
+            "description": "Carton number for tracking",
+            "example": "1"
+          },
+          "cartonType": {
+            "type": "string",
+            "description": "Carton type",
+            "example": "Package"
+          },
+          "promisedDeliveryDate": {
+            "type": "string",
+            "description": "Promised delivery date",
+            "format": "date-time",
+            "example": "2022-05-26T07:58:30.996Z"
+          },
+          "estimatedShipDate": {
+            "type": "string",
+            "description": "Estimated shipping date",
+            "format": "date-time",
+            "example": "2022-05-25T07:58:30.996Z"
+          },
+          "estimatedDeliveryDate": {
+            "type": "string",
+            "description": "Estimated delivery date",
+            "format": "date-time",
+            "example": "2022-05-26T07:58:30.996Z"
+          },
+          "shipmentMethod": {
+            "type": "string",
+            "description": "Shipment method",
+            "example": "ground"
+          },
+          "shipmentCarrier": {
+            "type": "string",
+            "description": "Shipment carrier",
+            "example": "FEDEX"
+          },
+          "weight": {
+            "type": "string",
+            "description": "Shipment weight",
+            "example": "500 gram"
+          },
+          "trackingNumber": {
+            "type": "string",
+            "description": "Courier tracking number for the carton",
+            "example": "1Z999AA10123456784"
+          },
+          "trackingURL": {
+            "type": "string",
+            "description": "Shipment tracking URL",
+            "example": "https://fedex.com/tracking"
+          },
+          "trackingDetails": {
+            "type": "array",
+            "description": "Tracking details",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentTrackingDetail"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDto"
+            }
+          }
+        },
+        "description": "Carton details"
+      },
+      "GiftCardDto": {
+        "type": "object",
+        "properties": {
+          "giftCardNum": {
+            "type": "string",
+            "description": "Gift card number",
+            "example": "453456765"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Gift card amount",
+            "example": 50
+          }
+        },
+        "description": "Gift card details"
+      },
+      "ItemDto": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "description": "Line item ID to identify item in the order",
+            "example": "1"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "100023"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": "SKU0023"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Order ID (fabric-generated)",
+            "example": "317736896"
+          },
+          "orderNumber": {
+            "type": "string",
+            "description": "Order number. It's usually generated by another system, such as an external checkout system.",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Sales channel ID",
+            "example": "12"
+          },
+          "segment": {
+            "type": "string",
+            "description": "Segment associated with item",
+            "example": null
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Vendor ID",
+            "example": "56"
+          },
+          "orderedQuantity": {
+            "type": "integer",
+            "description": "Items ordered",
+            "format": "int32",
+            "example": 2
+          },
+          "shippedQuantity": {
+            "type": "integer",
+            "description": "Items shipped",
+            "format": "int32",
+            "example": 2
+          },
+          "returnQuantity": {
+            "type": "integer",
+            "description": "Items returned",
+            "format": "int32",
+            "example": 1
+          },
+          "returnAmount": {
+            "type": "number",
+            "description": "Return amount",
+            "example": 10
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentFeeDetail"
+            }
+          },
+          "giftCard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GiftCardDto"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "uom": {
+            "type": "string",
+            "description": "Unit of measure",
+            "example": null
+          }
+        },
+        "description": "Item details"
+      },
+      "ScratchedItemDto": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "description": "Line item ID to identify item in the order",
+            "example": "2"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "100043"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": "SKU00043"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Items ordered",
+            "format": "int32",
+            "example": 1
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "Reason code for return"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "Sub-reason code for return",
+            "example": null
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Additional attributes (if application) of scratched items"
+            },
+            "description": "Details of scratched item"
+          },
+          "uom": {
+            "type": "string",
+            "description": "Unit of measure",
+            "example": null
+          }
+        },
+        "description": "Details of scratched items"
+      },
+      "ShipmentDto": {
+        "type": "object",
+        "properties": {
+          "shipmentNum": {
+            "type": "string",
+            "description": "Shipment number",
+            "example": "78974156816152"
+          },
+          "allocationId": {
+            "type": "string",
+            "description": "Allocation ID for an order, generated from allocation service",
+            "example": "112345678912340"
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "fabric-generated Invoice ID",
+            "example": "5674156816152"
+          },
+          "poNumber": {
+            "type": "string",
+            "description": "Purchase order number (generally, vendor-generated)",
+            "example": "1125"
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Vendor ID",
+            "example": "56"
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Shipment status code",
+            "example": "SHIPMENT_CREATED",
+            "enum": [
+              "SHIPMENT_CREATED",
+              "SHIPMENT_CANCELLED",
+              "PICKUP_CREATED",
+              "PICKUP_COMPLETED",
+              "SHIPMENT_RETURN_PENDING",
+              "SHIPMENT_RETURN_RECEIVED",
+              "SHIPMENT_PARTIALLY_DELIVERED",
+              "SHIPMENT_DELIVERED"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "Shipment type",
+            "example": "STANDARD",
+            "enum": [
+              "STANDARD",
+              "RESHIP",
+              "RETURN",
+              "SCRATCH",
+              "PICKUP"
+            ]
+          },
+          "reshipmentReasonCode": {
+            "type": "string",
+            "description": "Reason code for reshipment",
+            "example": "Order went missing"
+          },
+          "shipDate": {
+            "type": "string",
+            "description": "Shipping time",
+            "format": "date-time",
+            "example": "2022-06-06T07:58:30.996Z"
+          },
+          "locationNum": {
+            "type": "string",
+            "description": "Location number from the location service",
+            "example": "132412"
+          },
+          "locationType": {
+            "type": "string",
+            "description": "Location type based on location service such as store, distribution center (DC)",
+            "example": "DC"
+          },
+          "totalCartons": {
+            "type": "integer",
+            "description": "Total number of cartons",
+            "format": "int32",
+            "example": 2
+          },
+          "masterTrackingNumber": {
+            "type": "string",
+            "description": "Main tracking number, to track fulfillment of all the orders",
+            "example": "TX112345678"
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Ship-to ID",
+            "example": "1"
+          },
+          "shipToAddress": {
+            "$ref": "#/components/schemas/ShipmentShipToAddress"
+          },
+          "recipient": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentRecipient"
+            }
+          },
+          "cartons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartonDto"
+            }
+          },
+          "scratchedItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScratchedItemDto"
+            }
+          },
+          "auditLogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentAuditLog"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Additional attributes, if applicable"
+            },
+            "description": "Shipment attributes"
+          }
+        },
+        "description": "Shipment and reshipment details"
+      },
+      "LibQuery": {
+        "required": [
+          "filters"
+        ],
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Ending record number (from the offset number) in the response. When no value is provided, the default value is 100.",
+            "format": "int32",
+            "example": 10,
+            "default": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Starting number of the record (within the total number of records) in the response. Offset is zero-based. That is, the 10th record is at offset 9 starting from the 0th record. When no value is provided, the default value is 0",
+            "format": "int64",
+            "example": 0,
+            "default": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Sorting criteria based on item attributes",
+            "example": "updatedAt",
+            "default": "updatedAt"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Sorting direction such as ascending or descending",
+            "example": "desc",
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "JSON to do filter records. <br> **Note** To filter records json structure should be similar to target entity structure i.e order, shipment etc.",
+              "example": {
+                "retail": {
+                  "locationNum": 12
+                },
+                "orderSubTotal": {
+                  "gte": 1300,
+                  "lt": 1400
+                },
+                "orderNumber": "order-*Z",
+                "statusCode": [
+                  "ORDER_CREATED"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                },
+                "shipInfo": {
+                  "shipToId": [
+                    "23434",
+                    "23436"
+                  ]
+                }
+              },
+              "default": {}
+            },
+            "description": "JSON to do filtration of records. <br> **Note** To filter records json structure should be similar to target entity structure i.e order, shipment etc.",
+            "example": {
+              "retail": {
+                "locationNum": 12
+              },
+              "orderSubTotal": {
+                "gte": 1300,
+                "lt": 1400
+              },
+              "orderNumber": "order-*Z",
+              "statusCode": [
+                "ORDER_CREATED"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              },
+              "shipInfo": {
+                "shipToId": [
+                  "23434",
+                  "23436"
+                ]
+              }
+            },
+            "default": {}
+          }
+        },
+        "description": "Filter criteria"
+      },
+      "LibQueryResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "example": 100
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10,
+            "description": "Ending record number (from the offset number) in the response. When no value is provided, the default value is 100."
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "description": "Starting number of the record (within the total number of records) in the response. Offset is zero-based. That is, the 10th record is at offset 9 starting from the 0th record. When no value is provided, the default value is 0"
+          }
+        },
+        "description": "Pagination details"
+      },
+      "GiftCardActivationDto": {
+        "type": "object",
+        "properties": {
+          "giftCardNum": {
+            "type": "string",
+            "description": "Gift card number",
+            "example": "453456765"
+          },
+          "giftCardStatus": {
+            "type": "string",
+            "description": "Gift card status",
+            "example": "ACTIVE"
+          }
+        },
+        "description": "Gift card details"
+      },
+      "ShipmentGiftCard": {
+        "type": "object",
+        "properties": {
+          "shipmentId": {
+            "type": "string",
+            "description": "Shipment ID",
+            "example": "78974156816152"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentGiftCardItem"
+            }
+          }
+        },
+        "description": "Details of gift card associated with shipment"
+      },
+      "ShipmentGiftCardItem": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "100023"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item SKU",
+            "example": "SKU0023"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Sales channel ID",
+            "example": "12"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Order ID (fabric-generated)"
+          },
+          "orderNumber": {
+            "type": "string",
+            "description": "Order number. It's usually generated by another system, such as an external checkout system.",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "lineItemId": {
+            "type": "string",
+            "description": "Line item ID to identify item in the order",
+            "example": "1"
+          },
+          "giftCard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GiftCardActivationDto"
+            }
+          }
+        },
+        "description": "Gift card details in the context of order and associated items"
+      },
+      "ShipmentAcknowledge": {
+        "type": "object",
+        "properties": {
+          "shipmentId": {
+            "type": "string",
+            "description": "Shipment ID",
+            "example": "78974156816152"
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "description": "Details of shipment acknowledgement"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer token - eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

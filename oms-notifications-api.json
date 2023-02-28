@@ -1,0 +1,365 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "kalu2mri2qot1"
+  },
+  "info": {
+    "title": "Notification service",
+    "description": "OMS notification service APIs for multi tenant service",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/notification",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/notification",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/notification",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Notification Server Controller",
+      "description": "These endpoints help in triggering notification emails for the respective events which the user has subscribed for."
+    }
+  ],
+  "paths": {
+    "/send": {
+      "post": {
+        "tags": [
+          "Notification Server Controller"
+        ],
+        "summary": "Listen to user and emit notifications",
+        "description": "This listener processes the request body and emit notification events to webhook service",
+        "operationId": "listenTenantNotification",
+        "parameters": [
+          {
+            "name": "tenant-key",
+            "in": "header",
+            "description": "tenant id ",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationRequestInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Notifications emitted Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Notifications"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "json/application": {
+                "example": "Generic Bad Request Response"
+              }
+            }
+          },
+          "403": {
+            "description": "Duplicated Entity",
+            "content": {
+              "json/application": {
+                "example": "Conflict with duplicated entity"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "json/application": {
+                "example": "Entity with Id xxxxxxx doesn't exist"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acknowledgment": {
+      "post": {
+        "tags": [
+          "Notification Server Controller"
+        ],
+        "summary": "Listen to user and emit acknowledgment",
+        "description": "This listener processes the acknowledgement body and adds audit-logs",
+        "operationId": "acknowledgeNotification",
+        "parameters": [
+          {
+            "name": "tenant-key",
+            "in": "header",
+            "description": "tenant id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationAcknowledgement"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "acknowledgment emitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationAcknowledgement"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "json/application": {
+                "example": "Generic Bad Request Response"
+              }
+            }
+          },
+          "403": {
+            "description": "Duplicated Entity",
+            "content": {
+              "json/application": {
+                "example": "Conflict with duplicated entity"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "json/application": {
+                "example": "Entity with Id xxxxxxx doesn't exist"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NotificationRequestInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "notificationType": {
+            "type": "string"
+          },
+          "documentType": {
+            "type": "string"
+          },
+          "overrideContactInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderContact"
+            }
+          }
+        },
+        "description": "Notification received"
+      },
+      "OrderContact": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrderContactName"
+          },
+          "email": {
+            "type": "string",
+            "example": "test@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/OrderContactPhone"
+          }
+        },
+        "description": "OrderContact Model"
+      },
+      "OrderContactName": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "example": "Middle"
+          },
+          "last": {
+            "type": "string",
+            "example": "Doe"
+          }
+        },
+        "description": "OrderContactName Model"
+      },
+      "OrderContactPhone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "example": "55555555555"
+          },
+          "type": {
+            "type": "string",
+            "example": "MOBILE",
+            "enum": [
+              "MOBILE",
+              "HOME",
+              "BUSINESS"
+            ]
+          }
+        },
+        "description": "OrderContactPhone Model"
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "ErrorResponse Model"
+      },
+      "Notifications": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123456789"
+          },
+          "documentType": {
+            "type": "string",
+            "example": "ORDER"
+          },
+          "notificationType": {
+            "type": "string"
+          },
+          "overrideContactInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderContact"
+            }
+          }
+        },
+        "description": "Notifications Model"
+      },
+      "NotificationAcknowledgement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123456789"
+          },
+          "documentType": {
+            "type": "string",
+            "example": "ORDER"
+          },
+          "notificationType": {
+            "type": "string"
+          },
+          "notificationDate": {
+            "type": "string",
+            "example": "2022-07-14T10:27:28-05:00"
+          }
+        },
+        "description": "Acknowledgment received"
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "description": "API Key for the user provided by fabric",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}

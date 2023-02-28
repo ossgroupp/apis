@@ -1,0 +1,5431 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "eese5a1gkr69p"
+  },
+  "info": {
+    "title": "Order service OpenAPI specification",
+    "description": "fabric's Order APIs are high performance endpoints built on highly scalable architecture, and include a configurable data model to orchestrate the order fulfillment process. These APIs let merchants create order records, initiate post-order process workflows and manage order related data such as, invoicing, tracking, returns, exchange, cancellation, appeasements, backorders, and other use cases.",
+    "termsOfService": "https://libertytreemedia.com/privacy-policy",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    },
+    "license": {
+      "name": "Privacy Policy",
+      "url": "https://libertytreemedia.com/privacy-policy"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://uat01.oms.libertytreemedia.com/api/v2/order",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://stg02.oms.libertytreemedia.com/api/v2/order",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev02.oms.libertytreemedia.com/api/v2/order",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "Authorization": []
+    },
+    {
+      "context": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Appeasement",
+      "description": "Appeasement refers to a goodwill credit applied to a fulfilled order when customer faces difficulties for an order, for example late delivery, received damaged product, and like wise.  This endpoint help in creating appeasement for customer orders."
+    },
+    {
+      "name": "Package Tracking",
+      "description": "Package Tracking endpoint helps in performing package tracking operations"
+    },
+    {
+      "name": "Payment Status",
+      "description": "This endpoint helps in retrieving payment status for an order"
+    },
+    {
+      "name": "Order Cancellation",
+      "description": "These endpoints help in performing order cancellation operations"
+    },
+    {
+      "name": "Order",
+      "description": "An order is a customer's request to purchase one or more products from a shop or from a website. Order endponts let merchants get order details, create, update, and delete orders."
+    },
+    {
+      "name": "Attribute",
+      "description": "These endpoints help in performing attribute operations for an order"
+    },
+    {
+      "name": "Order Return",
+      "description": "These endpoints help in performing order Return operations"
+    },
+    {
+      "name": "Cross Border",
+      "description": "Cross Border service provides capabilities related to orders that have international shipping. These endpoints help in performing cross border operations."
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Create an order",
+        "description": "Creates an order. After an order is created, *Notification* APIs of OMS send order notification to customers.",
+        "operationId": "createOrder",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Order Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order Already Exists"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Get an order",
+        "description": "Retrieves an order by orderId or orderNumber. If orderId or orderNumber is not provided, this endpoint retrieves all orders for a merchant.",
+        "operationId": "getOrder",
+        "parameters": [
+          {
+            "name": "orderNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": 309019176
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "5349b4ddd2781d08c09890f4"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order with order number is not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{orderNumber}": {
+      "put": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Update an order",
+        "description": "Updates an order by order number",
+        "operationId": "updateOrder",
+        "parameters": [
+          {
+            "name": "orderNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": 309019176
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Order object Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/attribute": {
+      "post": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Create attribute",
+        "description": "Creates an order-attribute for order fulfillment",
+        "operationId": "createAttribute",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderHelperAttributeDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderAttribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Get all attributes",
+        "description": "Retrieves all order-attributes",
+        "operationId": "getAllAttributes",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderAttribute"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/attribute/{code}": {
+      "get": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Get a specific attribute",
+        "description": "Gets a specific order-attribute by code",
+        "operationId": "getAttribute",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderAttribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "update a specific attribute",
+        "description": "Updates a specific order-attribute  by code",
+        "operationId": "updateAttribute",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderHelperAttributeDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderAttribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Attribute"
+        ],
+        "summary": "Delete an attribute by code",
+        "description": "Deletes a specific attribute by code",
+        "operationId": "deleteAttributeByCode",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderAttribute"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/returns": {
+      "get": {
+        "tags": [
+          "Order Return"
+        ],
+        "summary": "Check order return eligibility",
+        "description": "This endpoint checks if an order is eligible for return.",
+        "operationId": "getOrderReturnsEligibility",
+        "parameters": [
+          {
+            "name": "tenant-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lineItemId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return Eligibility per item ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderEligibilityInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Order Return"
+        ],
+        "summary": "Return order",
+        "description": "Returns order",
+        "operationId": "returnsOrder",
+        "parameters": [
+          {
+            "name": "tenant-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnOrder"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Return request accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnOrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Get orders by query",
+        "description": "Retrieves orders based on query model passed in the request body.",
+        "operationId": "getOrdersByQuery",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Matched orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibQueryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "[filters must not be null]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Orders not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Orders not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-status/{orderNumber}": {
+      "post": {
+        "tags": [
+          "Payment Status"
+        ],
+        "summary": "Get payment details for a specific order",
+        "description": "Retrieves payment details for a specific order by order number",
+        "operationId": "updatePaymentStatus",
+        "parameters": [
+          {
+            "name": "orderNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": 309019176
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderUpdatePaymentStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Payment Status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/package-tracking/acknowledge": {
+      "post": {
+        "tags": [
+          "Package Tracking"
+        ],
+        "summary": "Acknowledge package tracking",
+        "description": "Acknowledges package tracking details",
+        "operationId": "acknowledgeTrackingDetails",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PackageTrackingAcknowledgement"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Order"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Shipment"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "orderNumber can not be null for Order entity"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "An order with the specified orderNumber was not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cross-border/validate-order": {
+      "post": {
+        "tags": [
+          "Cross Border"
+        ],
+        "summary": "Validate order for international shipping",
+        "description": "Validates if the order is eligible for international shipping",
+        "operationId": "validateOrder",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrossBorderValidateOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success "
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order number is required"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cross-border/release-order": {
+      "post": {
+        "tags": [
+          "Cross Border"
+        ],
+        "summary": "Releases order",
+        "description": "Releases order if the order is elgible for international shipping",
+        "operationId": "releaseOrder",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrossBorderReleaseOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success "
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order number is required"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order Not Found!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cancel": {
+      "get": {
+        "tags": [
+          "Order Cancellation"
+        ],
+        "summary": "Check order-cancellation eligibility",
+        "description": "Checks if a specific order is eligible for cancellation.",
+        "operationId": "getCancelOrderEligibility",
+        "parameters": [
+          {
+            "name": "orderId",
+            "description": "Oder ID",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "62f3982438bcab1951be0a19"
+            }
+          },
+          {
+            "name": "lineItemIds",
+            "in": "query",
+            "description": "Array of line item IDs to check if the line items are eligible for cancellation",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "example": 12345
+              }
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderEligibilityInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Order Cancellation"
+        ],
+        "summary": "Cancel order",
+        "description": "Cancels order",
+        "operationId": "cancelOrder",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCancellationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Order cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appeasement": {
+      "post": {
+        "tags": [
+          "Appeasement"
+        ],
+        "summary": "Create appeasement",
+        "description": "Creates an appeasement for customer order.",
+        "operationId": "createAppeasement",
+        "parameters": [
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreateAppeasementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Appeasement Completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Not Found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{orderId}/shipto/{shipToId}/pickup": {
+      "patch": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Update pickup information of an order",
+        "description": "Updates pickup information of a specific order by order ID.",
+        "operationId": "updatePickInfoInOrder",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+            }
+          },
+          {
+            "name": "shipToId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "5349b4ddd2781d08c09890f4"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderPickup"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Pickup information updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderShipInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{orderId}/customer": {
+      "patch": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Update customer information for an order",
+        "description": "Updates customer information of a specific order by order ID.",
+        "operationId": "updateCustomerInfoInOrder",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "5349b4ddd2781d08c09890f4"
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCustomer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Order object updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderCustomer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exchange": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Check order-exchange eligibility",
+        "description": "This endpoint checks if a specific item or an entire order, for a merchant, is eligible for exchange or not.",
+        "operationId": "getOrderExchangeEligibility",
+        "parameters": [
+          {
+            "name": "tenant-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": null
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "62f3982438bcab1951be0a19"
+            }
+          },
+          {
+            "name": "lineItemId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": 12345
+            }
+          },
+          {
+            "name": "x-site-context",
+            "in": "header",
+            "description": "x-site-context value",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/XSiteContext"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchange eligibility per item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderEligibilityInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not exists!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Order with orderId is not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Order": {
+        "required": [
+          "channelId",
+          "items",
+          "orderNumber",
+          "shipInfo",
+          "statusCode"
+        ],
+        "type": "object",
+        "description": "Order response body",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "description": "Number of updates happened to the order. Order-update refers to replacement, appeasement added, address change or any other order related update to the particular order.",
+            "format": "int64"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Auto generated ID once the order created successfully",
+            "example": "5349b4ddd2781d08c09890f4"
+          },
+          "orderNumber": {
+            "type": "string",
+            "description": "Unique order number",
+            "example": "309019176"
+          },
+          "orderDate": {
+            "type": "string",
+            "description": "Actual order creation date",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "cancellationDate": {
+            "type": "string",
+            "description": "Order cancellation date if any",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "allocationDate": {
+            "type": "string",
+            "description": "Order allocation date after order is created",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Sales channel ID",
+            "example": "12"
+          },
+          "cartId": {
+            "type": "string",
+            "description": "ID of the cart where order is placed",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "type": {
+            "type": "string",
+            "description": "Platfrom using which order is created",
+            "example": "WEB",
+            "enum": [
+              "WEB",
+              "CSC",
+              "MOBILE_APP",
+              "POS"
+            ]
+          },
+          "subType": {
+            "type": "string",
+            "description": "Operating system of the platfom as mentioned in the `type` field. If you want to configure any custom valuefor this field, contact fabric.",
+            "example": "International",
+            "enum": [
+              "IOS",
+              "Android",
+              "International"
+            ]
+          },
+          "processName": {
+            "type": "string",
+            "description": "Order process name",
+            "example": "CANCEL"
+          },
+          "employeeId": {
+            "type": "string",
+            "description": "Employee ID used when an employee places an order on behave of the customer.",
+            "example": "43278"
+          },
+          "retail": {
+            "$ref": "#/components/schemas/OrderRetail"
+          },
+          "orderSubTotal": {
+            "type": "number",
+            "description": "Order value after calculating discounts and any applicable fees",
+            "example": 123.45
+          },
+          "originalSubTotal": {
+            "type": "number",
+            "description": "Original order total value",
+            "example": 113.45
+          },
+          "orderDiscount": {
+            "type": "number",
+            "description": "Final discount value on order amount",
+            "example": 1.23
+          },
+          "originalDiscounts": {
+            "type": "number",
+            "description": "Original discount on order value",
+            "example": 1.45
+          },
+          "feeTotal": {
+            "type": "number",
+            "description": "Total fees, if any, applicable on order amount",
+            "example": 12.34
+          },
+          "originalFeeTotal": {
+            "type": "number",
+            "description": "Original fees appliable on shipping of items",
+            "example": 12.34
+          },
+          "taxTotal": {
+            "type": "number",
+            "description": "Total tax amount appliable on shipping of items",
+            "example": 12.34
+          },
+          "appeasementTotal": {
+            "description": "Appeasement amount, if any, processed on the order",
+            "type": "number",
+            "example": 12.34
+          },
+          "originalTaxTotal": {
+            "type": "number",
+            "description": "Original tax amount on order during fist time order creation",
+            "example": 12.34
+          },
+          "returnTotal": {
+            "type": "number",
+            "description": "Return amount incase of order return",
+            "example": 12.34
+          },
+          "cancelTotal": {
+            "type": "number",
+            "description": "Cancel amount incase of order cancellation",
+            "example": 12.34
+          },
+          "invoiceTotal": {
+            "type": "number",
+            "description": "Invoice value on order",
+            "example": 12.34
+          },
+          "orderTotal": {
+            "type": "number",
+            "description": "Total order amount after calculating fees, discounts, retrurn and cancellation if any",
+            "example": 146.9
+          },
+          "originalOrderTotal": {
+            "type": "number",
+            "description": "Order amount during first time order creation after calculating all fees, taxes, and discounts",
+            "example": 146.9
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "statusCode": {
+            "type": "string",
+            "example": "ORDER_CREATED"
+          },
+          "statusDescription": {
+            "type": "string",
+            "example": "Order Created"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "type": "String/Number/JSON",
+                "purchaseOrder": "String",
+                "salesRepId": "String",
+                "approve": "String",
+                "fraudCheckSessionId": "aee6d1face0e4d55948d1e30b6240048",
+                "fraudCheckStatus": "UPDATED",
+                "fraudCheckTransId": "0R12TQ46",
+                "fraudScore": "31"
+              }
+            },
+            "example": {
+              "type": "String/Number/JSON",
+              "purchaseOrder": "String",
+              "salesRepId": "String",
+              "approve": "String",
+              "fraudCheckSessionId": "aee6d1face0e4d55948d1e30b6240048",
+              "fraudCheckStatus": "UPDATED",
+              "fraudCheckTransId": "0R12TQ46",
+              "fraudScore": "31"
+            }
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderFeeDetail"
+            }
+          },
+          "appeasements": {
+            "type": "array",
+            "description": "Array of appeasements, if any",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementDetail"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDiscount"
+            }
+          },
+          "customer": {
+            "$ref": "#/components/schemas/OrderCustomer"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderPayment"
+            }
+          },
+          "items": {
+            "maxItems": 2147483647,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            }
+          },
+          "shipInfo": {
+            "maxItems": 2147483647,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderShipInfo"
+            }
+          },
+          "auditLogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderAuditLog"
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderNote"
+            }
+          },
+          "orderReleaseTimestamp": {
+            "type": "string",
+            "description": "Order dispatched date and time",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time when the original order is modified for the first time, for example for return, cancellation or replacement",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "description": "Date and time when the exisiting order is updated",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "OrderAddress": {
+        "required": [
+          "address1"
+        ],
+        "type": "object",
+        "description": "Order billing or shipping address",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrderContactName"
+          },
+          "email": {
+            "type": "string",
+            "example": "john123@gmail.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/OrderContactPhone"
+          },
+          "address1": {
+            "type": "string",
+            "example": "First line of address"
+          },
+          "address2": {
+            "type": "string",
+            "example": "123 Parking Lot"
+          },
+          "address3": {
+            "type": "string",
+            "example": "Third line of address"
+          },
+          "address4": {
+            "type": "string",
+            "example": "Fourth line of address"
+          },
+          "city": {
+            "type": "string",
+            "example": "Beaumont"
+          },
+          "state": {
+            "type": "string",
+            "example": "TX"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "77705"
+          },
+          "type": {
+            "type": "string",
+            "example": "residence"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Latitude of the address",
+            "example": 35.294952
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude of the address",
+            "example": 32.294952
+          }
+        }
+      },
+      "OrderAppeasementDetail": {
+        "type": "object",
+        "description": "Order appeasement detail object",
+        "properties": {
+          "appeasementCounter": {
+            "type": "integer",
+            "description": "Counter number where appeasement is processed. It is used for retail transactions",
+            "format": "int32",
+            "example": 1
+          },
+          "reasonCode": {
+            "type": "string",
+            "example": "Incorrect item"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "example": "Late shipping"
+          },
+          "value": {
+            "type": "number",
+            "description": "Appeasement amount",
+            "example": 34.56
+          },
+          "invoiceValue": {
+            "type": "number",
+            "description": "Appeasement invoice value; should be equal to appeasement value",
+            "example": 34.56
+          },
+          "payments": {
+            "type": "array",
+            "description": "Array of appeasement payments",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementPaymentInfo"
+            }
+          }
+        }
+      },
+      "OrderAppeasementPaymentInfo": {
+        "type": "object",
+        "description": "Order appeasement payment information object",
+        "properties": {
+          "paymentCounter": {
+            "type": "integer",
+            "description": "Counter number where appeasement payment is processed",
+            "format": "int32",
+            "example": 1
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 40
+          }
+        }
+      },
+      "OrderAuditLog": {
+        "type": "object",
+        "properties": {
+          "auditId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "auditType": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "auditTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:24:54.804Z"
+          },
+          "source": {
+            "type": "string",
+            "example": "POS"
+          },
+          "reasonCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "policyCode": {
+            "type": "string",
+            "example": "POS"
+          },
+          "note": {
+            "type": "string",
+            "example": "Note"
+          },
+          "lineItemId": {
+            "type": "string",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "lineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "sku": {
+            "type": "string",
+            "example": "F5F"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "amount": {
+            "type": "number",
+            "example": 2.4
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/OrderPaymentToken"
+          },
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "paymentResponse": {
+            "type": "object"
+          },
+          "updatedFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderAuditLogUpdatedField"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "description": "OrderAuditLog Model"
+      },
+      "OrderAuditLogUpdatedField": {
+        "type": "object",
+        "properties": {
+          "fieldName": {
+            "type": "string",
+            "example": "UOM"
+          },
+          "fieldOriginalValue": {
+            "type": "string",
+            "example": "PK"
+          }
+        },
+        "description": "OrderAuditLogUpdatedField Model"
+      },
+      "OrderContactName": {
+        "type": "object",
+        "description": "Name for order details",
+        "properties": {
+          "first": {
+            "type": "string",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "example": "Middle"
+          },
+          "last": {
+            "type": "string",
+            "example": "Doe"
+          }
+        }
+      },
+      "OrderContactPhone": {
+        "type": "object",
+        "description": "Contact details of customer for the order",
+        "properties": {
+          "number": {
+            "type": "string",
+            "example": "55555555555"
+          },
+          "type": {
+            "type": "string",
+            "example": "MOBILE",
+            "enum": [
+              "MOBILE",
+              "HOME",
+              "BUSINESS"
+            ]
+          }
+        }
+      },
+      "OrderCustomer": {
+        "type": "object",
+        "description": "Order customer model",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrderContactName"
+          },
+          "email": {
+            "type": "string",
+            "example": "john@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/OrderContactPhone"
+          },
+          "userId": {
+            "type": "string",
+            "description": "It is shopper's ID who visits company website to purchase products.",
+            "example": "62272e917b12209e68751d94"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID such as loyalty account ID or memebr account ID. Refers to any external system or fabric's loyalty service that the user has account with.",
+            "example": "62272e917b12209e68751d94"
+          },
+          "employeeId": {
+            "type": "string",
+            "description": "ID of the employee (sales person) who creates an order for shopper.",
+            "example": "62272e917b12209e68751d94"
+          },
+          "company": {
+            "type": "string",
+            "example": "fabric"
+          }
+        }
+      },
+      "OrderDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          }
+        }
+      },
+      "OrderDiscount": {
+        "type": "object",
+        "description": "Order discount object",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "amount": {
+            "type": "number",
+            "example": 2.4
+          },
+          "unit": {
+            "type": "string",
+            "example": "AMOUNT_OFF"
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "promoId": {
+            "type": "string",
+            "example": "HNY2022"
+          },
+          "promoCode": {
+            "type": "string",
+            "example": "HNY2022"
+          },
+          "promoTitle": {
+            "type": "string",
+            "example": "Happy New Year"
+          },
+          "type": {
+            "type": "string",
+            "example": "promotion"
+          },
+          "invoiceQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "returnQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "cancelQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          }
+        }
+      },
+      "OrderFeeDetail": {
+        "type": "object",
+        "description": "Order fee detail model",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "shipping"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          },
+          "invoiceValue": {
+            "type": "number",
+            "example": 34.56
+          }
+        }
+      },
+      "OrderInvoiceDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          },
+          "invoiceQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 34
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 10.4
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 12
+          }
+        },
+        "description": "OrderInvoiceDetail Model"
+      },
+      "OrderItem": {
+        "required": [
+          "itemId",
+          "lineItemId",
+          "lineItemNumber",
+          "shipToId",
+          "sku"
+        ],
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "lineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "itemId": {
+            "type": "string",
+            "example": "1234"
+          },
+          "sku": {
+            "type": "string",
+            "example": "P1234"
+          },
+          "channelId": {
+            "type": "string",
+            "example": "WHBM"
+          },
+          "segment": {
+            "type": "string",
+            "example": "P1234"
+          },
+          "vendorId": {
+            "type": "string",
+            "example": "P1234"
+          },
+          "title": {
+            "type": "string",
+            "example": "Item"
+          },
+          "type": {
+            "type": "string",
+            "description": "Identify order type whether it's pickup item, or web ship, or international order",
+            "example": "WEB_SHIP"
+          },
+          "subType": {
+            "type": "string",
+            "example": "Borderfree"
+          },
+          "backorder": {
+            "type": "boolean",
+            "description": "Identify whether this item has been ordered as backorder",
+            "example": true
+          },
+          "orderedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 60
+          },
+          "backOrderedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "pendingShippedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "pendingShippedBackOrderQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "shippedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "deliveredQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "invoiceQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "cancelledQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "pendingReturnQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "processingReturnQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "rejectedReturnQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "returnedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "reshippedQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "uom": {
+            "type": "string",
+            "example": "EA"
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Unique ID to link item with its shipping address. If all items of an order are shipped to single address, then all items will have same shipTo id. If multiple items of an order are shipped to multiple shipping address, then corresponding shipTo id is linked to each item.",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "itemUnitPrice": {
+            "type": "number",
+            "example": 10
+          },
+          "itemSubTotal": {
+            "type": "number",
+            "example": 600
+          },
+          "originalItemSubTotal": {
+            "type": "number",
+            "example": 600
+          },
+          "itemFeeTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "originalFeeTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "itemShippingTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "originalShippingTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "appeasementTotal": {
+            "type": "number",
+            "example": 5.5
+          },
+          "itemDiscountsTotal": {
+            "type": "number",
+            "example": 55
+          },
+          "originalDiscounts": {
+            "type": "number",
+            "example": 55
+          },
+          "itemTaxTotal": {
+            "type": "number",
+            "example": 5
+          },
+          "originalTaxTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "itemTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "originalItemTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "outstandingItemTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "originalOutstandingItemTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "invoiceTotal": {
+            "type": "number",
+            "example": 555
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "5345HJH"
+          },
+          "associateId": {
+            "type": "string",
+            "example": "5345HJH"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderInvoiceDetail"
+            }
+          },
+          "appeasements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementDetail"
+            }
+          },
+          "returns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderReturns"
+            }
+          },
+          "taxCode": {
+            "type": "string",
+            "example": "FR01"
+          },
+          "taxDetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDetail"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDiscount"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "isDonation": true,
+                "isGiftCard": false,
+                "isFinalSale": false,
+                "returnsLink": true
+              }
+            },
+            "example": {
+              "isDonation": true,
+              "isGiftCard": false,
+              "isFinalSale": false,
+              "returnsLink": true
+            }
+          },
+          "exchangeItem": {
+            "type": "boolean",
+            "example": true
+          },
+          "parentLineItemNumber": {
+            "type": "integer",
+            "format": "int32",
+            "example": 12
+          },
+          "pendingExchangeQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 12
+          },
+          "exchangeQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 13
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 12.4
+          },
+          "lineOrderStatus": {
+            "type": "string",
+            "example": "VALID"
+          },
+          "infiniteConsent": {
+            "type": "boolean",
+            "example": true
+          },
+          "notes": {
+            "type": "array",
+            "description": "Notes section to be used for CSR only",
+            "items": {
+              "$ref": "#/components/schemas/OrderNote"
+            }
+          },
+          "gifting": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "description": "OrderItem Model"
+      },
+      "OrderNote": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "user": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "notes": {
+            "type": "string",
+            "example": "Extra information to be provided"
+          }
+        }
+      },
+      "OrderPayment": {
+        "type": "object",
+        "properties": {
+          "paymentCounter": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-27T16:15:58-05:00"
+          },
+          "billToId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "paymentIdentifier": {
+            "$ref": "#/components/schemas/OrderPaymentIdentifier"
+          },
+          "paymentProvider": {
+            "type": "string",
+            "example": "stripe"
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/OrderPaymentToken"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "example": "CREDIT_CARD"
+          },
+          "authAmount": {
+            "type": "number",
+            "example": 123.2
+          },
+          "chargedAmount": {
+            "type": "number",
+            "example": 60
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 40
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "conversion": {
+            "type": "number",
+            "example": 1
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "OK"
+          },
+          "partialCapture": {
+            "type": "string",
+            "example": "false"
+          },
+          "finalCapture": {
+            "type": "string",
+            "example": "false"
+          },
+          "paymentLog": {
+            "type": "array",
+            "example": "payment response list",
+            "items": {
+              "$ref": "#/components/schemas/PaymentResponse"
+            }
+          },
+          "billToAddress": {
+            "$ref": "#/components/schemas/OrderAddress"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "expirationMonth": 12
+              }
+            },
+            "example": {
+              "expirationMonth": 12
+            }
+          }
+        },
+        "description": "OrderPayment Model"
+      },
+      "OrderPaymentIdentifier": {
+        "type": "object",
+        "properties": {
+          "cardIdentifier": {
+            "type": "string",
+            "description": "Last 4 digits from cart number",
+            "example": "3456"
+          },
+          "expirationYear": {
+            "type": "string",
+            "description": "Card expiration year",
+            "example": "2029"
+          },
+          "expirationMonth": {
+            "type": "string",
+            "description": "Card expiration month",
+            "example": "2029"
+          },
+          "paymentId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "fabricPaymentReference": {
+            "type": "string",
+            "example": "test"
+          }
+        },
+        "description": "OrderPaymentIdentifier Model"
+      },
+      "OrderPaymentToken": {
+        "type": "object",
+        "description": "Payment token details",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Payment token generated by checkout service",
+            "example": "pi_34tr6787rt"
+          },
+          "paymentType": {
+            "type": "string",
+            "description": "Used to identify payment type in case of credit cards",
+            "example": "VISA"
+          }
+        }
+      },
+      "OrderPickup": {
+        "type": "object",
+        "description": "Details of the person who picks up the order",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/OrderContactName"
+          },
+          "email": {
+            "type": "string",
+            "example": "john123@gmail.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/OrderContactPhone"
+          },
+          "pickupType": {
+            "type": "string",
+            "example": "Primary",
+            "enum": [
+              "Primary",
+              "Alternate"
+            ]
+          }
+        }
+      },
+      "OrderRetail": {
+        "type": "object",
+        "description": "Order retail object for reatil transactions. For non-retail transactions, only location number is provided.",
+        "properties": {
+          "locationNum": {
+            "type": "integer",
+            "description": "Store number of line item's fulfillment origin.",
+            "format": "int32",
+            "example": 123
+          },
+          "cashierId": {
+            "type": "string",
+            "description": "Cashier ID in case of retail transaction.",
+            "example": "C-123"
+          },
+          "registerId": {
+            "type": "string",
+            "description": "Registered user ID of the cashier who helps in creating the order. It is applicable for retail transactions.",
+            "example": "113"
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "Transaction ID incase of retail transaction.",
+            "example": "R123-431-1133-2129"
+          }
+        }
+      },
+      "OrderReturns": {
+        "type": "object",
+        "properties": {
+          "shipmentId": {
+            "type": "string",
+            "example": "12353543"
+          },
+          "shipmentLineItemId": {
+            "type": "string",
+            "example": "2412341"
+          },
+          "shipmentQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 11.29
+          },
+          "invoicedAmount": {
+            "type": "number",
+            "example": 11.29
+          },
+          "returnsCreatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-09-14T14:07:36.861Z"
+          }
+        },
+        "description": "OrderReturns Model"
+      },
+      "OrderShipInfo": {
+        "required": [
+          "shipToId"
+        ],
+        "type": "object",
+        "description": "Order shipping info",
+        "properties": {
+          "shipToId": {
+            "type": "string",
+            "description": "Unique ID to link item with its shipping address. If all items of an order are shipped to single address, then all items will have same shipTo id. If multiple items of an order are shipped to multiple shipping address, then corresponding shipTo id is linked to each item.",
+            "example": "5349b4ddd2781d08c09890f4"
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Code for the tax applied for shiping of items to the adress",
+            "example": "FR01"
+          },
+          "locationNum": {
+            "type": "string",
+            "description": "Location number to be used for BOPIS (Buy Online Purchase In Store) to identify the pickup store",
+            "example": "123"
+          },
+          "pickup": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderPickup"
+            }
+          },
+          "shipToAddress": {
+            "$ref": "#/components/schemas/OrderAddress"
+          },
+          "taxDetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDetail"
+            }
+          },
+          "shipMethod": {
+            "type": "string",
+            "example": "Express Delivery"
+          },
+          "shipToType": {
+            "type": "string",
+            "example": "SHIP_TO_ADDRESS"
+          },
+          "estimatedShipDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "estimatedDeliveryDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "shipToPrice": {
+            "type": "number",
+            "description": "Amount applicable for shipping the item to the address",
+            "example": 20
+          },
+          "shipToDiscount": {
+            "type": "number",
+            "description": "Discount amount applied for shipping the item to the address",
+            "example": 12.6
+          },
+          "shipToTaxTotal": {
+            "type": "number",
+            "description": "Total tax applicable to ship the item to the address",
+            "example": 12.6
+          },
+          "shipmentInstructions": {
+            "type": "string",
+            "description": "Additional user instructions",
+            "example": "User instructions"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "isOpenBox": false,
+                "isOTPDElivery": true
+              }
+            },
+            "example": {
+              "isOpenBox": false,
+              "isOTPDElivery": true
+            }
+          }
+        }
+      },
+      "PaymentDetails": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "body": {
+            "$ref": "#/components/schemas/PaymentDetailsResponseBody"
+          }
+        },
+        "description": "PaymentDetails Model"
+      },
+      "PaymentDetailsResponseBody": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string"
+          },
+          "transactionTimestamp": {
+            "type": "string"
+          },
+          "responseCode": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "description": "PaymentDetailsResponseBody Model"
+      },
+      "PaymentResponse": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PaymentDetails"
+          }
+        },
+        "description": "PaymentResponse Model",
+        "example": "payment response list"
+      },
+      "XSiteContext": {
+        "required": [
+          "account",
+          "stage"
+        ],
+        "type": "object",
+        "description": "JSON object containing `channel`, `account`, `stage`, `date`, and `site`.",
+        "properties": {
+          "account": {
+            "type": "string",
+            "description": "Merchant account ID. It is a 24 character alphanumeric account value of merchant's copilot account, provided by fabric",
+            "example": "5z689abc4216v8000930d1ef"
+          },
+          "date": {
+            "type": "string",
+            "example": "2022-10-18T09:05:19.647Z"
+          },
+          "stage": {
+            "type": "string",
+            "description": "Stage name",
+            "example": "sandbox"
+          },
+          "site": {
+            "type": "string",
+            "description": "Source origin (or storefront) of the request",
+            "example": "libertytreemedia.com"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "Error response"
+      },
+      "TenantConfigurationResponse": {
+        "type": "object",
+        "properties": {
+          "configName": {
+            "type": "string"
+          },
+          "objectValue": {
+            "type": "object"
+          },
+          "objectType": {
+            "type": "string"
+          },
+          "configType": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "description": "TenantConfigurationResponse Model"
+      },
+      "OrderHelperAttributeDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "description": "OrderHelperAttributeDTO Model"
+      },
+      "OrderAttribute": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BOOLEAN",
+              "INTEGER",
+              "NUMBER",
+              "STRING"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "description": "OrderAttribute Model"
+      },
+      "OrderDTO": {
+        "required": [
+          "channelId",
+          "items",
+          "orderNumber",
+          "shipInfo",
+          "statusCode"
+        ],
+        "type": "object",
+        "description": "Order object",
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "Unique order number to be provided by merchant",
+            "example": "309019176"
+          },
+          "orderDate": {
+            "type": "string",
+            "description": "Actual order creation date when the order was created for the first time.",
+            "format": "date-time",
+            "example": "2022-05-12T09:30:31.198Z"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Sales channel ID",
+            "example": "12"
+          },
+          "cartId": {
+            "type": "string",
+            "description": "ID of the cart for which order is created",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "type": {
+            "type": "string",
+            "description": "Platform of order creation, for example, website, mobile application, point of sale, and so on.",
+            "example": "WEB",
+            "enum": [
+              "WEB",
+              "CSC",
+              "MOBILE_APP",
+              "POS"
+            ]
+          },
+          "subType": {
+            "type": "string",
+            "description": "Operating system of the platform mentioned in the `type` field.",
+            "example": "International",
+            "enum": [
+              "IOS",
+              "Android",
+              "International"
+            ]
+          },
+          "employeeId": {
+            "type": "string",
+            "description": "ID of the employee who created the order or who helped creating the order.",
+            "example": "43278"
+          },
+          "retail": {
+            "$ref": "#/components/schemas/OrderRetail"
+          },
+          "orderSubTotal": {
+            "type": "number",
+            "description": "Base price of the ordered items before discounts. It does not include tax amount.",
+            "example": 123.45
+          },
+          "orderDiscount": {
+            "type": "number",
+            "description": "Discounted amount",
+            "example": 1.23
+          },
+          "feeTotal": {
+            "type": "number",
+            "description": "Order value after discount. Discount value is subtracted from order sub total.",
+            "example": 12.34
+          },
+          "taxTotal": {
+            "type": "number",
+            "description": "Total tax amount applicable on the order subtotal value.",
+            "example": 12.34
+          },
+          "orderTotal": {
+            "type": "number",
+            "description": "Total order value after calculating discount and tax values.",
+            "example": 146.9
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currecy code used for order amount",
+            "example": "USD"
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Order status code",
+            "example": "ORDER_CREATED"
+          },
+          "statusDescription": {
+            "type": "string",
+            "description": "Order status description",
+            "example": "Order created"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "purchaseOrder": "String",
+                "salesRepId": "String",
+                "approver": "String",
+                "fraudCheckSessionId": "aee6d1face0e4d55948d1e30b6240048",
+                "fraudCheckStatus": "UPDATED",
+                "fraudCheckTransId": "KKMH0R12TQ46",
+                "fraudScore": "31"
+              }
+            }
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderFeeDetail"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "description": "Array of discount objects",
+            "items": {
+              "$ref": "#/components/schemas/OrderDiscountDTO"
+            }
+          },
+          "customer": {
+            "$ref": "#/components/schemas/OrderCustomer"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderPaymentDTO"
+            }
+          },
+          "items": {
+            "maxItems": 2147483647,
+            "minItems": 1,
+            "type": "array",
+            "description": "Array of items for which order is processed",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemDTO"
+            }
+          },
+          "shipInfo": {
+            "maxItems": 2147483647,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderShipInfo"
+            }
+          },
+          "notes": {
+            "type": "array",
+            "description": "Notes section to be used for CSR only",
+            "items": {
+              "$ref": "#/components/schemas/OrderNote"
+            }
+          }
+        }
+      },
+      "OrderDiscountDTO": {
+        "type": "object",
+        "description": "Order discount model",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "description": "Minimum quantity to be purchased for the discount to be applied",
+            "format": "int32",
+            "example": 2
+          },
+          "amount": {
+            "type": "number",
+            "example": 2.4
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of discount; represents whether the discount is in percentage or by a certain amount",
+            "example": "AMOUNT_OFF"
+          },
+          "value": {
+            "type": "integer",
+            "description": "Discount value",
+            "format": "int32",
+            "example": 2
+          },
+          "promoId": {
+            "type": "string",
+            "description": "System generated unique ID for the promotion",
+            "example": "HNY2022"
+          },
+          "promoCode": {
+            "type": "string",
+            "description": "Coupon code to be applied to get the desired discount",
+            "example": "HNY2022"
+          },
+          "promoTitle": {
+            "type": "string",
+            "description": "Promotion title",
+            "example": "Happy New Year"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of promotion",
+            "example": "promotion"
+          }
+        }
+      },
+      "OrderItemDTO": {
+        "required": [
+          "itemId",
+          "lineItemId",
+          "lineItemNumber",
+          "shipToId",
+          "sku"
+        ],
+        "type": "object",
+        "description": "Details of ordered items",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "description": "Cart item ID, generated automatically",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "lineItemNumber": {
+            "type": "integer",
+            "description": "Cart item sequence number (starts at 1)",
+            "format": "int32",
+            "example": 1
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "1234"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Itme SKU",
+            "example": "P1234"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "Sales channel ID of the item",
+            "example": "WHBM"
+          },
+          "segment": {
+            "type": "string",
+            "description": "Segement the item belongs to. This is used to identify if any promotional offer is applicable to the item, for example if the item is a free gift.",
+            "example": "P1234"
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "ID of vendor who sells the item",
+            "example": "P1234"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the item",
+            "example": "Item"
+          },
+          "type": {
+            "type": "string",
+            "description": "Identify order type whether it's pickup item, or web ship, or international order",
+            "example": "WEB_SHIP"
+          },
+          "subType": {
+            "type": "string",
+            "description": "Provides additional information in relation to `type`",
+            "example": "Borderfree"
+          },
+          "backorder": {
+            "type": "boolean",
+            "description": "Backorder refers to re-stock of the item.<br>`true` if the item is ordered as backorder<br>`false` if the item is not ordered as backorder",
+            "example": true
+          },
+          "orderedQuantity": {
+            "type": "integer",
+            "description": "Quantity of items ordered",
+            "format": "int32",
+            "example": 60
+          },
+          "uom": {
+            "type": "string",
+            "description": "Unit of measurement",
+            "example": "EA"
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Unique ID to link item with its shipping address. If all items of an order are shipped to single address, then all items will have same shipTo id. If multiple items of an order are shipped to multiple shipping address, then corresponding shipTo id is linked to each item.",
+            "example": "b03b72dc-78d8-4ea4-90fc-2fe6a1fe6569"
+          },
+          "itemUnitPrice": {
+            "type": "number",
+            "description": "Price set for each unit of item",
+            "example": 10
+          },
+          "itemSubTotal": {
+            "type": "number",
+            "description": "Sub-total for all quantities of the item. Calculated by multiplying unit price with ordered quantity.",
+            "example": 600
+          },
+          "itemFeeTotal": {
+            "type": "number",
+            "description": "Total fees applicable on purchase of items. It is calculated based on the values passed in the `fees` array under `OrderItemDTO`. It includes shipping fee or any other fee.",
+            "example": 5
+          },
+          "itemDiscountsTotal": {
+            "type": "number",
+            "description": "Total discount applicable on purchase of items. It is calculated based on the values passed in the `discounts` array under `OrderItemDTO`.",
+            "example": 55
+          },
+          "itemTaxTotal": {
+            "type": "number",
+            "description": "Total tax amount applicable on purchase of items. It is calculated based on the values passed in the `taxDetail` array under `OrderItemDTO`.",
+            "example": 5
+          },
+          "itemTotal": {
+            "type": "number",
+            "description": "Final amount charged on all items (based on quantity), after calculating discount and tax.",
+            "example": 555
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency used for order of items",
+            "example": "USD"
+          },
+          "employeeId": {
+            "type": "string",
+            "description": "In case of POS, ID of the employee who helps in creating order for the item.",
+            "example": "5345HJH"
+          },
+          "associateId": {
+            "type": "string",
+            "example": "5345HJH"
+          },
+          "fees": {
+            "type": "array",
+            "description": "Shipping fee or any other fee applicable on purchase of the item",
+            "items": {
+              "$ref": "#/components/schemas/OrderDetail"
+            }
+          },
+          "taxCode": {
+            "type": "string",
+            "description": "Tax code applied, for the item, if any",
+            "example": "FR01"
+          },
+          "taxDetail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDetail"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderDiscountDTO"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "isDonation": true,
+                "isGiftCard": false,
+                "isFinalSale": false,
+                "returnsLink": true
+              }
+            },
+            "example": {
+              "isDonation": true,
+              "isGiftCard": false,
+              "isFinalSale": false,
+              "returnsLink": true
+            }
+          },
+          "notes": {
+            "type": "array",
+            "description": "Notes section to be used for CSR only",
+            "items": {
+              "$ref": "#/components/schemas/OrderNote"
+            }
+          }
+        }
+      },
+      "OrderPaymentDTO": {
+        "type": "object",
+        "description": "Order payment object",
+        "properties": {
+          "paymentCounter": {
+            "type": "integer",
+            "description": "Counter number, for retail transaction, where payment is processed. Is this empty for web transaction?",
+            "format": "int32",
+            "example": 1
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-01-27T16:15:58-05:00"
+          },
+          "billToId": {
+            "type": "string",
+            "description": "Billing ID",
+            "example": "62272e917b12209e68751d94"
+          },
+          "paymentIdentifier": {
+            "$ref": "#/components/schemas/OrderPaymentIdentifierDTO"
+          },
+          "paymentProvider": {
+            "type": "string",
+            "description": "Payment processing platform",
+            "example": "stripe"
+          },
+          "paymentToken": {
+            "$ref": "#/components/schemas/OrderPaymentToken"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "example": "CREDIT_CARD"
+          },
+          "authAmount": {
+            "type": "number",
+            "description": "Authorized amount to be charged for the order",
+            "example": 123.45
+          },
+          "chargedAmount": {
+            "type": "number",
+            "description": "Amount charged on the payment method",
+            "example": 60
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for order amount",
+            "example": "USD"
+          },
+          "conversion": {
+            "type": "number",
+            "description": "Currency cenversion",
+            "example": 1
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Shows if value mentioned in payment method is authorized for the payment to proceed",
+            "example": "AUTHORIZED"
+          },
+          "authExpirationDate": {
+            "type": "string",
+            "description": "Payment authorization expiration date and time",
+            "format": "date-time",
+            "example": "2022-01-27T16:15:58-05:00"
+          },
+          "billToAddress": {
+            "$ref": "#/components/schemas/OrderAddress"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Additional information related to payment method, counter, and any other payment related process.",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "expirationMonth": 12
+              }
+            },
+            "example": {
+              "expirationMonth": 12
+            }
+          }
+        }
+      },
+      "OrderPaymentIdentifierDTO": {
+        "type": "object",
+        "description": "Order payment identifier model",
+        "properties": {
+          "cardIdentifier": {
+            "type": "string",
+            "description": "Last 4 digits of card number",
+            "example": "3456"
+          },
+          "expirationYear": {
+            "type": "string",
+            "description": "Card expiration year",
+            "example": "2029"
+          },
+          "expirationMonth": {
+            "type": "string",
+            "description": "Card expiration month",
+            "example": "02"
+          },
+          "paymentId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94",
+            "description": "Payment ID"
+          },
+          "fabricPaymentReference": {
+            "type": "string",
+            "example": "fab3456"
+          }
+        }
+      },
+      "OrderRefund": {
+        "required": [
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 40
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "conversion": {
+            "type": "number",
+            "example": 1
+          }
+        },
+        "description": "OrderRefund Model"
+      },
+      "ReturnItem": {
+        "required": [
+          "orderLineItemId",
+          "quantity",
+          "returnType",
+          "scanTimeStamp",
+          "shipmentId",
+          "shipmentLineId"
+        ],
+        "type": "object",
+        "properties": {
+          "returnType": {
+            "type": "string",
+            "description": "Return Type",
+            "example": "RECEIVED",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "REJECTED",
+              "RECEIVED"
+            ]
+          },
+          "orderLineItemId": {
+            "type": "string",
+            "description": "Order Line Item Id"
+          },
+          "shipmentId": {
+            "type": "string",
+            "description": "Shipment Id"
+          },
+          "shipmentLineId": {
+            "type": "string",
+            "description": "Shipment Line Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "scanTimeStamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-07-11T15:03:14.642Z"
+          },
+          "reasonCode": {
+            "type": "string",
+            "example": "reasonCode"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "example": "subReasonCode"
+          },
+          "policyOveride": {
+            "type": "boolean",
+            "description": " true : to disable the policy check,\nfalse : to enable the policy check",
+            "example": true
+          },
+          "returnAmount": {
+            "type": "number",
+            "example": 100
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentFeeDetail"
+            }
+          },
+          "exchange": {
+            "$ref": "#/components/schemas/ReturnsExchangeData"
+          }
+        },
+        "description": "ReturnItem Model"
+      },
+      "ReturnOrder": {
+        "required": [
+          "employeeId",
+          "items",
+          "orderId",
+          "returnTimeStamp",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "example": "62b37697c67b204dd18a7465"
+          },
+          "returnTimeStamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-07-11T15:03:14.642Z"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "8a7465"
+          },
+          "source": {
+            "type": "string",
+            "example": "CSR"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReturnItem"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "example": "\"attributes\": {\n     *     \"additionalProp1\": {},\n     *     \"additionalProp2\": {},\n     *     \"additionalProp3\": {}\n     *   }"
+            },
+            "example": "\"attributes\": {\n     *     \"additionalProp1\": {},\n     *     \"additionalProp2\": {},\n     *     \"additionalProp3\": {}\n     *   }"
+          },
+          "exchange": {
+            "type": "boolean"
+          }
+        },
+        "description": "ReturnOrder Model"
+      },
+      "ReturnsExchangeData": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "disableRefunding": {
+            "type": "boolean",
+            "description": "Disables refunding for this item",
+            "example": true
+          },
+          "refund": {
+            "$ref": "#/components/schemas/OrderRefund"
+          },
+          "items": {
+            "type": "array",
+            "description": "Item list that will be shipped in exchange for the returned item",
+            "items": {
+              "$ref": "#/components/schemas/ReturnsExchangeItem"
+            }
+          }
+        },
+        "description": "ReturnsExchangeData Model"
+      },
+      "ReturnsExchangeItem": {
+        "required": [
+          "itemId",
+          "quantity",
+          "sku"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "Item identification",
+            "example": "1234"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Item identification",
+            "example": "P1234"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "How many items should be exchanged",
+            "format": "int32",
+            "example": 10
+          },
+          "itemUnitPrice": {
+            "type": "number",
+            "description": "Item's unit price",
+            "example": 10
+          },
+          "initiateReshipment": {
+            "type": "boolean",
+            "description": "Do not wait for the return, proceed with the shipment immediately",
+            "example": true
+          }
+        },
+        "description": "ReturnsExchangeItem Model"
+      },
+      "ShipmentFeeDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "tax"
+          },
+          "value": {
+            "type": "number",
+            "example": 34.56
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "quantity",
+            "format": "int32",
+            "example": 12
+          },
+          "refundAmount": {
+            "type": "number",
+            "description": "refund amount",
+            "example": 10.4
+          }
+        },
+        "description": "ShipmentFeeDetail Model"
+      },
+      "ReturnItemResponse": {
+        "type": "object",
+        "properties": {
+          "returnStatus": {
+            "type": "string",
+            "example": "VALID",
+            "enum": [
+              "VALID",
+              "POLICY_VIOLATION",
+              "PENDING",
+              "PROCESSING",
+              "REJECTED"
+            ]
+          },
+          "policyCode": {
+            "type": "string",
+            "example": "policyCode"
+          },
+          "lineItemId": {
+            "type": "string",
+            "example": "32221112"
+          },
+          "returnQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "refundAmount": {
+            "type": "number",
+            "example": 100
+          }
+        },
+        "description": "ReturnItemResponse Model"
+      },
+      "ReturnOrderResponse": {
+        "type": "object",
+        "properties": {
+          "refundStatus": {
+            "type": "string",
+            "enum": [
+              "REFUND_INITIATED",
+              "REFUND_SUCCESS",
+              "REFUND_FAILURE",
+              "REFUND_PENDING"
+            ]
+          },
+          "totalRefund": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReturnItemResponse"
+            }
+          }
+        },
+        "description": "ReturnOrderResponse Model"
+      },
+      "OrderReleasePayload": {
+        "type": "object",
+        "properties": {
+          "orderNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tenant": {
+            "type": "string"
+          },
+          "processName": {
+            "type": "string"
+          },
+          "releaseType": {
+            "type": "string"
+          }
+        },
+        "description": "OrderReleasePayload Model"
+      },
+      "LibQuery": {
+        "required": [
+          "filters"
+        ],
+        "type": "object",
+        "description": "Query object to retrieve matched orders",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Numbers of records to be returned",
+            "format": "int32",
+            "example": 10,
+            "default": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of records to skipped",
+            "format": "int64",
+            "example": 0,
+            "default": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Item property on which data needed to be sorted on",
+            "example": "updatedAt",
+            "default": "updatedAt"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Direction of sorting- ascending or descending",
+            "example": "desc",
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "JSON to filter records. JSON structure should be similar to target entity structure i.e order, shipment etc.",
+              "example": {
+                "retail": {
+                  "locationNum": 12
+                },
+                "orderSubTotal": {
+                  "gte": 1300,
+                  "lt": 1400
+                },
+                "orderNumber": "order-*Z",
+                "statusCode": [
+                  "ORDER_CREATED"
+                ],
+                "createdAt": {
+                  "lt": "2022-09-11T23:12:00.123Z"
+                },
+                "shipInfo": {
+                  "shipToId": [
+                    "23434",
+                    "23436"
+                  ]
+                }
+              },
+              "default": {}
+            },
+            "description": "JSON to do filtration of records. to filter records json structure should be similar to target entity structure i.e order, shipment etc",
+            "example": {
+              "retail": {
+                "locationNum": 12
+              },
+              "orderSubTotal": {
+                "gte": 1300,
+                "lt": 1400
+              },
+              "orderNumber": "order-*Z",
+              "statusCode": [
+                "ORDER_CREATED"
+              ],
+              "createdAt": {
+                "lt": "2022-09-11T23:12:00.123Z"
+              },
+              "shipInfo": {
+                "shipToId": [
+                  "23434",
+                  "23436"
+                ]
+              }
+            },
+            "default": {}
+          }
+        }
+      },
+      "LibQueryResponse": {
+        "type": "object",
+        "description": "Response object based on query model",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "Total number of order records",
+            "format": "int64",
+            "example": 100
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of records returned on a single page",
+            "format": "int32",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of records skipped before selecting matched records",
+            "format": "int64",
+            "example": 1
+          }
+        }
+      },
+      "OrderUpdatePaymentStatusConnectorInfo": {
+        "type": "object",
+        "description": "Payment processing platform details",
+        "properties": {
+          "connectorName": {
+            "type": "string",
+            "description": "Payment processing platform or connector name",
+            "example": "stripe"
+          },
+          "paymentMethodType": {
+            "type": "string",
+            "description": "Payment mode",
+            "example": "Credit card"
+          },
+          "eventId": {
+            "type": "string",
+            "description": "eventId"
+          }
+        }
+      },
+      "OrderUpdatePaymentStatusRequest": {
+        "type": "object",
+        "description": "Order update payment status request object",
+        "properties": {
+          "paymentIdentifier": {
+            "type": "string",
+            "description": "paymentIdentifier",
+            "example": "62272e917b12209e68751d94"
+          },
+          "type": {
+            "type": "string",
+            "description": "Payment type",
+            "example": "VISA"
+          },
+          "status": {
+            "type": "string",
+            "description": "Payment status",
+            "example": "Success"
+          },
+          "balances": {
+            "$ref": "#/components/schemas/OrderUpdatePaymentStatusRequestBalances"
+          },
+          "connectorInfo": {
+            "$ref": "#/components/schemas/OrderUpdatePaymentStatusConnectorInfo"
+          }
+        }
+      },
+      "OrderUpdatePaymentStatusRequestBalances": {
+        "type": "object",
+        "properties": {
+          "captured": {
+            "type": "number",
+            "description": "captured"
+          },
+          "capturable": {
+            "type": "number",
+            "description": "capturable"
+          },
+          "refunded": {
+            "type": "number",
+            "description": "refunded"
+          },
+          "refundable": {
+            "type": "number",
+            "description": "refundable"
+          }
+        }
+      },
+      "PackageTrackingAcknowledgement": {
+        "required": [
+          "entity",
+          "eventType",
+          "orderNumber"
+        ],
+        "type": "object",
+        "description": "Package tracking acknowledgement object",
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "Order number generated by OMS",
+            "example": "order123"
+          },
+          "eventType": {
+            "type": "string",
+            "example": "ORDER_CREATE_IN_PTS",
+            "enum": [
+              "ORDER_CREATE_IN_PTS",
+              "ORDER_CANCELLED_IN_PTS",
+              "SHIPMENT_CREATE_IN_PTS",
+              "SHIPMENT_CANCELLED_IN_PTS"
+            ]
+          },
+          "entity": {
+            "type": "string",
+            "example": "ORDER",
+            "enum": [
+              "ORDER",
+              "SHIPMENT"
+            ]
+          },
+          "shipmentId": {
+            "type": "string",
+            "description": "Shipment ID generated by OMS",
+            "example": "shipment123"
+          }
+        }
+      },
+      "Shipment": {
+        "type": "object",
+        "description": "Shipment object",
+        "properties": {
+          "shipmentId": {
+            "type": "string",
+            "description": "Shipment ID generated by OMS",
+            "example": "627963716b19511e8a3a631b"
+          },
+          "shipmentNum": {
+            "type": "string",
+            "description": "Shipment number generated by OMS",
+            "example": "78974156816152"
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "Invoice ID generated by OMS",
+            "example": "5674156816152"
+          },
+          "allocationId": {
+            "type": "string",
+            "description": "Allocation ID generated by OMS",
+            "example": "112345678912340"
+          },
+          "orderNumber": {
+            "type": "array",
+            "description": "Order number",
+            "example": 112345678912340,
+            "items": {
+              "type": "string",
+              "description": "Order number",
+              "example": 112345678912340
+            }
+          },
+          "poNumber": {
+            "type": "string",
+            "description": "Purchase order number",
+            "example": 1125
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Vendor ID",
+            "example": 56
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Shipment status code",
+            "example": "SHIPPED"
+          },
+          "type": {
+            "type": "string",
+            "description": "Shipment type",
+            "example": "STANDARD"
+          },
+          "reshipmentReasonCode": {
+            "type": "string",
+            "description": "Re-shipment reason code, if any",
+            "example": "Order went missing"
+          },
+          "shipDate": {
+            "type": "string",
+            "description": "Shipping date",
+            "format": "date-time",
+            "example": "2022-06-06T07:58:30.996Z"
+          },
+          "locationNum": {
+            "type": "string",
+            "description": "Location number",
+            "example": "132412"
+          },
+          "locationType": {
+            "type": "string",
+            "description": "Location type",
+            "example": "DC"
+          },
+          "totalCartons": {
+            "type": "integer",
+            "description": "Total number of cartons",
+            "format": "int32",
+            "example": 2
+          },
+          "masterTrackingNumber": {
+            "type": "string",
+            "description": "Master tracking number",
+            "example": "TX112345678"
+          },
+          "shipToId": {
+            "type": "string",
+            "description": "Unique ID to link item with its shipping address. If all items of an order are shipped to single address, then all items will have same shipTo id. If multiple items of an order are shipped to multiple shipping address, then corresponding shipTo id is linked to each item.",
+            "example": "1"
+          },
+          "shipToAddress": {
+            "$ref": "#/components/schemas/ShipmentShipToAddress"
+          },
+          "recipient": {
+            "type": "array",
+            "description": "Recipient list",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentRecipient"
+            }
+          },
+          "cartons": {
+            "type": "array",
+            "description": "Cartons list",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentCarton"
+            }
+          },
+          "scratchedItems": {
+            "type": "array",
+            "description": "Scratched items list",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentScratchedItem"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Created date",
+            "format": "date-time",
+            "example": "2022-06-06T07:58:30.996Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated date",
+            "format": "date-time",
+            "example": "2022-06-06T07:58:30.996Z"
+          },
+          "auditLogs": {
+            "type": "array",
+            "description": "Audit logs list",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentAuditLog"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Attributes to save any additional information"
+            },
+            "description": "Attributes to save any additional information"
+          }
+        }
+      },
+      "ShipmentAuditLog": {
+        "type": "object",
+        "properties": {
+          "auditType": {
+            "type": "string",
+            "example": "create"
+          },
+          "employeeId": {
+            "type": "string",
+            "example": "62272e917b12209e68751d94"
+          },
+          "auditTimestamp": {
+            "type": "string",
+            "example": "2022-05-12T09:24:54.804Z"
+          },
+          "source": {
+            "type": "string",
+            "example": "POS"
+          },
+          "note": {
+            "type": "string",
+            "example": "Note"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "updatedFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentAuditLogUpdatedAttribute"
+            }
+          }
+        },
+        "description": "ShipmentAuditLog Model"
+      },
+      "ShipmentAuditLogUpdatedAttribute": {
+        "type": "object",
+        "properties": {
+          "attributeName": {
+            "type": "string",
+            "example": "UOM"
+          },
+          "attributeOriginalValue": {
+            "type": "string",
+            "example": "PK"
+          }
+        },
+        "description": "ShipmentAuditLogUpdatedAttribute Model"
+      },
+      "ShipmentCarton": {
+        "type": "object",
+        "properties": {
+          "cartonNum": {
+            "type": "string",
+            "description": "carton number",
+            "example": "1"
+          },
+          "cartonType": {
+            "type": "string",
+            "description": "Cartoon type",
+            "example": "Package"
+          },
+          "promisedDeliveryDate": {
+            "type": "string",
+            "description": "Promised delivery date",
+            "format": "date-time",
+            "example": "2022-05-26T07:58:30.996Z"
+          },
+          "estimatedShipDate": {
+            "type": "string",
+            "description": "Estimated ship date",
+            "format": "date-time",
+            "example": "2022-05-25T07:58:30.996Z"
+          },
+          "estimatedDeliveryDate": {
+            "type": "string",
+            "description": "Estimated delivery date",
+            "format": "date-time",
+            "example": "2022-05-26T07:58:30.996Z"
+          },
+          "shipmentMethod": {
+            "type": "string",
+            "description": "Shipment method",
+            "example": "ground"
+          },
+          "shipmentCarrier": {
+            "type": "string",
+            "description": "Shipment carrier",
+            "example": "FEDEX"
+          },
+          "weight": {
+            "type": "string",
+            "description": "weight",
+            "example": "500 gram"
+          },
+          "trackingNumber": {
+            "type": "string",
+            "description": "Tracking number",
+            "example": "1Z999AA10123456784"
+          },
+          "trackingURL": {
+            "type": "string",
+            "description": "Tracking URL",
+            "example": "https://fedex.com/tracking"
+          },
+          "trackingDetails": {
+            "type": "array",
+            "description": "Tracking detail list",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentTrackingDetail"
+            }
+          },
+          "items": {
+            "type": "array",
+            "description": "Item list",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentItem"
+            }
+          }
+        },
+        "description": "Shipment carton object"
+      },
+      "ShipmentGiftCardDetail": {
+        "type": "object",
+        "properties": {
+          "giftCardNum": {
+            "type": "string",
+            "description": "gift card number",
+            "example": "453456765"
+          },
+          "amount": {
+            "type": "number",
+            "description": "gift card amount",
+            "example": 50
+          },
+          "giftCardStatus": {
+            "type": "string",
+            "description": "gift card status",
+            "example": "ACTIVE"
+          },
+          "giftCardActiveRequestDate": {
+            "type": "string",
+            "description": "gift card activation request date",
+            "example": "2022-05-26T07:58:30.996Z"
+          },
+          "giftCardActiveDate": {
+            "type": "string",
+            "description": "gift card activate date",
+            "example": "2022-06-26T07:58:30.996Z"
+          }
+        },
+        "description": "ShipmentGiftCardDetail Model"
+      },
+      "ShipmentItem": {
+        "type": "object",
+        "properties": {
+          "shipmentLineItemId": {
+            "type": "string",
+            "description": "shipment line item id",
+            "example": "607f1f77bcf86cd799439011"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "order id",
+            "example": "317736896"
+          },
+          "orderNumber": {
+            "type": "string",
+            "description": "order number",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "lineItemId": {
+            "type": "string",
+            "description": "line item id",
+            "example": "1"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "item id",
+            "example": "100023"
+          },
+          "sku": {
+            "type": "string",
+            "description": "sku",
+            "example": "SKU0023"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "channel id",
+            "example": "12"
+          },
+          "segment": {
+            "type": "string",
+            "description": "segment"
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "vendor id"
+          },
+          "orderedQuantity": {
+            "type": "integer",
+            "description": "ordered quantity",
+            "format": "int32",
+            "example": 2
+          },
+          "shippedQuantity": {
+            "type": "integer",
+            "description": "shipped quantity",
+            "format": "int32",
+            "example": 2
+          },
+          "returnQuantity": {
+            "type": "integer",
+            "description": "return quantity",
+            "format": "int32",
+            "example": 1
+          },
+          "returnAmount": {
+            "type": "number",
+            "description": "return amount",
+            "example": 10
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentFeeDetail"
+            }
+          },
+          "giftCard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentGiftCardDetail"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "uom": {
+            "type": "string"
+          }
+        },
+        "description": "ShipmentItem Model"
+      },
+      "ShipmentName": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "description": "first name",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "description": "middle name"
+          },
+          "last": {
+            "type": "string",
+            "description": "last name",
+            "example": "Doe"
+          }
+        },
+        "description": "ShipmentName Model"
+      },
+      "ShipmentPhone": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "description": "phone number",
+            "example": "+10612345678"
+          },
+          "type": {
+            "type": "string",
+            "description": "type",
+            "example": "MOBILE"
+          }
+        },
+        "description": "ShipmentPhone Model"
+      },
+      "ShipmentRecipient": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ShipmentName"
+          },
+          "email": {
+            "type": "string",
+            "description": "email",
+            "example": "support@libertytreemedia.com"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/ShipmentPhone"
+          }
+        },
+        "description": "ShipmentRecipient Model"
+      },
+      "ShipmentScratchedItem": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "Order ID",
+            "example": "507f1f77bcf86cd799439012"
+          },
+          "lineItemId": {
+            "type": "string",
+            "description": "Line item ID",
+            "example": "2"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "Item ID",
+            "example": "100043"
+          },
+          "sku": {
+            "type": "string",
+            "description": "sku",
+            "example": "SKU00043"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Quantity",
+            "format": "int32",
+            "example": 1
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "Reason code"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "Sub reason code"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Scratch item attributes"
+            },
+            "description": "Scratch item attributes"
+          },
+          "uom": {
+            "type": "string",
+            "example": "EA"
+          }
+        },
+        "description": "Shipment scratched item object"
+      },
+      "ShipmentShipToAddress": {
+        "type": "object",
+        "properties": {
+          "addressLine1": {
+            "type": "string",
+            "description": "address line 1",
+            "example": "888 Broadway"
+          },
+          "addressLine2": {
+            "type": "string",
+            "description": "address line 2"
+          },
+          "addressLine3": {
+            "type": "string",
+            "description": "address line 3"
+          },
+          "addressLine4": {
+            "type": "string",
+            "description": "address line 4"
+          },
+          "city": {
+            "type": "string",
+            "description": "city",
+            "example": "New York"
+          },
+          "state": {
+            "type": "string",
+            "description": "state",
+            "example": "NY"
+          },
+          "country": {
+            "type": "string",
+            "description": "country",
+            "example": "USA"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "postal code",
+            "example": "1003"
+          },
+          "type": {
+            "type": "string",
+            "description": "address type ",
+            "example": "home"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "latitude",
+            "format": "double",
+            "example": 134.13413
+          },
+          "longitude": {
+            "type": "number",
+            "description": "longitude",
+            "format": "double",
+            "example": 757.0435
+          }
+        },
+        "description": "ShipmentShipToAddress Model"
+      },
+      "ShipmentTrackingDetail": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "description": "event",
+            "example": "picked up"
+          },
+          "eventId": {
+            "type": "string",
+            "description": "unique event id",
+            "example": "627963716b19511e8a3a631b"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "timestamp",
+            "example": "2019-09-30T07:58:30.996Z"
+          },
+          "shipmentCarrier": {
+            "type": "string",
+            "description": "shipment carrier, in case of different carrier",
+            "example": "FEDEX"
+          },
+          "location": {
+            "type": "string",
+            "description": "location",
+            "example": "Reno, NV"
+          },
+          "notes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "description": "shipment notes"
+            },
+            "description": "shipment notes"
+          }
+        },
+        "description": "ShipmentTrackingDetail Model"
+      },
+      "OrderHoldConfiguration": {
+        "required": [
+          "processName",
+          "serviceName",
+          "tenantId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/org.bson.types.ObjectId"
+          },
+          "tenantId": {
+            "type": "string",
+            "example": "123456789"
+          },
+          "serviceName": {
+            "type": "string",
+            "example": "order-hold-verification"
+          },
+          "processName": {
+            "type": "string",
+            "example": "order-create"
+          },
+          "time": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "OrderHoldConfiguration Model"
+      },
+      "org.bson.types.ObjectId": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": 1233243
+      },
+      "CrossBorderValidateOrderRequest": {
+        "required": [
+          "orderNumbers"
+        ],
+        "type": "object",
+        "description": "Cross border validate order request model",
+        "properties": {
+          "orderNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": 309019176
+            }
+          }
+        }
+      },
+      "CrossBorderReleaseOrderRequest": {
+        "type": "object",
+        "properties": {
+          "orderNumber": {
+            "type": "string"
+          },
+          "releaseType": {
+            "type": "string",
+            "enum": [
+              "RELEASE",
+              "CANCEL"
+            ]
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "subReasonCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "description": "CrossBorderReleaseOrderRequest Model"
+      },
+      "OrderCancelLineItem": {
+        "required": [
+          "lineItemId",
+          "quantity"
+        ],
+        "type": "object",
+        "description": "Order cancel line-item level object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "example": 12345
+          },
+          "quantity": {
+            "type": "number",
+            "example": 1
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "Override header level reason code and set to specified line item audit log",
+            "example": "wrong item"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "Override header level sub reason code and set to specified line item audit log",
+            "example": "Mismatched item"
+          }
+        }
+      },
+      "OrderCancellationRequest": {
+        "required": [
+          "orderId",
+          "reasonCode"
+        ],
+        "type": "object",
+        "description": "Order cancellation request object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "example": "62f3982438bcab1951be0a19"
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "Set to all line items and header audits logs",
+            "example": "wrong item"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "Set to all line items and header audits logs",
+            "example": "Ordered item doesn't match"
+          },
+          "source": {
+            "type": "string",
+            "description": "Determine where the request is initialize"
+          },
+          "employeeId": {
+            "type": "number",
+            "description": "Determine who initiate the request",
+            "example": "AD5069"
+          },
+          "note": {
+            "type": "string",
+            "description": "Use to add notes",
+            "example": "Wrong item is sent to customer"
+          },
+          "policyCode": {
+            "type": "string",
+            "description": "Set policy code",
+            "example": "Cancel"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Set attributes to header level audit log's attribute object",
+            "additionalProperties": {
+              "type": "object",
+              "example": {
+                "cancelEligibility": true
+              }
+            },
+            "example": {
+              "IsCancellationEligibile": true
+            }
+          },
+          "items": {
+            "type": "array",
+            "description": "Set when doing line item level cancellation other set to null or empty",
+            "items": {
+              "$ref": "#/components/schemas/OrderCancelLineItem"
+            }
+          }
+        }
+      },
+      "OrderAppeasementInfo": {
+        "required": [
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "appeasementCounter": {
+            "type": "integer",
+            "description": "It's optional and we highly discourage using it.",
+            "format": "int32",
+            "example": 1
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "It is optional. It's free text field and is being saved just as a metadata.",
+            "example": "Late Delivery"
+          },
+          "subReasonCode": {
+            "type": "string",
+            "description": "It is optional. It's free text field and is being saved just as a metadata.",
+            "example": "subReasonCode"
+          },
+          "value": {
+            "type": "number",
+            "description": "It required. It is the amount which will be refunded or reduced from the cost.",
+            "example": 12.5
+          },
+          "notes": {
+            "type": "string",
+            "description": "It is optional. It's free text field and is being saved just as a metadata.",
+            "example": "Any additional info"
+          },
+          "payments": {
+            "type": "array",
+            "description": "It's optional. It identifies the payment method associated with the order using payment counter. If specified, it should be consistent with the order payments, like we cannot refund a larger amount than charged from a certain payment method.",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementPaymentInfo"
+            }
+          }
+        },
+        "description": "OrderAppeasementInfo Model"
+      },
+      "OrderCreateAppeasementRequest": {
+        "required": [
+          "orderNumber",
+          "source",
+          "userID"
+        ],
+        "type": "object",
+        "description": "Appeasement request details",
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "It is required and used as a primary identifier to apply appeasement on an order.",
+            "example": "123"
+          },
+          "appeasementType": {
+            "type": "string",
+            "description": "It is free text field added on demand from Chico's, not used in the business logic.",
+            "example": "appeasementType"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/OrderCustomer"
+          },
+          "userID": {
+            "type": "string",
+            "description": "It is used as identifier of the user who initiates the appeasement request",
+            "example": "12"
+          },
+          "source": {
+            "type": "string",
+            "description": "Identifies the system by which the request was initiated",
+            "example": "SFSC"
+          },
+          "appeasements": {
+            "type": "array",
+            "description": "It represents the order-level appeasements. It is necessary to add at least one of the order-level or item-level appeasements.",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementInfo"
+            }
+          },
+          "items": {
+            "type": "array",
+            "description": "It represents the wrapper of item-level appeasements. It is necessary to add at least one of the order-level or item-level appeasements",
+            "items": {
+              "$ref": "#/components/schemas/OrderLineItemAppeasement"
+            }
+          }
+        }
+      },
+      "OrderLineItemAppeasement": {
+        "required": [
+          "appeasements",
+          "lineItemId"
+        ],
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "description": "It is required as an identifier of line item on which appeasements is applied",
+            "example": "d538b1f1-0e45-43c6-bfc6-9666fc1188ca"
+          },
+          "appeasements": {
+            "type": "array",
+            "description": "It is required if we specify parent object. It represents item-level appeasements.",
+            "items": {
+              "$ref": "#/components/schemas/OrderAppeasementInfo"
+            }
+          }
+        },
+        "description": "OrderLineItemAppeasement Model"
+      },
+      "OrderCreateAppeasementResponse": {
+        "type": "object",
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "example": "12"
+          },
+          "totalAmountRefunded": {
+            "type": "number",
+            "example": 25.5
+          },
+          "channel": {
+            "type": "string",
+            "example": "12"
+          },
+          "tenant": {
+            "type": "string",
+            "example": "5f689caa4216e7000750d1ef"
+          }
+        },
+        "description": "OrderCreateAppeasementResponse Model"
+      },
+      "ServiceResponse": {
+        "type": "object",
+        "properties": {
+          "responseCode": {
+            "type": "string",
+            "description": "ResponseCodes Model",
+            "example": "SUCCESS",
+            "enum": [
+              "SUCCESS",
+              "ERROR",
+              "NOT_FOUND",
+              "INVALID_REQUEST",
+              "AMOUNT_EXCEEDS",
+              "PAYMENT_NOT_FOUND",
+              "PARTIAL_SUCCESS"
+            ]
+          },
+          "responseMessage": {
+            "type": "string",
+            "example": "API Operation successfully completed"
+          },
+          "responseData": {
+            "$ref": "#/components/schemas/OrderCreateAppeasementResponse"
+          }
+        },
+        "description": "ServiceResponse Model"
+      },
+      "OrderEligibilityInfo": {
+        "type": "object",
+        "description": "Order eligibility object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "Order ID",
+            "example": "62f3982438bcab1951be0a19"
+          },
+          "eligibleReasonCodes": {
+            "type": "array",
+            "description": "Reason codes allowed for returns",
+            "items": {
+              "type": "string",
+              "description": "Reason codes allowed for returns",
+              "example": "wrong item"
+            }
+          },
+          "policyType": {
+            "type": "string",
+            "description": "Policy type",
+            "example": "Exchange or return or cancellation"
+          },
+          "period": {
+            "type": "string",
+            "description": "Provides the configured duration for returns",
+            "example": "30D00H00M"
+          },
+          "items": {
+            "type": "array",
+            "description": "List of items with their eligibility to return",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemEligibilityInfo"
+            }
+          },
+          "fees": {
+            "type": "array",
+            "description": "fees",
+            "items": {
+              "$ref": "#/components/schemas/OrderPolicyFee"
+            }
+          }
+        }
+      },
+      "OrderItemEligibilityInfo": {
+        "type": "object",
+        "description": "Item's return or exchange eligibility information",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "description": "Line item ID",
+            "example": "62f3dfc438bcab1951be0a19"
+          },
+          "eligibleQuantity": {
+            "type": "integer",
+            "description": "Eligible quantity of items for return or exchange",
+            "format": "int32",
+            "example": 10
+          },
+          "eligible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OrderPolicyFee": {
+        "type": "object",
+        "description": "Order policy fee object",
+        "properties": {
+          "platinumFee": {
+            "type": "number",
+            "description": "Fee applicable for the policy",
+            "example": 33.9
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency ",
+            "example": "USD"
+          }
+        }
+      }
+    },
+    "examples": {
+      "Authorization": {
+        "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV9.eyJpZCI6IjYxZjIyMTU4..."
+      },
+      "apiKey": {
+        "value": "abc-de12345"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "description": "`Authorization token` or `access token` for the user, provided by fabric",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "context": {
+        "type": "apiKey",
+        "description": "JSON object containing `channel`, `account`, `stage`, `date`, and `site`",
+        "name": "x-site-context",
+        "in": "header"
+      }
+    }
+  }
+}

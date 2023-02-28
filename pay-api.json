@@ -1,0 +1,2497 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Pay APIs.",
+    "version": "1.0.0",
+    "title": "Pay",
+    "contact": {
+      "email": "support@libertytreemedia.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "Customer Payment Profile",
+      "description": "Customer payment profile APIs"
+    },
+    {
+      "name": "Payment Intent",
+      "description": "Payment intent APIs"
+    },
+    {
+      "name": "Payment Method",
+      "description": "Payment method APIs"
+    },
+    {
+      "name": "Refund",
+      "description": "Refund APIs"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://{stage}-apigw.{client}.libertytreemedia.zone",
+      "description": "product server1 samples",
+      "variables": {
+        "client": {
+          "enum": [
+            "demo"
+          ],
+          "default": "demo"
+        },
+        "stage": {
+          "enum": [
+            "prod01"
+          ],
+          "default": "prod01"
+        }
+      }
+    },
+    {
+      "url": "https://{stage}-apigw.{client}.libertytreemedia.zone",
+      "description": "product server2 samples",
+      "variables": {
+        "client": {
+          "enum": [
+            "demo"
+          ],
+          "default": "demo"
+        },
+        "stage": {
+          "enum": [
+            "prod02"
+          ],
+          "default": "prod02"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/customer": {
+      "post": {
+        "tags": [
+          "Customer Payment Profile"
+        ],
+        "summary": "Add customer",
+        "description": "Add customer",
+        "operationId": "ltmPayCreateCustomer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer was created successfuly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customer/{customerId}": {
+      "parameters": [
+        {
+          "name": "customerId",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "tags": [
+          "Customer Payment Profile"
+        ],
+        "operationId": "ltmPayGetCustomerById",
+        "summary": "Get customer",
+        "description": "If customer exists and was not deleted you will get a Customer object\n\nIf customer exists but was deleted you will get a DeletedCustomer object\n",
+        "responses": {
+          "200": {
+            "description": "Get customer successfuly",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Customer"
+                    },
+                    {
+                      "$ref": "#/components/schemas/DeletedCustomer"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update customer",
+        "description": "Update customer",
+        "tags": [
+          "Customer Payment Profile"
+        ],
+        "operationId": "ltmPayUpdateCustomer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer was retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Customer Payment Profile"
+        ],
+        "operationId": "ltmPayDeleteCustomerById",
+        "summary": "Delete customer",
+        "description": "Delete Customer by Customer Id",
+        "responses": {
+          "200": {
+            "description": "Customer was successfuly deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletedCustomer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "post": {
+        "tags": [
+          "Customer Payment Profile"
+        ],
+        "operationId": "ltmPayListCustomers",
+        "summary": "Get customers",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListCustomers"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of Customers successfuly retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListCustomersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-intent/{paymentIntentId}": {
+      "parameters": [
+        {
+          "name": "paymentIntentId",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "tags": [
+          "Payment Intent"
+        ],
+        "operationId": "ltmPayGetPaymentIntentById",
+        "summary": "Get payment intent",
+        "description": "Get Payment Intent by Id",
+        "responses": {
+          "200": {
+            "description": "Payment Intent was successfuly retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update payment intent",
+        "operationId": "ltmPayUpdatePaymentIntent",
+        "tags": [
+          "Payment Intent"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePaymentIntent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment Intent was successfuly updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Payment Intent"
+        ],
+        "operationId": "ltmPayCancelPaymentIntent",
+        "summary": "Cancel payment intent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelPaymentIntent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment Intent Successfully Canceled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-intent": {
+      "post": {
+        "tags": [
+          "Payment Intent"
+        ],
+        "operationId": "ltmPayCreatePaymentIntent",
+        "summary": "Create payment intent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentIntent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment Intent was successfuly created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-intent/confirm/{paymentIntentId}": {
+      "parameters": [
+        {
+          "name": "paymentIntentId",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "Confirm payment intent",
+        "operationId": "ltmPayConfirmPaymentIntent",
+        "tags": [
+          "Payment Intent"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmPaymentIntent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirm payment intent was successsful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-intent/capture/{paymentIntentId}": {
+      "parameters": [
+        {
+          "name": "paymentIntentId",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": [
+          "Payment Intent"
+        ],
+        "operationId": "ltmPayCapturePaymentIntent",
+        "summary": "Capture payment intent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CapturePaymentIntent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Capture Payment Intent was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-method/{paymentMethodId}/attach": {
+      "parameters": [
+        {
+          "name": "paymentMethodId",
+          "schema": {
+            "type": "string"
+          },
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": [
+          "Customer Payment Profile"
+        ],
+        "operationId": "ltmPayAttachPaymentMethodToCustomer",
+        "summary": "Attach payment method to customer",
+        "description": "Test",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachPaymentMethod"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attaching a Payment Method to a Customer was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethod"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-method/{paymentMethodId}/detach": {
+      "parameters": [
+        {
+          "name": "paymentMethodId",
+          "schema": {
+            "type": "string"
+          },
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "tags": [
+          "Customer Payment Profile"
+        ],
+        "operationId": "ltmPayDetachPaymentMethodFromCustomer",
+        "summary": "Detach payment method from customer",
+        "responses": {
+          "200": {
+            "description": "Detach a Payment Method from a Customer by Payment Method Id was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethod"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-method/{paymentMethodId}": {
+      "parameters": [
+        {
+          "name": "paymentMethodId",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "tags": [
+          "Payment Method"
+        ],
+        "operationId": "ltmPayGetPaymentMethodById",
+        "summary": "Get payment method",
+        "responses": {
+          "200": {
+            "description": "Get Payment Method by Id was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethod"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-methods": {
+      "post": {
+        "tags": [
+          "Payment Method"
+        ],
+        "operationId": "ltmPayListPaymentMethods",
+        "summary": "Get payment methods by customer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListPaymentMethods"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List Payment Methods was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethodsList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/refund": {
+      "post": {
+        "tags": [
+          "Refund"
+        ],
+        "summary": "Create refund",
+        "operationId": "ltmPayCreateRefund",
+        "description": "Creates a full refund if amount is not provided or is equal to the amount of payment intent. Partial refund is created upon providing amount lesser than the payment intent.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRefund"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create Refund was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/refund/{refundId}": {
+      "parameters": [
+        {
+          "name": "refundId",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "tags": [
+          "Refund"
+        ],
+        "operationId": "ltmPayGetRefund",
+        "summary": "Get refund",
+        "responses": {
+          "200": {
+            "description": "Get Refund was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Refund"
+        ],
+        "operationId": "ltmPayUpdateRefund",
+        "summary": "Update refund",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update Refund was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/refunds": {
+      "post": {
+        "tags": [
+          "Refund"
+        ],
+        "summary": "Get refunds for a payment intent",
+        "operationId": "ltmPayListRefunds",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListRefunds"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List Refunds was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string",
+                      "example": "list"
+                    },
+                    "url": {
+                      "type": "string",
+                      "example": "/v1/refunds"
+                    },
+                    "has_more": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Refund"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A generic client error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "description": "The customer’s address.",
+        "required": [
+          "city",
+          "country",
+          "line1",
+          "postal_code",
+          "state"
+        ],
+        "properties": {
+          "city": {
+            "type": "string",
+            "example": "New York",
+            "description": "City, district, suburb, town, or village."
+          },
+          "country": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2,
+            "example": "US",
+            "description": "Two-letter country code."
+          },
+          "line1": {
+            "type": "string",
+            "example": "108 Main Street",
+            "description": "Address line 1 (e.g., street, PO Box, or company name)."
+          },
+          "line2": {
+            "type": "string",
+            "example": "4th Avenue",
+            "description": "Address line 2 (e.g., apartment, suite, unit, or building)."
+          },
+          "postal_code": {
+            "type": "string",
+            "example": 10003,
+            "description": "ZIP or postal code."
+          },
+          "state": {
+            "type": "string",
+            "example": "NY",
+            "description": "State, county, province, or region."
+          }
+        }
+      },
+      "Created": {
+        "type": "object",
+        "description": "A filter on the list based on the object created field. The value can be a string with an integer Unix timestamp, or it can be a dictionary with the following options",
+        "properties": {
+          "gt": {
+            "type": "integer",
+            "example": 1591917132,
+            "description": "Return results where the created field is greater than this value."
+          },
+          "gte": {
+            "type": "integer",
+            "example": 1591917132,
+            "description": "Return results where the created field is greater than or equal to this value."
+          },
+          "lt": {
+            "type": "integer",
+            "example": 1591917132,
+            "description": "Return results where the created field is less than this value."
+          },
+          "lte": {
+            "type": "integer",
+            "example": 1591917132,
+            "description": "Return results where the created field is less than or equal to this value."
+          }
+        }
+      },
+      "CreateCustomer": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "description": {
+            "type": "string",
+            "example": "This is example text.",
+            "description": "An arbitrary string that you can attach to a customer object. It is displayed alongside the customer in the dashboard."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "johnsmith@libertytreemedia.com",
+            "maxLength": 512,
+            "description": "Customer’s email address."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "example": "John Smith",
+            "description": "The customer’s full name or business name."
+          },
+          "payment_method": {
+            "type": "string",
+            "example": "pm_1GulN6FbKq2PvwXbAWV9JJEc",
+            "description": "The ID of the PaymentMethod to attach to the customer."
+          },
+          "invoice_settings": {
+            "type": "object",
+            "description": "Default invoice settings for this customer.",
+            "properties": {
+              "default_payment_method": {
+                "type": "string",
+                "example": "pm_1GulN6FbKq2PvwXbAWV9JJEc"
+              }
+            }
+          },
+          "phone": {
+            "type": "string",
+            "example": "123-123-1234",
+            "description": "The customer’s phone number."
+          },
+          "shipping": {
+            "$ref": "#/components/schemas/Shipping"
+          }
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cus_8epDebVEl8Bs2V",
+            "description": "Unique identifier for the object."
+          },
+          "object": {
+            "type": "string",
+            "example": "customer",
+            "description": "String representing the object’s type."
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "balance": {
+            "type": "number",
+            "example": 0,
+            "description": "Current balance, if any, being stored on the customer. If negative, the customer has credit to apply to their next invoice. If positive, the customer has an amount owed that will be added to their next invoice. The balance does not refer to any unpaid invoices; it solely takes into account amounts that have yet to be successfully applied to any invoice. This balance is only taken into account as invoices are finalized."
+          },
+          "created": {
+            "type": "number",
+            "example": 1466202923,
+            "description": "Time at which the object was created. Measured in seconds since the Unix epoch."
+          },
+          "currency": {
+            "type": "string",
+            "example": "usd",
+            "description": "Three-letter ISO code for the currency the customer can be charged in for recurring billing purposes."
+          },
+          "default_source": {
+            "type": "string",
+            "example": "card_18NVYR2eZvKYlo2CQ2ieV9S5",
+            "description": "ID of the default payment source for the customer."
+          },
+          "delinquent": {
+            "type": "boolean",
+            "example": true,
+            "description": "When the customer’s latest invoice is billed by charging automatically, delinquent is true if the invoice’s latest charge failed. When the customer’s latest invoice is billed by sending an invoice, delinquent is true if the invoice isn’t paid by its due date."
+          },
+          "description": {
+            "type": "string",
+            "example": "My First Test Customer (created for API docs)",
+            "description": "An arbitrary string attached to the object. Often useful for displaying to users."
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "email": {
+            "type": "string",
+            "example": "mia.wilson.99@example.com",
+            "description": "the customer's email address."
+          },
+          "invoice_prefix": {
+            "type": "string",
+            "example": "D86E170",
+            "description": "The prefix for the customer used to generate unique invoice numbers."
+          },
+          "invoice_settings": {
+            "type": "object",
+            "properties": {
+              "custom_fields": {
+                "type": "object",
+                "description": "Default custom fields to be displayed on invoices for this customer.",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the custom field."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The value of the custom field."
+                  }
+                }
+              },
+              "default_payment_method": {
+                "type": "string",
+                "description": "ID of a payment method that’s attached to the customer, to be used as the customer’s default payment method for subscriptions and invoices."
+              },
+              "footer": {
+                "type": "string",
+                "description": "Default footer to be displayed on invoices for this customer."
+              }
+            }
+          },
+          "livemode": {
+            "type": "boolean",
+            "example": false,
+            "description": "Has the value true if the object exists in live mode or the value false if the object exists in test mode."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format.",
+            "properties": {
+              "order_id": {
+                "type": "string",
+                "example": 673
+              }
+            }
+          },
+          "name": {
+            "type": "string",
+            "example": "John Smith",
+            "description": "The customer’s full name or business name."
+          },
+          "next_invoice_sequence": {
+            "type": "number",
+            "example": 113288,
+            "description": "The suffix of the customer’s next invoice number, e.g., 0001."
+          },
+          "phone": {
+            "type": "string",
+            "example": "123-123-1234",
+            "description": "The customer’s phone number."
+          },
+          "preferred_locales": {
+            "type": "array",
+            "example": [
+              "string",
+              "string"
+            ],
+            "description": "The customer’s preferred locales (languages), ordered by preference."
+          },
+          "shipping": {
+            "$ref": "#/components/schemas/Shipping"
+          },
+          "tax_exempt": {
+            "type": "string",
+            "example": "exempt",
+            "description": "Describes the customer’s tax exemption status. One of none, exempt, or reverse. When set to reverse, invoice and receipt PDFs include the text “Reverse charge”."
+          }
+        }
+      },
+      "DeletedCustomer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cus_8epDebVEl8Bs2V",
+            "description": "Unique identifier for the object."
+          },
+          "object": {
+            "type": "string",
+            "example": "customer",
+            "description": "String representing the object’s type."
+          },
+          "deleted": {
+            "type": "boolean",
+            "example": true,
+            "description": "Boolean expressing whether customer had been deleted."
+          }
+        }
+      },
+      "ListCustomers": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "johnsmith@libertytreemedia.com",
+            "description": "A case-sensitive filter on the list based on the customer’s email field. The value must be a string."
+          },
+          "created": {
+            "$ref": "#/components/schemas/Created"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "example": 10,
+            "description": "A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10."
+          },
+          "starting_after": {
+            "type": "string",
+            "example": "cus_HU71SS7faWPfVQ",
+            "description": "A cursor for use in pagination. starting_after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list."
+          },
+          "ending_before": {
+            "type": "string",
+            "example": "cus_HU71SS7faWPfVQ",
+            "description": "A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list."
+          }
+        }
+      },
+      "ListCustomersResponse": {
+        "type": "object",
+        "description": "A dictionary with a data property that contains an array of up to limit customers, starting after customer starting_after. Passing an optional email will result in filtering to customers with only that exact email address. Each entry in the array is a separate customer object. If no more customers are available, the resulting array will be empty. This request should never return an error.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "example": "list",
+            "description": "String representing the object’s type."
+          },
+          "url": {
+            "type": "string",
+            "example": "/v1/customers",
+            "description": "Endpoint url."
+          },
+          "has_more": {
+            "type": "boolean",
+            "example": false,
+            "description": "Is there more customers than the array in the data property."
+          },
+          "data": {
+            "type": "array",
+            "description": "An array of up to limit customers.",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          }
+        }
+      },
+      "PaymentIntent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "pi_1DpRqg2eZvKYlo2CDp9Ko99t",
+            "description": "Unique identifier for the object."
+          },
+          "object": {
+            "type": "string",
+            "example": "payment_intent",
+            "description": "String representing the object’s type. Objects of the same type share the same value."
+          },
+          "amount": {
+            "type": "number",
+            "example": 1099,
+            "description": "Amount intended to be collected by this PaymentIntent. A positive integer representing how much to charge in the smallest currency unit (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or equivalent in charge currency. The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99)."
+          },
+          "amount_capturable": {
+            "type": "number",
+            "example": 0,
+            "description": "Amount that can be captured from this PaymentIntent."
+          },
+          "amount_received": {
+            "type": "number",
+            "example": 0,
+            "description": "Amount that was collected by this PaymentIntent."
+          },
+          "application": {
+            "type": "string",
+            "example": null,
+            "description": "ID of the Connect application that created the PaymentIntent."
+          },
+          "application_fee_amount": {
+            "type": "number",
+            "example": null,
+            "description": "The amount of the application fee (if any) that will be requested to be applied to the payment and transferred to the **Pay** account. The amount of the application fee collected will be capped at the total payment amount. For more information, see the PaymentIntents use case for connected accounts."
+          },
+          "canceled_at": {
+            "type": "number",
+            "example": null,
+            "description": "Populated when status is canceled, this is the time at which the PaymentIntent was canceled. Measured in seconds since the Unix epoch."
+          },
+          "cancellation_reason": {
+            "type": "string",
+            "example": null,
+            "description": "Reason for cancellation of this PaymentIntent, either user-provided (duplicate, fraudulent, requested_by_customer, or abandoned) or generated by **Pay** internally (failed_invoice, void_invoice, or automatic)."
+          },
+          "capture_method": {
+            "type": "string",
+            "example": "automatic",
+            "description": "Controls when the funds will be captured from the customer’s account."
+          },
+          "charges": {
+            "$ref": "#/components/schemas/Charges"
+          },
+          "client_secret": {
+            "type": "string",
+            "example": "pi_1DpRqg2eZvKYlo2CDp9Ko99t_secret_4QlXQ5gMV3Es2MlgKOY1pbXMc",
+            "description": "The client secret of this PaymentIntent. Used for client-side retrieval using a publishable key. The client secret can be used to complete a payment from your frontend. It should not be stored, logged, embedded in URLs, or exposed to anyone other than the customer. Make sure that you have TLS enabled on any page that includes the client secret."
+          },
+          "confirmation_method": {
+            "type": "string",
+            "enum": [
+              "automatic",
+              "manual"
+            ],
+            "example": "automatic",
+            "description": "Automatic: (Default) PaymentIntent can be confirmed using a publishable key. After next_actions are handled, no additional confirmation is required to complete the payment. Manual: All payment attempts must be made using a secret key. The PaymentIntent returns to the requires_confirmation state after handling next_actions, and requires your server to initiate each payment attempt with an explicit confirmation."
+          },
+          "created": {
+            "type": "number",
+            "example": 1546743530,
+            "description": "Time at which the object was created. Measured in seconds since the Unix epoch."
+          },
+          "currency": {
+            "type": "string",
+            "example": "eur",
+            "description": "Three-letter ISO currency code, in lowercase. Must be a supported currency."
+          },
+          "customer": {
+            "type": "string",
+            "example": null,
+            "description": "ID of the Customer this PaymentIntent belongs to, if one exists. Payment methods attached to other Customers cannot be used with this PaymentIntent."
+          },
+          "description": {
+            "type": "string",
+            "example": null,
+            "description": "An arbitrary string attached to the object. Often useful for displaying to users."
+          },
+          "invoice": {
+            "type": "string",
+            "example": null,
+            "description": "ID of the invoice that created this PaymentIntent, if it exists."
+          },
+          "last_payment_error": {
+            "$ref": "#/components/schemas/LastPaymentError"
+          },
+          "livemode": {
+            "type": "boolean",
+            "example": false,
+            "description": "Has the value true if the object exists in live mode or the value false if the object exists in test mode."
+          },
+          "metadata": {
+            "type": "object",
+            "example": {},
+            "description": "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata."
+          },
+          "next_action": {
+            "type": "object",
+            "example": null,
+            "description": "If present, this property tells you what actions you need to take in order for your customer to fulfill a payment using the provided source."
+          },
+          "on_behalf_of": {
+            "type": "string",
+            "example": null,
+            "description": "The account (if any) for which the funds of the PaymentIntent are intended. See the PaymentIntents use case for connected accounts for details."
+          },
+          "payment_method": {
+            "type": "string",
+            "example": "pm_123abcdef123",
+            "description": "ID of the payment method used in this PaymentIntent."
+          },
+          "payment_method_options": {
+            "type": "object",
+            "example": {
+              "card": {
+                "installments": null,
+                "network": null,
+                "request_three_d_secure": "automatic"
+              }
+            },
+            "description": "Payment-method-specific configuration for this PaymentIntent."
+          },
+          "payment_method_types": {
+            "type": "array",
+            "example": [
+              "card"
+            ],
+            "description": "The list of payment method types (e.g. card) that this PaymentIntent is allowed to use.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "receipt_email": {
+            "type": "string",
+            "example": null,
+            "description": "Email address that the receipt for the resulting payment will be sent to. If receipt_email is specified for a payment in live mode, a receipt will be sent regardless of your email settings."
+          },
+          "review": {
+            "type": "string",
+            "example": null,
+            "description": "ID of the review associated with this PaymentIntent, if any."
+          },
+          "setup_future_usage": {
+            "type": "string",
+            "enum": [
+              "on_session",
+              "off_session"
+            ],
+            "example": "off_session",
+            "description": "Indicates that you intend to make future payments with this PaymentIntent’s payment method. Providing this parameter will attach the payment method to the PaymentIntent’s Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete. If no Customer was provided, the payment method can still be attached to a Customer after the transaction completes. When processing card payments, **Pay** also uses setup_future_usage to dynamically optimize your payment flow and comply with regional legislation and network rules, such as SCA. Use on_session if you intend to only reuse the payment method when your customer is present in your checkout flow. Use off_session if your customer may or may not be present in your checkout flow."
+          },
+          "shipping": {
+            "$ref": "#/components/schemas/ShippingPaymentIntent"
+          },
+          "statement_descriptor": {
+            "type": "string",
+            "example": null,
+            "description": "For non-card charges, you can use this value as the complete description that appears on your customers’ statements. Must contain at least one letter, maximum 22 characters."
+          },
+          "statement_descriptor_suffix": {
+            "type": "string",
+            "example": null,
+            "description": "Provides information about a card payment that customers see on their statements. Concatenated with the prefix (shortened descriptor) or statement descriptor that’s set on the account to form the complete statement descriptor. Maximum 22 characters for the concatenated descriptor."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "requires_payment_method",
+              "requires_confirmation",
+              "requires_action",
+              "processing",
+              "requires_capture",
+              "canceled",
+              "succeeded"
+            ],
+            "example": "requires_payment_method",
+            "description": "Status of this PaymentIntent."
+          },
+          "transfer_data": {
+            "$ref": "#/components/schemas/TransferData"
+          },
+          "transfer_group": {
+            "type": "string",
+            "example": null,
+            "description": "A string that identifies the resulting payment as part of a group. See the PaymentIntents use case for connected accounts for details."
+          }
+        }
+      },
+      "CreatePaymentIntent": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 1099,
+            "description": "Amount intended to be collected by this PaymentIntent. A positive integer representing how much to charge in the smallest currency unit (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or equivalent in charge currency. The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99)."
+          },
+          "currency": {
+            "type": "string",
+            "example": "eur",
+            "description": "Three-letter ISO currency code, in lowercase. Must be a supported currency."
+          },
+          "customer": {
+            "type": "string",
+            "example": null,
+            "description": "ID of the Customer this PaymentIntent belongs to, if one exists. Payment methods attached to other Customers cannot be used with this PaymentIntent."
+          },
+          "confirm": {
+            "type": "boolean",
+            "default": false,
+            "example": false,
+            "description": "Set to true to attempt to confirm this PaymentIntent immediately. This parameter defaults to false. When creating and confirming a PaymentIntent at the same time, parameters available in the confirm API may also be provided."
+          },
+          "off_session": {
+            "type": "boolean",
+            "default": false,
+            "example": false,
+            "description": "Set to true to indicate that the customer is not in your checkout flow during this payment attempt, and therefore is unable to authenticate. This parameter is intended for scenarios where you collect card details and charge them later. This parameter can only be used with confirm=true."
+          },
+          "payment_method": {
+            "description": "ID of the payment method (a PaymentMethod, Card, or compatible Source object) to attach to this PaymentIntent. If this parameter is omitted with confirm=true, customer.default_source will be attached as this PaymentIntent’s payment instrument to improve the migration experience for users of the Charges API. We recommend that you explicitly provide the payment_method going forward.",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "pm_1Gsv4BFbKq2PvwXbl4XEl1O3",
+                "description": "ID of the payment method used in this PaymentIntent."
+              },
+              {
+                "type": "object",
+                "required": [
+                  "payment_method"
+                ],
+                "properties": {
+                  "confirm": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            ]
+          },
+          "payment_method_types": {
+            "type": "array",
+            "example": [
+              "card"
+            ],
+            "description": "The list of payment method types (e.g. card) that this PaymentIntent is allowed to use.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "receipt_email": {
+            "type": "string",
+            "format": "email",
+            "example": "joedoe@libertytreemedia.com",
+            "description": "Email address that the receipt for the resulting payment will be sent to. If receipt_email is specified for a payment in live mode, a receipt will be sent regardless of your email settings."
+          },
+          "setup_future_usage": {
+            "type": "string",
+            "enum": [
+              "on_session",
+              "off_session"
+            ],
+            "example": "off_session",
+            "description": "Indicates that you intend to make future payments with this PaymentIntent’s payment method. Providing this parameter will attach the payment method to the PaymentIntent’s Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete. If no Customer was provided, the payment method can still be attached to a Customer after the transaction completes. When processing card payments, **Pay** also uses setup_future_usage to dynamically optimize your payment flow and comply with regional legislation and network rules, such as SCA. Use on_session if you intend to only reuse the payment method when your customer is present in your checkout flow. Use off_session if your customer may or may not be present in your checkout flow."
+          },
+          "transfer_data": {
+            "$ref": "#/components/schemas/TransferData"
+          },
+          "metadata": {
+            "type": "object",
+            "example": {},
+            "description": "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata."
+          }
+        }
+      },
+      "CapturePaymentIntent": {
+        "type": "object",
+        "properties": {
+          "amount_to_capture": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1000
+          },
+          "transfer_data": {
+            "$ref": "#/components/schemas/TransferData"
+          }
+        }
+      },
+      "ConfirmPaymentIntent": {
+        "type": "object",
+        "properties": {
+          "payment_method": {
+            "type": "string",
+            "example": "pm_1Gsv4BFbKq2PvwXbl4XEl1O3",
+            "description": "ID of the payment method (a PaymentMethod, Card, or compatible Source object) to attach to this PaymentIntent."
+          },
+          "receipt_email": {
+            "type": "string",
+            "format": "email",
+            "example": "joedoe@libertytreemedia.com",
+            "description": "Email address that the receipt for the resulting payment will be sent to. If receipt_email is specified for a payment in live mode, a receipt will be sent regardless of your email settings."
+          },
+          "setup_future_usage": {
+            "type": "string",
+            "enum": [
+              "on_session",
+              "off_session"
+            ],
+            "example": "off_session",
+            "description": "Indicates that you intend to make future payments with this PaymentIntent’s payment method. Providing this parameter will attach the payment method to the PaymentIntent’s Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete. If no Customer was provided, the payment method can still be attached to a Customer after the transaction completes. When processing card payments, **Pay** also uses setup_future_usage to dynamically optimize your payment flow and comply with regional legislation and network rules, such as SCA. If setup_future_usage is already set and you are performing a request using a publishable key, you may only update the value from on_session to off_session."
+          }
+        }
+      },
+      "UpdatePaymentIntent": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 1099,
+            "description": "Amount intended to be collected by this PaymentIntent. A positive integer representing how much to charge in the smallest currency unit (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or equivalent in charge currency. The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99)."
+          },
+          "currency": {
+            "type": "string",
+            "example": "eur",
+            "description": "Three-letter ISO currency code, in lowercase. Must be a supported currency."
+          },
+          "customer": {
+            "type": "string",
+            "example": null,
+            "description": "ID of the Customer this PaymentIntent belongs to, if one exists. Payment methods attached to other Customers cannot be used with this PaymentIntent."
+          },
+          "payment_method": {
+            "type": "string",
+            "example": "pm_123abcdef123",
+            "description": "ID of the payment method used in this PaymentIntent."
+          },
+          "payment_method_options": {
+            "type": "object",
+            "example": {
+              "card": {
+                "installments": null,
+                "network": null,
+                "request_three_d_secure": "automatic"
+              }
+            },
+            "description": "Payment-method-specific configuration for this PaymentIntent."
+          },
+          "payment_method_types": {
+            "type": "array",
+            "example": [
+              "card"
+            ],
+            "description": "The list of payment method types (e.g. card) that this PaymentIntent is allowed to use.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "receipt_email": {
+            "type": "string",
+            "example": null,
+            "description": "Email address that the receipt for the resulting payment will be sent to. If receipt_email is specified for a payment in live mode, a receipt will be sent regardless of your email settings."
+          },
+          "setup_future_usage": {
+            "type": "string",
+            "enum": [
+              "on_session",
+              "off_session"
+            ],
+            "description": "Indicates that you intend to make future payments with this PaymentIntent’s payment method. Providing this parameter will attach the payment method to the PaymentIntent’s Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete. If no Customer was provided, the payment method can still be attached to a Customer after the transaction completes. When processing card payments, **Pay** also uses setup_future_usage to dynamically optimize your payment flow and comply with regional legislation and network rules, such as SCA. Use on_session if you intend to only reuse the payment method when your customer is present in your checkout flow. Use off_session if your customer may or may not be present in your checkout flow."
+          },
+          "capture_method": {
+            "type": "string",
+            "example": "automatic",
+            "description": "Controls when the funds will be captured from the customer’s account."
+          },
+          "transfer_data": {
+            "$ref": "#/components/schemas/TransferData"
+          }
+        }
+      },
+      "CancelPaymentIntent": {
+        "type": "object",
+        "properties": {
+          "cancellation_reason": {
+            "type": "string",
+            "enum": [
+              "duplicate",
+              "fraudulent",
+              "requested_by_customer",
+              "abandoned"
+            ],
+            "default": "requested_by_customer",
+            "example": "requested_by_customer",
+            "description": "Reason for canceling this PaymentIntent."
+          }
+        }
+      },
+      "TransferData": {
+        "type": "object",
+        "required": [
+          "destination"
+        ],
+        "description": "The data with which to automatically create a Transfer when the payment is finalized. See the PaymentIntents use case for connected accounts for details.",
+        "properties": {
+          "destination": {
+            "type": "string",
+            "example": "acct_1GtG8vJwgwMmQiI2",
+            "description": "ID of an existing, connected **Pay** account."
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1000,
+            "description": "The amount that will be transferred automatically when the invoice is paid. If no amount is set, the full amount is transferred. There cannot be any line items with recurring prices when using this field."
+          }
+        }
+      },
+      "PaymentMethod": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "pm_1Jc71c2eZvKYlo2C5EpxHvnY",
+            "description": "Unique identifier for the object."
+          },
+          "object": {
+            "type": "string",
+            "example": "payment_method",
+            "description": "String representing the object’s type. Objects of the same type share the same value."
+          },
+          "billing_details": {
+            "$ref": "#/components/schemas/BillingDetails"
+          },
+          "card": {
+            "type": "object",
+            "description": "If this is a card PaymentMethod, this hash contains the user’s card details.",
+            "properties": {
+              "brand": {
+                "type": "string",
+                "example": "visa",
+                "description": "Card brand."
+              },
+              "checks": {
+                "type": "object",
+                "description": "Checks on Card address and CVC if provided.",
+                "properties": {
+                  "address_line1_check": {
+                    "description": "If a address line1 was provided, results of the check, one of pass, fail, unavailable, or unchecked.",
+                    "type": "string",
+                    "example": "pass"
+                  },
+                  "address_postal_code_check": {
+                    "description": "If a address postal code was provided, results of the check, one of pass, fail, unavailable, or unchecked.",
+                    "type": "string",
+                    "example": "pass"
+                  },
+                  "cvc_check": {
+                    "type": "string",
+                    "example": "pass",
+                    "description": "If a CVC was provided, results of the check, one of pass, fail, unavailable, or unchecked."
+                  }
+                }
+              },
+              "country": {
+                "type": "string",
+                "example": "US",
+                "description": "Two-letter ISO code representing the country of the card. You could use this attribute to get a sense of the international breakdown of cards you’ve collected."
+              },
+              "exp_month": {
+                "type": "number",
+                "example": 12,
+                "description": "Two-digit number representing the card’s expiration month."
+              },
+              "exp_year": {
+                "type": "number",
+                "example": 2022,
+                "description": "Four-digit number representing the card’s expiration year."
+              },
+              "fingerprint": {
+                "type": "string",
+                "example": "Xt5EWLLDS7FJjR1c",
+                "description": "Uniquely identifies this particular card number. You can use this attribute to check whether two customers who’ve signed up with you are using the same card number, for example. For payment methods that tokenize card information (Apple Pay, Google Pay), the tokenized number might be provided instead of the underlying card number."
+              },
+              "funding": {
+                "type": "string",
+                "example": "credit",
+                "description": "Card funding type. Can be credit, debit, prepaid, or unknown."
+              },
+              "generated_from": {
+                "type": "object",
+                "example": null,
+                "description": "Details of the original PaymentMethod that created this object."
+              },
+              "last4": {
+                "type": "string",
+                "example": 4242,
+                "description": "The last four digits of the card."
+              },
+              "networks": {
+                "type": "object",
+                "description": "Contains information about card networks that can be used to process the payment.",
+                "properties": {
+                  "available": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "visa"
+                    ],
+                    "description": "Contains information about card networks that can be used to process the payment."
+                  },
+                  "preferred": {
+                    "type": "string",
+                    "example": "visa",
+                    "description": "The preferred network for the card."
+                  }
+                }
+              },
+              "three_d_secure_usage": {
+                "type": "object",
+                "description": "Contains details on how this Card maybe be used for 3D Secure authentication.",
+                "properties": {
+                  "supported": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "Whether 3D Secure is supported on this card."
+                  }
+                }
+              },
+              "wallet": {
+                "type": "object",
+                "example": null,
+                "description": "If this Card is part of a card wallet, this contains the details of the card wallet."
+              }
+            }
+          },
+          "created": {
+            "type": "number",
+            "example": 12345678,
+            "description": "Time at which the object was created. Measured in seconds since the Unix epoch."
+          },
+          "customer": {
+            "type": "string",
+            "example": null,
+            "description": "The ID of the Customer to which this PaymentMethod is saved. This will not be set when the PaymentMethod has not been saved to a Customer."
+          },
+          "livemode": {
+            "type": "boolean",
+            "example": false,
+            "description": "Has the value true if the object exists in live mode or the value false if the object exists in test mode."
+          },
+          "metadata": {
+            "type": "object",
+            "example": {
+              "order_id": "123456789"
+            },
+            "description": "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format."
+          },
+          "type": {
+            "type": "string",
+            "example": "card",
+            "description": "The type of the PaymentMethod. An additional hash is included on the PaymentMethod with a name matching this value. It contains additional information specific to the PaymentMethod type."
+          }
+        }
+      },
+      "BillingDetails": {
+        "type": "object",
+        "description": "Billing information associated with the PaymentMethod that may be used or required by particular types of payment methods.",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "email": {
+            "type": "string",
+            "example": "jenny@example.com",
+            "description": "Email address."
+          },
+          "name": {
+            "type": "string",
+            "example": "Thomas Jefferson",
+            "description": "Full name."
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1555-555-5555",
+            "description": "Billing phone number (including extension)."
+          }
+        }
+      },
+      "AttachPaymentMethod": {
+        "type": "object",
+        "properties": {
+          "customer": {
+            "type": "string",
+            "example": "cus_HZlDXNXLHSOcLj",
+            "description": "The ID of the customer to which to attach the PaymentMethod."
+          }
+        }
+      },
+      "UpdatePaymentMethod": {
+        "type": "object",
+        "properties": {
+          "billing_details": {
+            "$ref": "#/components/schemas/BillingDetails"
+          },
+          "metadata": {
+            "type": "object",
+            "example": {
+              "order_id": "6735"
+            },
+            "description": "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata."
+          },
+          "card": {
+            "type": "object",
+            "description": "If this is a card PaymentMethod, this hash contains the user’s card details.",
+            "required": [
+              "exp_month",
+              "exp_year"
+            ],
+            "properties": {
+              "exp_month": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12,
+                "description": "Two-digit number representing the card’s expiration month."
+              },
+              "exp_year": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 20,
+                    "maximum": 99,
+                    "example": 21
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 2020,
+                    "maximum": 9999,
+                    "example": 2020
+                  }
+                ],
+                "description": "Number representing the card’s expiration year."
+              }
+            }
+          }
+        }
+      },
+      "ListPaymentMethods": {
+        "type": "object",
+        "required": [
+          "customer"
+        ],
+        "properties": {
+          "customer": {
+            "type": "string",
+            "example": "cus_HZlDXNXLHSOcLj",
+            "description": "The ID of the customer whose PaymentMethods will be retrieved."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "au_becs_debit",
+              "bacs_debit",
+              "bancontact",
+              "card",
+              "eps",
+              "fpx",
+              "giropay",
+              "ideal",
+              "p24",
+              "sepa_debit"
+            ],
+            "default": "card",
+            "example": "card",
+            "description": "A required filter on the list, based on the object type field."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "example": 10,
+            "description": "A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10."
+          },
+          "starting_after": {
+            "type": "string",
+            "example": "pm_1H0bhA2eZvKYlo2ClFepu5sQ",
+            "description": "A cursor for use in pagination. starting_after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list."
+          },
+          "ending_before": {
+            "type": "string",
+            "example": "pm_1H0bhA2eZvKYlo2ClFepu5sQ",
+            "description": "A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list."
+          }
+        }
+      },
+      "PaymentMethodsList": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "example": "list",
+            "description": "Object description."
+          },
+          "url": {
+            "type": "string",
+            "example": "/v1/payment_methods",
+            "description": "**Endpoint** URL."
+          },
+          "has_more": {
+            "type": "boolean",
+            "example": false,
+            "description": "Does the list continue."
+          },
+          "data": {
+            "type": "array",
+            "description": "Property that contains an array of up to limit PaymentMethods of type type, starting after PaymentMethods starting_after. Each entry in the array is a separate PaymentMethod object. If no more PaymentMethods are available, the resulting array will be empty. This request should never return an error.",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethod"
+            }
+          }
+        }
+      },
+      "CreateRefund": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1000,
+            "description": "A positive integer in cents representing how much of this charge to refund. Can refund only up to the remaining, unrefunded amount of the charge."
+          },
+          "payment_intent": {
+            "type": "string",
+            "example": "pi_1GsyhzFbKq2PvwXbwAI3ZluI",
+            "description": "ID of the PaymentIntent to refund."
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "duplicate",
+              "fraudulent",
+              "requested_by_customer"
+            ],
+            "default": "requested_by_customer",
+            "example": "requested_by_customer",
+            "description": "String indicating the reason for the refund. If set, possible values are duplicate, fraudulent, and requested_by_customer. If you believe the charge to be fraudulent, specifying fraudulent as the reason will add the associated card and email to your block lists, and will also help us improve our fraud detection algorithms."
+          },
+          "refund_application_fee": {
+            "type": "boolean",
+            "default": false,
+            "example": false,
+            "description": "Boolean indicating whether the application fee should be refunded when refunding this charge. If a full charge refund is given, the full application fee will be refunded. Otherwise, the application fee will be refunded in an amount proportional to the amount of the charge refunded. An application fee can be refunded only by the application that created the charge."
+          }
+        }
+      },
+      "Refund": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "re_3Jc9Yc2eZvKYlo2C0pfyXwjx",
+            "description": "Unique identifier for the object."
+          },
+          "object": {
+            "type": "string",
+            "example": "refund",
+            "description": "String representing the object’s type. Objects of the same type share the same value."
+          },
+          "amount": {
+            "type": "string",
+            "example": 100,
+            "description": "Amount, in cents."
+          },
+          "balance_transaction": {
+            "type": "string",
+            "example": null,
+            "description": "Balance transaction that describes the impact on your account balance."
+          },
+          "charge": {
+            "type": "string",
+            "example": "ch_3Jc9Yc2eZvKYlo2C0NpFs8Yt",
+            "description": "ID of the charge that was refunded."
+          },
+          "created": {
+            "type": "number",
+            "example": 1632232972,
+            "description": "Time at which the object was created. Measured in seconds since the Unix epoch."
+          },
+          "currency": {
+            "type": "string",
+            "example": "usd",
+            "description": "Three-letter ISO currency code, in lowercase. Must be a supported currency."
+          },
+          "description": {
+            "type": "string",
+            "example": "description",
+            "description": "An arbitrary string attached to the object. Often useful for displaying to users. (Available on non-card refunds only)"
+          },
+          "metadata": {
+            "type": "object",
+            "example": {},
+            "description": "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format."
+          },
+          "payment_intent": {
+            "type": "string",
+            "example": "pi_1IdQBOJxr7zyIFb9qX4HxzL1",
+            "description": "ID of the PaymentIntent that was refunded."
+          },
+          "reason": {
+            "type": "string",
+            "example": "expired_uncaptured_charge",
+            "description": "Reason for the refund, either user-provided (duplicate, fraudulent, or requested_by_customer) or generated by **Pay** internally (expired_uncaptured_charge)."
+          },
+          "receipt_number": {
+            "type": "string",
+            "example": null,
+            "description": "This is the transaction number that appears on email receipts sent for this refund."
+          },
+          "source_transfer_reversal": {
+            "type": "string",
+            "example": null,
+            "description": "The transfer reversal that is associated with the refund."
+          },
+          "status": {
+            "type": "string",
+            "example": "succeeded",
+            "description": "Status of the refund. For credit card refunds, this can be pending, succeeded, or failed. For other types of refunds, it can be pending, succeeded, failed, or canceled. Refer to our refunds documentation for more details."
+          },
+          "transfer_reversal": {
+            "type": "string",
+            "example": null,
+            "description": "If the accompanying transfer was reversed, the transfer reversal object. Only applicable if the charge was created using the destination parameter."
+          }
+        }
+      },
+      "ListRefunds": {
+        "type": "object",
+        "properties": {
+          "payment_intent": {
+            "type": "string",
+            "example": "pi_1GsyhzFbKq2PvwXbwAI3ZluI",
+            "description": "Only return refunds for the PaymentIntent specified by this ID."
+          },
+          "created": {
+            "$ref": "#/components/schemas/Created"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "example": 10,
+            "description": "A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10."
+          },
+          "starting_after": {
+            "type": "string",
+            "example": "re_1GtLjtFbKq2PvwXb52R6Qek3",
+            "description": "A cursor for use in pagination. starting_after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list."
+          },
+          "ending_before": {
+            "type": "string",
+            "example": "re_1GtLjtFbKq2PvwXb52R6Qek3",
+            "description": "A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list."
+          }
+        }
+      },
+      "Discount": {
+        "type": "object",
+        "description": "Describes the current discount active on the customer, if there is one.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "abc",
+            "description": "The ID of the discount object."
+          },
+          "customer": {
+            "type": "string",
+            "example": "cus_123abcdef",
+            "description": "The ID of the customer associated with this discount."
+          },
+          "end": {
+            "type": "number",
+            "example": 1233213333,
+            "description": "If the coupon has a duration of repeating, the date that this discount will end. If the coupon has a duration of once or forever, this attribute will be null."
+          },
+          "start": {
+            "type": "number",
+            "example": 1233213333,
+            "description": "Date that the coupon was applied."
+          }
+        }
+      },
+      "Shipping": {
+        "type": "object",
+        "description": "Mailing and shipping address for the customer. Appears on invoices emailed to this customer.",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Smith",
+            "description": "Customer's name."
+          },
+          "phone": {
+            "type": "string",
+            "example": "123-123-1234",
+            "description": "The customer’s phone number."
+          }
+        }
+      },
+      "Charges": {
+        "type": "object",
+        "description": "Charges that were created by this PaymentIntent, if any.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "example": "list",
+            "description": "String representing the object’s type. Objects of the same type share the same value. Always has the value list."
+          },
+          "data": {
+            "type": "array",
+            "example": [],
+            "description": "This list only contains the latest charge, even if there were previously multiple unsuccessful charges. To view all previous charges for a PaymentIntent, you can filter the charges list using the payment_intent parameter."
+          },
+          "has_more": {
+            "type": "boolean",
+            "example": false,
+            "description": "True if this list has another page of items after this one that can be fetched."
+          },
+          "url": {
+            "type": "string",
+            "example": "/v1/charges?payment_intent=pi_1DpRqg2eZvKYlo2CDp9Ko99",
+            "description": "The URL where this list can be accessed."
+          }
+        }
+      },
+      "LastPaymentError": {
+        "type": "object",
+        "description": "The payment error encountered in the previous PaymentIntent confirmation. It will be cleared if the PaymentIntent is later updated for any reason.",
+        "properties": {
+          "charge": {
+            "type": "string",
+            "description": "For card errors, the ID of the failed charge.",
+            "example": "ch_122345678"
+          },
+          "code": {
+            "type": "string",
+            "description": "For some errors that could be handled programmatically, a short string indicating the error code reported.",
+            "example": "200 - OK"
+          },
+          "decline_code": {
+            "type": "string",
+            "description": "For card errors resulting from a card issuer decline, a short string indicating the card issuer’s reason for the decline if they provide one.",
+            "example": "default"
+          },
+          "doc_url": {
+            "type": "string",
+            "description": "A URL to more information about the error code reported.",
+            "example": "https://www.error.com"
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error. For card errors, these messages can be shown to your users.",
+            "example": "This didn't work out."
+          },
+          "param": {
+            "type": "string",
+            "description": "If the error is parameter-specific, the parameter related to the error. For example, you can use this to display a message near the correct form field.",
+            "example": "Customer id should be a string."
+          },
+          "payment_method": {
+            "type": "object",
+            "example": {
+              "card": {
+                "brand": "visa",
+                "checks": {
+                  "address_line1_check": null,
+                  "address_postal_code_check": null,
+                  "cvc_check": "unavailable"
+                },
+                "country": "US",
+                "exp_month": 12,
+                "exp_year": 2023,
+                "fingerprint": "kEBuBXcEH36zrhx9",
+                "funding": "credit",
+                "installments": null,
+                "last4": "0019",
+                "network": "visa",
+                "three_d_secure": null,
+                "wallet": null
+              },
+              "type": "card"
+            },
+            "description": "The PaymentMethod object for errors returned on a request involving a PaymentMethod."
+          },
+          "payment_method_type": {
+            "type": "string",
+            "description": "If the error is specific to the type of payment method, the payment method type that had a problem. This field is only populated for invoice-related errors.",
+            "example": "card"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "api_error",
+              "card_error",
+              "idempotency_error",
+              "invalid_request_error"
+            ],
+            "description": "The type of error returned.",
+            "example": "idempotency_error"
+          }
+        }
+      },
+      "ShippingPaymentIntent": {
+        "type": "object",
+        "description": "Shipping information for this PaymentIntent.",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "carrier": {
+            "type": "string",
+            "example": "USPS",
+            "description": "The delivery service that shipped a physical product, such as Fedex, UPS, USPS, etc."
+          },
+          "name": {
+            "type": "string",
+            "example": "George Washington",
+            "description": "Recipient name."
+          },
+          "phone": {
+            "type": "string",
+            "example": "312-312-7777",
+            "description": "Recipient phone (including extension)."
+          },
+          "tracking_number": {
+            "type": "string",
+            "example": "123ABC321",
+            "description": "The tracking number for a physical product, obtained from the delivery service. If multiple tracking numbers were generated for this purchase, please separate them with commas."
+          }
+        }
+      },
+      "ClientError": {
+        "type": "object",
+        "description": "Client Error object",
+        "properties": {
+          "code": {
+            "description": "The error code",
+            "type": "string",
+            "example": "Error code"
+          },
+          "message": {
+            "description": "The error message",
+            "type": "string",
+            "example": "Error message"
+          }
+        }
+      },
+      "ServerError": {
+        "type": "object",
+        "description": "Internal server error object",
+        "properties": {
+          "code": {
+            "description": "The error code",
+            "type": "string",
+            "example": "500"
+          },
+          "message": {
+            "description": "The error message",
+            "type": "string",
+            "example": "An internal error occurred. If the issue persists please contact support@libertytreemedia.com."
+          }
+        }
+      }
+    }
+  }
+}
